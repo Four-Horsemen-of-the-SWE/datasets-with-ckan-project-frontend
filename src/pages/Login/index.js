@@ -1,22 +1,24 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Form, Input, Button, Typography } from "antd";
+import { Form, Input, Button, Typography, message } from "antd";
 
 const { Title, Text, Link } = Typography;
 
 export default function Login() {
   document.title = "Login";
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage()
 
   const onFinish = (value) => {
-    console.log(value);
+    messageApi.success('Login Success')
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log(errorInfo);
+    messageApi.error(JSON.stringify(errorInfo));
   };
 
   return (
     <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 md:flex">
+      {contextHolder}
       <img
         src={process.env.PUBLIC_URL + "/images/login.svg"}
         alt="data"
