@@ -1,9 +1,14 @@
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  LockOutlined,
+  UserOutlined,
+  ProfileOutlined,
+  CameraOutlined,
+} from "@ant-design/icons";
 import { Form, Input, Button, Typography } from "antd";
 
 const { Title, Text, Link } = Typography;
 
-export default function Login() {
+export default function Register() {
   document.title = "Login";
   const [form] = Form.useForm();
 
@@ -18,7 +23,7 @@ export default function Login() {
   return (
     <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 md:flex">
       <img
-        src={process.env.PUBLIC_URL + "/images/login.svg"}
+        src={process.env.PUBLIC_URL + "/images/team.svg"}
         alt="data"
         height={350}
       />
@@ -32,9 +37,9 @@ export default function Login() {
         className="w-1/3"
       >
         <div className="mb-5">
-          <Title>Login</Title>
+          <Title>Register</Title>
           <Text type="secondary" strong>
-            Login to upload your datasets. and share for everyone to use.
+            Register to visit the best dataset repository.
           </Text>
         </div>
         <Form.Item
@@ -49,6 +54,21 @@ export default function Login() {
           <Input
             prefix={<UserOutlined />}
             placeholder="Username"
+            size="large"
+          />
+        </Form.Item>
+        <Form.Item
+          name="fullname"
+          rules={[
+            {
+              required: true,
+              message: "Please input your fullname!",
+            },
+          ]}
+        >
+          <Input
+            prefix={<ProfileOutlined />}
+            placeholder="Fullname"
             size="large"
           />
         </Form.Item>
@@ -68,27 +88,24 @@ export default function Login() {
             size="large"
           />
         </Form.Item>
+        <Form.Item name="imageurl">
+          <Input
+            prefix={<CameraOutlined />}
+            placeholder="Image URL"
+            size="large"
+          />
+        </Form.Item>
         <Form.Item shouldUpdate>
           {() => (
-            <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              block
-              disabled={
-                !form.isFieldsTouched(true) ||
-                !!form.getFieldsError().filter(({ errors }) => errors.length)
-                  .length
-              }
-            >
-              Login
+            <Button type="primary" htmlType="submit" size="large" block>
+              Register
             </Button>
           )}
         </Form.Item>
 
         <div className="flex justify-between items-center font-semibold">
-          <span>Or create an account.</span>
-          <Link href="/register">Register</Link>
+          <span>Already have an account ?</span>
+          <Link href="/login">Login</Link>
         </div>
       </Form>
     </div>
