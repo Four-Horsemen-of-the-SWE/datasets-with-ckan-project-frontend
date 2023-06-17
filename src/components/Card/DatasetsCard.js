@@ -1,30 +1,79 @@
-import { StarOutlined } from "@ant-design/icons";
-import { Card } from "antd";
+import { EyeOutlined, CheckOutlined, FullscreenOutlined } from "@ant-design/icons";
+import { Button, Card, Image, Modal, Space, Typography } from "antd";
+import { useState } from "react";
 import moment from "moment/moment";
 
 const { Meta } = Card;
+const { Link } = Typography;
 
-export default function DatasetsCard({ thumbnail, title, description, date, author }) {
+export default function DatasetsCard({
+  thumbnail,
+  title,
+  description,
+  date,
+  author,
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <Card
-      hoverable
-      loading={false}
-      className="shadow-sm"
-      cover={<img alt="thumbnail" src={thumbnail} />}
-      actions={[
-        author,
-        moment(date).format("MMM Do YY"),
-        <StarOutlined key="bookmark" />,
-      ]}
-    >
-      <Meta
-        title={title}
-        description={
-          description.length > 100
-            ? description.slice(0, 100) + "..."
-            : description
-        }
-      />
-    </Card>
+    <>
+      <Modal
+        centered
+        title={`${title} Preview`}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button
+            key="preview"
+            type="dashed"
+            size="large"
+            icon={<FullscreenOutlined />}
+          >
+            <Link href="/asdasdsd">View</Link>
+          </Button>,
+          <Button
+            key="ok"
+            onClick={handleCancel}
+            type="primary"
+            size="large"
+            icon={<CheckOutlined />}
+          >
+            OK
+          </Button>,
+        ]}
+      >
+        <p>{description}</p>
+      </Modal>
+
+      <Card
+        hoverable
+        loading={false}
+        className="shadow-sm"
+        cover={<img alt="thumbnail" src={thumbnail} />}
+        actions={[
+          author,
+          moment(date).format("MMM Do YY"),
+          <EyeOutlined key="bookmark" onClick={() => setIsModalOpen(true)} />,
+        ]}
+      >
+        <Meta
+          title={title}
+          description={
+            description.length > 100
+              ? description.slice(0, 100) + "..."
+              : description
+          }
+        />
+      </Card>
+    </>
   );
 }
