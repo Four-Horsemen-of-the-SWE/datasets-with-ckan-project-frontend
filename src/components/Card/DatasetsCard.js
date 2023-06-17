@@ -4,7 +4,7 @@ import { useState } from "react";
 import moment from "moment/moment";
 
 const { Meta } = Card;
-const { Link } = Typography;
+const { Link, Paragraph } = Typography;
 
 export default function DatasetsCard({
   thumbnail,
@@ -68,9 +68,9 @@ export default function DatasetsCard({
         <Meta
           title={title}
           description={
-            description.length > 100
-              ? description.slice(0, 100) + "..."
-              : description
+            <Paragraph ellipsis={{rows: 4, symbol: 'more'}}>
+              {description}
+            </Paragraph>
           }
         />
       </Card>

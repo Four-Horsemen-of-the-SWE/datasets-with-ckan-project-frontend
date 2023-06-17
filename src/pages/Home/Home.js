@@ -66,6 +66,13 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="container mx-auto text-center">
+        <Title>
+          Inside our platform you'll find all the datasets you need to do with
+          your data science work. User Over {5000} data.
+        </Title>
+      </section>
+
       <section className="container mx-auto py-5">
         <Title level={2}>
           <Space direction="vertical">
