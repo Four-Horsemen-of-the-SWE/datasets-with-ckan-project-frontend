@@ -10,7 +10,7 @@ import { Form, Input, Button, Typography, message, Divider, Upload } from "antd"
 const { Title, Text, Link } = Typography;
 
 export default function Register() {
-  document.title = "Login";
+  document.title = "Register";
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 

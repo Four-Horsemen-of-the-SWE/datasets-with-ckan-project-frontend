@@ -68,9 +68,14 @@ export default function Home() {
 
       <section className="container mx-auto py-5">
         <Title level={2}>
-          <Space>
-            <PushpinOutlined />
-            Newest Datasets
+          <Space direction="vertical">
+            <Space>
+              <PushpinOutlined />
+              Newest Datasets
+            </Space>
+            <Title level={4} type="secondary" className="mt-0">
+              รายการดาต้าเซ็ทที่ใหม่ที่สุด
+            </Title>
           </Space>
         </Title>
 
@@ -84,6 +89,7 @@ export default function Home() {
                 title={item.title}
                 description={item.description}
                 author={item.author}
+                key={key}
               />
             </Col>
           ))}
