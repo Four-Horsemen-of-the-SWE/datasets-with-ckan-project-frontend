@@ -1,0 +1,6 @@
+.section--header {
+  background-image: url('../../../public/images/server.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
