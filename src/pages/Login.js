@@ -1,5 +1,6 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input, Button, Typography, message } from "antd";
+import axios from "axios";
 
 const { Title, Text, Link } = Typography;
 
@@ -9,7 +10,17 @@ export default function Login() {
   const [messageApi, contextHolder] = message.useMessage()
 
   const onFinish = (value) => {
-    messageApi.success('Login Success')
+    axios.post("https://www.melivecode.com/api/login", {
+      username: value.username,
+      password: value.password
+    })
+    .then(response => {
+      console.log(response)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+    // messageApi.success('Login Success')
   };
 
   const onFinishFailed = (errorInfo) => {

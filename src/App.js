@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import './App.css'
 
 // import components
-import Login from "./Login";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home/Home";
 import Notfound from "./components/Notfound";
