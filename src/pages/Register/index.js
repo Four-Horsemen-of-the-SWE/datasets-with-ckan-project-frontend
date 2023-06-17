@@ -3,8 +3,9 @@ import {
   UserOutlined,
   ProfileOutlined,
   CameraOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Form, Input, Button, Typography, message, Divider, Upload } from "antd";
 
 const { Title, Text, Link } = Typography;
 
@@ -22,12 +23,12 @@ export default function Register() {
   };
 
   return (
-    <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 md:flex">
+    <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 lg:flex">
       {contextHolder}
       <img
         src={process.env.PUBLIC_URL + "/images/team.svg"}
-        alt="data"
-        height={350}
+        alt="register"
+        className="h-32 md:h-64 hidden lg:block"
       />
       <Form
         name="login"
@@ -36,7 +37,7 @@ export default function Register() {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
-        className="w-1/3"
+        className="w-full lg:w-1/3"
       >
         <div className="mb-5">
           <Title>Register</Title>
@@ -97,6 +98,15 @@ export default function Register() {
             size="large"
           />
         </Form.Item>
+
+        <Divider plain>OR</Divider>
+
+        <Form.Item>
+          <Upload listType="picture">
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          </Upload>
+        </Form.Item>
+
         <Form.Item shouldUpdate>
           {() => (
             <Button type="primary" htmlType="submit" size="large" block>

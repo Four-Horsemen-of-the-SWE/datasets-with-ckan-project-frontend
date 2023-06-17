@@ -17,12 +17,12 @@ export default function Login() {
   };
 
   return (
-    <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 md:flex">
+    <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 lg:flex">
       {contextHolder}
       <img
         src={process.env.PUBLIC_URL + "/images/login.svg"}
-        alt="data"
-        height={350}
+        alt="login"
+        className="h-32 md:h-64 hidden lg:block"
       />
       <Form
         name="login"
@@ -31,7 +31,7 @@ export default function Login() {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
-        className="w-1/3"
+        className="w-full lg:w-1/3"
       >
         <div className="mb-5">
           <Title>Login</Title>
