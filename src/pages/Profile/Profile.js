@@ -1,7 +1,8 @@
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Button, Card, Col, Divider, Row, Space, Typography } from "antd";
+import { PlusOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { Alert, Avatar, Button, Card, Col, Divider, Row, Space, Typography } from "antd";
 import CreateDatasetsModal from "../../components/Datasets/CreateDatasetsModal";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -9,8 +10,10 @@ export default function Profile() {
   const [isCreateDatasetsModalOpen, setIsCreateDatasetsModalOpen] = useState(false)
   return (
     <>
-
-      <CreateDatasetsModal isModalOpen={isCreateDatasetsModalOpen} close={() => setIsCreateDatasetsModalOpen(false)} />
+      <CreateDatasetsModal
+        isModalOpen={isCreateDatasetsModalOpen}
+        close={() => setIsCreateDatasetsModalOpen(false)}
+      />
 
       <section className="container mx-auto">
         <Row gutter={32} justify="space-between" className="my-10">
@@ -25,12 +28,16 @@ export default function Profile() {
               - Baby don't hurt me -
             </Title>
 
-            <Divider>
-              Options
-            </Divider>
+            <Divider>Options</Divider>
 
             <Space direction="vertical" className="w-full">
-              <Button icon={<PlusOutlined />} size="large" type="primary" block onClick={() => setIsCreateDatasetsModalOpen(true)}>
+              <Button
+                icon={<PlusOutlined />}
+                size="large"
+                type="primary"
+                block
+                onClick={() => setIsCreateDatasetsModalOpen(true)}
+              >
                 Create Datasets
               </Button>
               <Button icon={<EditOutlined />} size="large" type="dashed" block>
@@ -44,6 +51,14 @@ export default function Profile() {
               <Title level={4} type="secondary" style={{ margin: 0 }}>
                 Datasets
               </Title>
+
+              <Card
+                bordered={false}
+                type="inner"
+                className="my-3 bg-[#7f767617] border border-slate-400 block"
+              >
+                <div>Ambatukam datasets</div>
+              </Card>
             </Card>
 
             {/* bookmarked */}
@@ -51,6 +66,14 @@ export default function Profile() {
               <Title level={4} type="secondary" style={{ margin: 0 }}>
                 Bookmark
               </Title>
+
+              <Card
+                bordered={false}
+                type="inner"
+                className="my-3 bg-[#7f767617] border border-slate-400 block"
+              >
+                <div>Ambatukam datasets</div>
+              </Card>
             </Card>
           </Col>
         </Row>
