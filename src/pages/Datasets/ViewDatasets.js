@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { ContainerOutlined } from "@ant-design/icons";
-import { Space, Typography, Image, Row, Col, Divider, Tabs } from "antd";
+import { Typography, Image, Row, Col, Divider, Tabs } from "antd";
 
 // import components
 import ResourceView from "../../components/Datasets/ResourceView";
 import InformationView from "../../components/Datasets/InformationView";
 import DiscussionView from "../../components/Discussion/DiscussionView";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 const { TabPane } = Tabs;
 
 export default function ViewDatasets() {
