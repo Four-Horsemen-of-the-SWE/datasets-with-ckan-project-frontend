@@ -11,6 +11,7 @@ import Notfound from "./components/Notfound";
 import Navbar from "./components/Navbar";
 import ViewDatasets from "./pages/Datasets/ViewDatasets";
 import Profile from "./pages/Profile/Profile";
+import AllDatasets from "./pages/Datasets/AllDatasets";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/datasets" element={<AllDatasets />} />
         <Route path="/datasets/:datasets_name" element={<ViewDatasets />} />
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="*" element={<Notfound />} />
