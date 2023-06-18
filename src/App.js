@@ -10,6 +10,7 @@ import Home from "./pages/Home/Home";
 import Notfound from "./components/Notfound";
 import Navbar from "./components/Navbar";
 import ViewDatasets from "./pages/Datasets/ViewDatasets";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/datasets/:datasets_name" element={<ViewDatasets />} />
+        <Route path="/profile/:username" element={<Profile />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </>

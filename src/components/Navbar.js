@@ -44,7 +44,7 @@ export default function Navbar() {
           <div className="flex sm:mt-0 ml-2 sm:ml-4 items-center">
             {isLogin ? (
               <>
-                <Link href="/login">
+                <Link href="/profile">
                   <Button className="mr-2 sm:mr-4">Profile</Button>
                 </Link>
                 <Button type="primary" danger>Logout</Button>
