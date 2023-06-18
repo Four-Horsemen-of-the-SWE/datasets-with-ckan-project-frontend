@@ -19,7 +19,7 @@ export default function Navbar() {
   }
   return (
     <Card bordered size="small" className="w-full shadow-md rounded-lg">
-      <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
+      <div className="container mx-auto flex flex-row justify-between items-center">
         <div className="flex items-center">
           <Link href="/">
             <img
@@ -38,8 +38,8 @@ export default function Navbar() {
             Datasets
           </Link>
         </div>
-        <div className="flex items-center mt-3 sm:mt-0">
-          <div className="flex mt-3 sm:mt-0 ml-2 sm:ml-4">
+        <div className="flex items-center sm:mt-0">
+          <div className="flex sm:mt-0 ml-2 sm:ml-4 items-center">
             <Link href="/login">
               <Button className="mr-2 sm:mr-4">Login</Button>
             </Link>

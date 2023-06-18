@@ -38,7 +38,7 @@ export default function DatasetsCard({
             size="large"
             icon={<FullscreenOutlined />}
           >
-            <Link href="/asdasdsd">View</Link>
+            <Link href={`/datasets/${title}`}>View</Link>
           </Button>,
           <Button
             key="ok"
@@ -65,14 +65,16 @@ export default function DatasetsCard({
           <EyeOutlined key="bookmark" onClick={() => setIsModalOpen(true)} />,
         ]}
       >
-        <Meta
-          title={title}
-          description={
-            <Paragraph ellipsis={{rows: 4, symbol: 'more'}}>
-              {description}
-            </Paragraph>
-          }
-        />
+        <Link href={`/datasets/${title}`}>
+          <Meta
+            title={title}
+            description={
+              <Paragraph ellipsis={{ rows: 4, symbol: "more" }}>
+                {description}
+              </Paragraph>
+            }
+          />
+        </Link>
       </Card>
     </>
   );
