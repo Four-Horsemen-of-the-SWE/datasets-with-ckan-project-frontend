@@ -29,7 +29,8 @@ export default function ViewDatasets() {
             <Title level={2}>Retail store computer hardware inventory 💀</Title>
             <Paragraph
               ellipsis={{
-                rows: 2,
+                rows: 6,
+                expandable: true,
                 symbol: "more",
               }}
             >
