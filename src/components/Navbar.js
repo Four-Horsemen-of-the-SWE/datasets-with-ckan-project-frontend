@@ -2,11 +2,13 @@ import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Card, Space, Input, Typography } from "antd";
 import Logo from "../images/folders.svg";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
 
 const { Link } = Typography;
 const { Search } = Input;
 
 export default function Navbar() {
+  const [isLogin, setIsLogin] = useState(true)
   const location = useLocation();
 
   // Check if the current route is the login or register page
@@ -40,12 +42,23 @@ export default function Navbar() {
         </div>
         <div className="flex items-center sm:mt-0">
           <div className="flex sm:mt-0 ml-2 sm:ml-4 items-center">
-            <Link href="/login">
-              <Button className="mr-2 sm:mr-4">Login</Button>
-            </Link>
-            <Link href="/register">
-              <Button type="primary">Register</Button>
-            </Link>
+            {isLogin ? (
+              <>
+                <Link href="/login">
+                  <Button className="mr-2 sm:mr-4">Profile</Button>
+                </Link>
+                <Button type="primary" danger>Logout</Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button className="mr-2 sm:mr-4">Login</Button>
+                </Link>
+                <Link href="/register">
+                  <Button type="primary">Logout</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
