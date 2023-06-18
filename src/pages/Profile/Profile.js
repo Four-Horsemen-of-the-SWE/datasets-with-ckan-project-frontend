@@ -1,11 +1,17 @@
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Card, Col, Divider, Row, Space, Typography } from "antd";
+import CreateDatasetsModal from "../../components/Datasets/CreateDatasetsModal";
+import { useState } from "react";
 
 const { Title, Text } = Typography;
 
 export default function Profile() {
+  const [isCreateDatasetsModalOpen, setIsCreateDatasetsModalOpen] = useState(false)
   return (
     <>
+
+      <CreateDatasetsModal isModalOpen={isCreateDatasetsModalOpen} close={() => setIsCreateDatasetsModalOpen(false)} />
+
       <section className="container mx-auto">
         <Row gutter={32} justify="space-between" className="my-10">
           <Col xs={24} xl={6} className="text-center">
@@ -24,7 +30,7 @@ export default function Profile() {
             </Divider>
 
             <Space direction="vertical" className="w-full">
-              <Button icon={<PlusOutlined />} size="large" type="primary" block>
+              <Button icon={<PlusOutlined />} size="large" type="primary" block onClick={() => setIsCreateDatasetsModalOpen(true)}>
                 Create Datasets
               </Button>
               <Button icon={<EditOutlined />} size="large" type="dashed" block>
