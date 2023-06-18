@@ -1,5 +1,5 @@
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Button, Card, Space, Input, Typography } from "antd";
+import { Avatar, Button, Card, Popconfirm, Input, Typography } from "antd";
 import Logo from "../images/folders.svg";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -47,7 +47,18 @@ export default function Navbar() {
                 <Link href="/profile/me">
                   <Button className="mr-2 sm:mr-4">Profile</Button>
                 </Link>
-                <Button type="primary" danger>Logout</Button>
+                <Popconfirm
+                  title="Logout ?"
+                  description="Are you sure to logout ?"
+                  placement="bottom"
+                  onConfirm={() => alert("Logout")}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="primary" danger>
+                    Logout
+                  </Button>
+                </Popconfirm>
               </>
             ) : (
               <>
