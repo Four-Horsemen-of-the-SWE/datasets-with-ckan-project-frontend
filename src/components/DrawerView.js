@@ -36,7 +36,7 @@ export default function DrawerView({ isDrawerOpen, close }) {
     },
     {
       icon: <EditOutlined />,
-      label: "Update Profile",
+      label: "Edit Profile",
     },
     {
       icon: (

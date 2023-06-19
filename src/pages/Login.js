@@ -37,7 +37,7 @@ export default function Login() {
         messageApi.success("Login Success");
         setTimeout(() => {
           window.location.href = '/';
-        }, 2000);
+        }, 1200);
       } else {
         // if error
         messageApi.error("Login Error");
@@ -46,7 +46,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if(!isLogin) {
+    if(isLogin()) {
       window.location.href = "/";
     }
   }, [])

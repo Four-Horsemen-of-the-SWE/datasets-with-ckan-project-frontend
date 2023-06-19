@@ -89,7 +89,7 @@ export default function AllDatasets() {
       <Divider />
 
       <div className="container mx-auto">
-        <Row gutter={18} justify="space-between" align="top">
+        <Row gutter={[18, 18]} justify="space-between" align="top">
           <Col md={4}>
             <Space direction="vertical" className="w-full">
               <Title level={5} style={{ marginTop: 0 }}>
