@@ -1,55 +1,42 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Row, Space, Typography, Select, Divider, Card } from "antd";
+import axios from "axios";
 
 // import components
 import DatasetsCard from "../../components/Card/DatasetsCard";
+import { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
-
-const datasets = [
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-];
 
 const tags = ['Computer Science', 'Education', 'Classification', 'Computer Vision', 'NLP', 'Data Visualizatio', 'Pre-Trained Model']
 
 export default function AllDatasets() {
+
+  const [allDatasets, setAllDatasets] = useState([]);
+
+  const fetchDatasets = async() => {
+    try {
+      const response = await axios.get(
+        "https://opendata.cea.or.th/api/3/action/current_package_list_with_resources?limit=6"
+      );
+      if(response.status === 200) {
+        setAllDatasets(response.data.result)
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchDatasets()
+  }, [])
+
   return (
     <>
       <div className="container mx-auto">
         <Row justify="center" align="bottom" gutter={18}>
           <Col sm={24} md={9}>
-            <Space direction="vertical">
+            <Space direction="vertical" className="my-3">
               <Title>Our Datasets</Title>
               <Text>
                 Browse 10+ open source datasets for your next machine learning
@@ -90,7 +77,7 @@ export default function AllDatasets() {
 
       <div className="container mx-auto">
         <Row gutter={[18, 18]} justify="space-between" align="top">
-          <Col md={4}>
+          <Col md={4} className="w-full">
             <Space direction="vertical" className="w-full">
               <Title level={5} style={{ marginTop: 0 }}>
                 Tags
@@ -114,12 +101,13 @@ export default function AllDatasets() {
           </Col>
           <Col md={20}>
             <Row gutter={[18, 18]}>
-              {datasets.map((item, key) => (
-                <Col xs={8} md={6} lg={6}>
+              {allDatasets.map((item, key) => (
+                <Col xs={12} md={12} lg={6}>
                   <DatasetsCard
-                    thumbnail={item.thumbnail}
+                    thumbnail={item?.thumbnail}
                     title={item.title}
-                    description={item.description}
+                    notes={item.notes}
+                    metadata_modified={item.metadata_modified}
                     author={item.author}
                     key={key}
                   />

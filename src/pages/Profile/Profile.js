@@ -21,7 +21,7 @@ export default function Profile() {
   return (
     <>
       <section className="container mx-auto">
-        <Row gutter={32} justify="space-between" className="my-10">
+        <Row gutter={[32, 15]} justify="space-between" className="my-10">
           <Col xs={24} xl={6} className="text-center">
             <img
               src="https://www.cameo.com/cdn-cgi/image/fit=cover,format=auto,width=300,height=300/https://cdn.cameo.com/resizer/Y7IzCEs_m-F80605DB-EDCE-4B71-9170-E6821D7D2633.jpg"

@@ -1,47 +1,34 @@
 import "./style.css";
+import { useState, useEffect } from "react";
 import { SearchOutlined, PushpinOutlined } from "@ant-design/icons";
 import { Button, Col, Divider, Input, Row, Space, Typography } from "antd";
 import DatasetsCard from "../../components/Card/DatasetsCard";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 
-const datasets = [
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-  {
-    thumbnail: "https://i.ytimg.com/vi/LgrJHDP3F_g/maxresdefault.jpg",
-    title: "Geh Datasets",
-    description:
-      "Hello and welcome back this is the topical discussion on the morning breeze on nbs television, my name is Simon Kangualiala. We bring in the studio this morning one of the gae rights activists: mr. - should i call you Mr??- Pepe Julien Onzima, thank you for coming in, good morning WHY ARE YOU GAEH?",
-    date: new Date(),
-    author: "Ambatunat",
-  },
-];
-
 export default function Home() {
   document.title = "Home"
+
+  const [allDatasets, setAllDatasets] = useState([]);
+
+  const fetchDatasets = async () => {
+    try {
+      const response = await axios.get(
+        "https://opendata.cea.or.th/api/3/action/current_package_list_with_resources?limit=6"
+      );
+      if (response.status === 200) {
+        setAllDatasets(response.data.result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDatasets();
+  }, []);
+
   return (
     <>
       <section className="section--header w-100 h-96 flex justify-center items-center">
@@ -67,7 +54,7 @@ export default function Home() {
       </section>
 
       <section className="container mx-auto text-center my-16">
-        <Title style={{lineHeight: '1.6em'}}>
+        <Title style={{ lineHeight: "1.6em" }}>
           "Inside our platform you'll find all the datasets you need to do with
           your data science work. Over{" "}
           <Title mark className="inline">
@@ -93,12 +80,13 @@ export default function Home() {
         <Divider />
 
         <Row gutter={[18, 18]}>
-          {datasets.map((item, key) => (
-            <Col xs={8} md={6} lg={6}>
+          {allDatasets.map((item, key) => (
+            <Col xxs={12} md={12} lg={6}>
               <DatasetsCard
-                thumbnail={item.thumbnail}
+                thumbnail={item?.thumbnail}
                 title={item.title}
-                description={item.description}
+                notes={item.notes}
+                metadata_modified={item.metadata_modified}
                 author={item.author}
                 key={key}
               />
