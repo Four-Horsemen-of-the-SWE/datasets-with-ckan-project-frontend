@@ -4,51 +4,58 @@ import {
   BookOutlined,
   EditOutlined,
 } from "@ant-design/icons";
+import { useSignOut } from "react-auth-kit";
 import { Button, Drawer, List, Space, Popconfirm, Typography } from "antd"
 
 const { Link } = Typography
 
-const data = [
-  {
-    icon: <UserOutlined />,
-    label: (
-      <Link href="/profile/me" style={{ color: "#000" }}>
-        Your Profile
-      </Link>
-    ),
-  },
-  {
-    icon: <DatabaseOutlined />,
-    label: "Your Datasets",
-  },
-  {
-    icon: <BookOutlined />,
-    label: "Your Bookmarked",
-  },
-  {
-    icon: <EditOutlined />,
-    label: "Update Profile",
-  },
-  {
-    icon: (
-      <Popconfirm
-        title="Logout ?"
-        description="Are you sure to logout ?"
-        placement="right"
-        onConfirm={() => alert("Logout")}
-        okText="Yes"
-        cancelText="No"
-      >
-        <Button type="primary" danger>
-          Logout
-        </Button>
-      </Popconfirm>
-    ),
-  },
-];
-
-
 export default function DrawerView({ isDrawerOpen, close }) {
+  const signOut = useSignOut();
+
+  const signOutHandle = () => {
+    signOut();
+    window.location.href = "/";
+  };
+
+  const data = [
+    {
+      icon: <UserOutlined />,
+      label: (
+        <Link href="/profile/me" style={{ color: "#000" }}>
+          Your Profile
+        </Link>
+      ),
+    },
+    {
+      icon: <DatabaseOutlined />,
+      label: "Your Datasets",
+    },
+    {
+      icon: <BookOutlined />,
+      label: "Your Bookmarked",
+    },
+    {
+      icon: <EditOutlined />,
+      label: "Update Profile",
+    },
+    {
+      icon: (
+        <Popconfirm
+          title="Logout ?"
+          description="Are you sure to logout ?"
+          placement="right"
+          onConfirm={signOutHandle}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="primary" danger>
+            Logout
+          </Button>
+        </Popconfirm>
+      ),
+    },
+  ];
+
   return (
     <Drawer
       title="Profile"

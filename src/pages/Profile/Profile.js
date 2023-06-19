@@ -2,12 +2,23 @@ import { PlusOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Alert, Avatar, Button, Card, Col, Divider, Row, Space, Typography } from "antd";
 import CreateDatasetsModal from "../../components/Datasets/CreateDatasetsModal";
 import { useState } from "react";
+import { useIsAuthenticated } from "react-auth-kit";
 import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 export default function Profile() {
+  const isAuthenticated = useIsAuthenticated();
   const [isCreateDatasetsModalOpen, setIsCreateDatasetsModalOpen] = useState(false)
+
+  if (isAuthenticated()) {
+    // Redirect to Dashboard
+    console.log("Login");
+  } else {
+    // Redirect to Login
+    console.log("No Login");
+  }
+
   return (
     <>
       <CreateDatasetsModal

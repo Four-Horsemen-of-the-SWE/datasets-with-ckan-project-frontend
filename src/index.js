@@ -5,22 +5,19 @@ import "./fonts/NotoStansThai/NotoSansThai.ttf";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { createRoot } from "react-dom/client";
-import { Auth0Provider } from "@auth0/auth0-react";
+import { AuthProvider } from "react-auth-kit";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <Auth0Provider
-    domain="dev-3f6fg6ll5vqldddt.us.auth0.com"
-    clientId="JyTFvkzX3oFpSCaJeLjmM9IcfRCfkoEC"
-    authorizationParams={{
-      redirect_uri: window.location.origin,
-    }}
+  <AuthProvider
+    authType={"localstorage"}
+    authName={"_auth"}
+    cookieDomain={window.location.hostname}
   >
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </Auth0Provider>
+  </AuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

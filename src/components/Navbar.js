@@ -1,16 +1,19 @@
+import { useIsAuthenticated } from "react-auth-kit";
 import { UserOutlined, PlusOutlined, MessageOutlined } from "@ant-design/icons";
 import { Button, Card, Input, Typography, Space } from "antd";
 import Logo from "../images/folders.svg";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
+
+// import component
 import DrawerView from "./DrawerView";
 
 const { Link } = Typography;
 const { Search } = Input;
 
 export default function Navbar() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [isLogin, setIsLogin] = useState(true)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(useIsAuthenticated());
   const location = useLocation();
 
   // Check if the current route is the login or register page
@@ -21,6 +24,7 @@ export default function Navbar() {
   if (isLoginPage || isRegisterPage) {
     return null;
   }
+
   return (
     <>
       <DrawerView
@@ -69,7 +73,7 @@ export default function Navbar() {
                     <Button className="mr-2 sm:mr-4">Login</Button>
                   </Link>
                   <Link href="/register">
-                    <Button type="primary">Logout</Button>
+                    <Button type="primary">Register</Button>
                   </Link>
                 </>
               )}

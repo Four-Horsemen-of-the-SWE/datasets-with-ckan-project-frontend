@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input, Button, Typography, message } from "antd";
+import { useSignIn, useIsAuthenticated } from "react-auth-kit";
 import axios from "axios";
 
 const { Title, Text, Link } = Typography;
@@ -7,25 +9,47 @@ const { Title, Text, Link } = Typography;
 export default function Login() {
   document.title = "Login";
   const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage()
-
-  const onFinish = (value) => {
-    axios.post("https://www.melivecode.com/api/login", {
-      username: value.username,
-      password: value.password
-    })
-    .then(response => {
-      console.log(response)
-    })
-    .catch(error => {
-      console.log(error)
-    })
-    // messageApi.success('Login Success')
-  };
+  const [messageApi, contextHolder] = message.useMessage();
+  const signIn = useSignIn();
+  const isLogin = useIsAuthenticated();
 
   const onFinishFailed = (errorInfo) => {
     messageApi.error(JSON.stringify(errorInfo));
   };
+
+  const signInHandle = async (value) => { 
+    const response = await axios.post("https://www.melivecode.com/api/login", {
+      username: value.username,
+      password: value.password,
+      expiresIn: 60000,
+    });
+
+    if (response.status === 200) {
+      if (
+        signIn({
+          token: response.data.accessToken,
+          expiresIn: response.data.expiresIn,
+          tokenType: "Bearer",
+          authState: response.data.user,
+        })
+      ) {
+        // if success
+        messageApi.success("Login Success");
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000);
+      } else {
+        // if error
+        messageApi.error("Login Error");
+      }
+    }
+  };
+
+  useEffect(() => {
+    if(!isLogin) {
+      window.location.href = "/";
+    }
+  }, [])
 
   return (
     <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 lg:flex">
@@ -39,7 +63,7 @@ export default function Login() {
         name="login"
         form={form}
         layout="vertical"
-        onFinish={onFinish}
+        onFinish={signInHandle}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         className="w-full lg:w-1/3"
