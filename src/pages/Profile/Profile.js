@@ -1,7 +1,6 @@
 import { useCreateModalStore } from "../../store";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
-import { useState } from "react";
 import { useIsAuthenticated } from "react-auth-kit";
 
 const { Title } = Typography;
@@ -9,14 +8,6 @@ const { Title } = Typography;
 export default function Profile() {
   const { isCreateModalShow, setIsCreateModalShow } = useCreateModalStore();
   const isAuthenticated = useIsAuthenticated();
-
-  if (isAuthenticated()) {
-    // Redirect to Dashboard
-    console.log("Login");
-  } else {
-    // Redirect to Login
-    console.log("No Login");
-  }
 
   return (
     <>
@@ -33,22 +24,31 @@ export default function Profile() {
               - Baby don't hurt me -
             </Title>
 
-            <Divider>Options</Divider>
+            {isAuthenticated() && (
+              <>
+                <Divider>Options</Divider>
 
-            <Space direction="vertical" className="w-full">
-              <Button
-                icon={<PlusOutlined />}
-                size="large"
-                type="primary"
-                block
-                onClick={() => setIsCreateModalShow(!isCreateModalShow)}
-              >
-                Create Datasets
-              </Button>
-              <Button icon={<EditOutlined />} size="large" type="dashed" block>
-                Edit Profile
-              </Button>
-            </Space>
+                <Space direction="vertical" className="w-full">
+                  <Button
+                    icon={<PlusOutlined />}
+                    size="large"
+                    type="primary"
+                    block
+                    onClick={() => setIsCreateModalShow(!isCreateModalShow)}
+                  >
+                    Create Datasets
+                  </Button>
+                  <Button
+                    icon={<EditOutlined />}
+                    size="large"
+                    type="dashed"
+                    block
+                  >
+                    Edit Profile
+                  </Button>
+                </Space>
+              </>
+            )}
           </Col>
           <Col xs={24} xl={18}>
             {/* datasets */}
