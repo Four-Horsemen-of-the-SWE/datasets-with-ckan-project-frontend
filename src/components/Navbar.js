@@ -1,20 +1,22 @@
-import { useIsAuthenticated } from "react-auth-kit";
-import { UserOutlined, PlusOutlined, MessageOutlined } from "@ant-design/icons";
-import { Button, Card, Input, Typography, Space } from "antd";
 import Logo from "../images/folders.svg";
+import { useCreateModalStore } from "../store";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useIsAuthenticated } from "react-auth-kit";
+import { UserOutlined, PlusOutlined, MessageOutlined } from "@ant-design/icons";
+import { Button, Card, Typography, Space } from "antd";
 
 // import component
 import DrawerView from "./DrawerView";
+import CreateDatasetsModal from "./Datasets/CreateDatasetsModal";
 
 const { Link } = Typography;
-const { Search } = Input;
 
 export default function Navbar() {
+  const location = useLocation();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(useIsAuthenticated());
-  const location = useLocation();
+  const { isCreateModalShow, setIsCreateModalShow } = useCreateModalStore()
 
   // Check if the current route is the login or register page
   const isLoginPage = location.pathname === "/login";
@@ -27,6 +29,13 @@ export default function Navbar() {
 
   return (
     <>
+      {/* create datasets modal view */}
+      <CreateDatasetsModal
+        isModalOpen={isCreateModalShow}
+        close={() => setIsCreateModalShow(false)}
+      />
+
+      {/* drawer view */}
       <DrawerView
         isDrawerOpen={isDrawerOpen}
         close={() => setIsDrawerOpen(false)}
@@ -57,7 +66,12 @@ export default function Navbar() {
               {isLogin ? (
                 <>
                   <Space>
-                    <Button icon={<PlusOutlined />}>Create Datasets</Button>
+                    <Button
+                      icon={<PlusOutlined />}
+                      onClick={() => setIsCreateModalShow(true)}
+                    >
+                      Create Datasets
+                    </Button>
                     <Button icon={<MessageOutlined />} />
                     <Button
                       icon={<UserOutlined />}

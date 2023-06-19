@@ -1,15 +1,14 @@
-import { PlusOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
-import { Alert, Avatar, Button, Card, Col, Divider, Row, Space, Typography } from "antd";
-import CreateDatasetsModal from "../../components/Datasets/CreateDatasetsModal";
+import { useCreateModalStore } from "../../store";
+import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
 import { useState } from "react";
 import { useIsAuthenticated } from "react-auth-kit";
-import { Link } from "react-router-dom";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export default function Profile() {
+  const { isCreateModalShow, setIsCreateModalShow } = useCreateModalStore();
   const isAuthenticated = useIsAuthenticated();
-  const [isCreateDatasetsModalOpen, setIsCreateDatasetsModalOpen] = useState(false)
 
   if (isAuthenticated()) {
     // Redirect to Dashboard
@@ -21,11 +20,6 @@ export default function Profile() {
 
   return (
     <>
-      <CreateDatasetsModal
-        isModalOpen={isCreateDatasetsModalOpen}
-        close={() => setIsCreateDatasetsModalOpen(false)}
-      />
-
       <section className="container mx-auto">
         <Row gutter={32} justify="space-between" className="my-10">
           <Col xs={24} xl={6} className="text-center">
@@ -47,7 +41,7 @@ export default function Profile() {
                 size="large"
                 type="primary"
                 block
-                onClick={() => setIsCreateDatasetsModalOpen(true)}
+                onClick={() => setIsCreateModalShow(!isCreateModalShow)}
               >
                 Create Datasets
               </Button>
