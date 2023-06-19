@@ -18,30 +18,35 @@ export default function Login() {
   };
 
   const signInHandle = async (value) => { 
-    const response = await axios.post("https://www.melivecode.com/api/login", {
-      username: value.username,
-      password: value.password,
-      expiresIn: 60000,
-    });
+    try {
+      const response = await axios.post("https://www.melivecode.com/api/login", {
+        username: value.username,
+        password: value.password,
+        expiresIn: 60000,
+      });
 
-    if (response.status === 200) {
-      if (
-        signIn({
-          token: response.data.accessToken,
-          expiresIn: response.data.expiresIn,
-          tokenType: "Bearer",
-          authState: response.data.user,
-        })
-      ) {
-        // if success
-        messageApi.success("Login Success");
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1200);
-      } else {
-        // if error
-        messageApi.error("Login Error");
+      if (response.status === 200) {
+        if (
+          signIn({
+            token: response.data.accessToken,
+            expiresIn: response.data.expiresIn,
+            tokenType: "Bearer",
+            authState: response.data.user,
+          })
+        ) {
+          // if success
+          messageApi.success("Login Success");
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1200);
+        } else {
+          // if error
+          messageApi.error("Login Error");
+        }
       }
+    } catch(error) {
+      // show error message
+      messageApi.error(error.message)
     }
   };
 
