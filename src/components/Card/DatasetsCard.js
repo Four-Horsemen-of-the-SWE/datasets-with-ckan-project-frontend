@@ -1,5 +1,5 @@
 import { EyeOutlined, CheckOutlined, FullscreenOutlined } from "@ant-design/icons";
-import { Button, Card, Image, Modal, Space, Typography } from "antd";
+import { Button, Card, Modal, Typography } from "antd";
 import { useState } from "react";
 // import { Link } from "react-router-dom";
 import moment from "moment/moment";
@@ -60,7 +60,6 @@ export default function DatasetsCard({
       {/* datasets card */}
       <Card
         hoverable
-        loading={false}
         className="shadow-sm h-full"
         cover={
           <img

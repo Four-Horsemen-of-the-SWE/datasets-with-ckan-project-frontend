@@ -68,7 +68,7 @@ export default function InformationView({ license_title, version, metadata_creat
             )}
           />
 
-          <Space direction="vertical">
+          <Space direction="vertical" className="w-full">
             {/* downloaded statistic */}
             <Statistic title="Downloaded" value={25668} />
 

@@ -1,7 +1,7 @@
 import "./style.css";
 import { useState, useEffect } from "react";
 import { SearchOutlined, PushpinOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Input, Row, Space, Typography } from "antd";
+import { Button, Col, Divider, Input, Row, Space, Spin, Typography } from "antd";
 import DatasetsCard from "../../components/Card/DatasetsCard";
 import axios from "axios";
 
@@ -11,14 +11,16 @@ export default function Home() {
   document.title = "Home"
 
   const [allDatasets, setAllDatasets] = useState([]);
+  const [isHotestLoading, setIsHotestLoading] = useState(true);
 
-  const fetchDatasets = async () => {
+  const fetchHotestDatasets = async () => {
     try {
       const response = await axios.get(
-        "https://opendata.cea.or.th/api/3/action/current_package_list_with_resources?limit=6"
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
       );
       if (response.status === 200) {
         setAllDatasets(response.data.result);
+        setIsHotestLoading(false);
       }
     } catch (error) {
       console.log(error);
@@ -26,7 +28,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchDatasets();
+    fetchHotestDatasets();
   }, []);
 
   return (
@@ -80,6 +82,11 @@ export default function Home() {
         <Divider />
 
         <Row gutter={[18, 18]}>
+          {isHotestLoading && (
+            <div className="w-full h-auto flex items-center justify-center">
+              <Spin size="large" />
+            </div>
+          )}
           {allDatasets.map((item, key) => (
             <Col xxs={12} md={12} lg={6}>
               <DatasetsCard
@@ -89,6 +96,7 @@ export default function Home() {
                 notes={item.notes}
                 metadata_modified={item.metadata_modified}
                 author={item.author}
+                loading={isHotestLoading}
                 key={key}
               />
             </Col>

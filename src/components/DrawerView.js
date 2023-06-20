@@ -4,13 +4,14 @@ import {
   BookOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { useSignOut } from "react-auth-kit";
+import { useSignOut, useAuthUser } from "react-auth-kit";
 import { Button, Drawer, List, Space, Popconfirm, Typography } from "antd"
 
 const { Link } = Typography
 
 export default function DrawerView({ isDrawerOpen, close }) {
   const signOut = useSignOut();
+  const auth = useAuthUser();
 
   const signOutHandle = () => {
     signOut();
@@ -21,7 +22,7 @@ export default function DrawerView({ isDrawerOpen, close }) {
     {
       icon: <UserOutlined />,
       label: (
-        <Link href="/profile/me" style={{ color: "#000" }}>
+        <Link href={`/profile/${!!auth()?.name ? auth().name : ''}`} style={{ color: "#000" }}>
           Your Profile
         </Link>
       ),

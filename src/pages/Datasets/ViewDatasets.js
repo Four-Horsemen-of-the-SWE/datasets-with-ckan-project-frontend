@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { MoreOutlined, EditOutlined, StarOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Space, Button, Dropdown } from "antd";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown } from "antd";
+import { useIsAuthenticated } from "react-auth-kit";
 
 // import components
 import ResourceView from "../../components/Datasets/ResourceView";
@@ -30,11 +31,12 @@ export default function ViewDatasets() {
   const { datasets_id } = useParams();
   const [datasets, setDatasets] = useState({});
   const [isLoading ,setIsLoading] = useState(true);
+  const isAuthenticated = useIsAuthenticated();
 
   const fetchDatasets = async() => {
     try {
       const response = await axios.get(
-        `https://opendata.cea.or.th/api/3/action/package_show?id=${datasets_id}`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}`
       );
 
       if (response.status === 200) {
@@ -60,19 +62,21 @@ export default function ViewDatasets() {
   } else {
     return (
       <>
-        <div className="container mx-auto mt-4 w-100 flex justify-end">
-          <Dropdown
-            menu={{
-              items,
-            }}
-            trigger={["click"]}
-            placement="bottomRight"
-          >
-            <Button size="large">
-              <MoreOutlined />
-            </Button>
-          </Dropdown>
-        </div>
+        {isAuthenticated() && (
+          <div className="container mx-auto mt-4 w-100 flex justify-end">
+            <Dropdown
+              menu={{
+                items,
+              }}
+              trigger={["click"]}
+              placement="bottomRight"
+            >
+              <Button size="large">
+                <MoreOutlined />
+              </Button>
+            </Dropdown>
+          </div>
+        )}
 
         <div className="container mx-auto">
           <Row
@@ -90,7 +94,7 @@ export default function ViewDatasets() {
                   symbol: "more",
                 }}
               >
-                {datasets.notes}
+                {datasets.notes ? datasets.notes : "No Description"}
               </Paragraph>
             </Col>
             <Col md={6}>

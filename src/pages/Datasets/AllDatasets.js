@@ -17,7 +17,7 @@ export default function AllDatasets() {
   const fetchDatasets = async() => {
     try {
       const response = await axios.get(
-        "https://opendata.cea.or.th/api/3/action/current_package_list_with_resources?limit=6"
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/current_package_list_with_resources?limit=6`
       );
       if(response.status === 200) {
         setAllDatasets(response.data.result)

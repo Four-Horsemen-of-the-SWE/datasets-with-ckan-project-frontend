@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { RequireAuth } from "react-auth-kit";
 
 import "./App.css";
 

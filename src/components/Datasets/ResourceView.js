@@ -43,7 +43,7 @@ export default function ResourceView({ resource }) {
               </Link>,
             ]}
           >
-            <Card.Meta description={item.description} />
+            <Card.Meta description={item.description ? item.description : "No Description"} />
           </Card>
         ))}
       </div>

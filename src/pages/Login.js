@@ -19,7 +19,7 @@ export default function Login() {
 
   const signInHandle = async (value) => { 
     try {
-      const response = await axios.post("https://www.melivecode.com/api/login", {
+      const response = await axios.post(`${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/login`, {
         username: value.username,
         password: value.password,
         expiresIn: 60000,
