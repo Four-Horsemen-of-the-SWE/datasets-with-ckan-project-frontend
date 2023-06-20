@@ -113,7 +113,12 @@ export default function ViewDatasets() {
                   <ResourceView resource={datasets?.resources} />
                 </Col>
                 <Col sm={24} md={4}>
-                  <InformationView />
+                  <InformationView
+                    license_title={datasets.license_title}
+                    version={datasets.version}
+                    metadata_created={datasets.metadata_created}
+                    metadata_modified={datasets.metadata_modified}
+                  />
                 </Col>
               </Row>
             </TabPane>

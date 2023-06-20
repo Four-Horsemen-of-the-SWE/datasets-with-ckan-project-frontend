@@ -1,6 +1,6 @@
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { Alert, Space, Statistic, Typography } from "antd";
+import { List, Space, Statistic, Typography } from "antd";
 
 const { Title, Text } = Typography;
 
@@ -17,47 +17,68 @@ const downloaded_data = {
   ],
 };
 
-export default function InformationView() {
-  const data = [];
+export default function InformationView({ license_title, version, metadata_created, metadata_modified }) {
+  const additional_data = [
+    {
+      label: "License",
+      value: license_title,
+    },
+    {
+      label: "Version",
+      value: version,
+    },
+    {
+      label: "Created",
+      value: metadata_created,
+    },
+    {
+      label: "Modified",
+      value: metadata_modified,
+    },
+  ];
+
   return (
     <>
       <div className="container mx-auto">
         <Title level={3}>Data</Title>
-        <Text type="secondary">Additional Information</Text>
+        <Text type="secondary" className="block">
+          Additional Information
+        </Text>
 
-        {/* if data is empty */}
-        {!data.length && (
-          <Alert
-            showIcon
-            type="info"
-            message="No information"
-            className="my-3"
+        <Space direction="vertical" className="w-full" size={32}>
+          <List
+            bordered={false}
+            dataSource={additional_data}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  title={item.label}
+                  description={item.value ? item.value : "No Data"}
+                />
+              </List.Item>
+            )}
           />
-        )}
 
-        <Space direction="vertical" className="w-full" size={18}>
-          {/* downloaded statistic */}
-          <Space direction="vertical" className="w-full">
+          <Space direction="vertical">
+            {/* downloaded statistic */}
             <Statistic title="Downloaded" value={25668} />
 
-            <div className="w-full">
-              <Line
-                data={downloaded_data}
-                options={{
-                  title: {
-                    display: true,
-                    text: "Average Rainfall per month",
-                    fontSize: 20,
-                  },
-                  legend: {
-                    display: true,
-                    position: "right",
-                  },
-                  maintainAspectRatio: false,
-                  responsive: true,
-                }}
-              />
-            </div>
+            <Line
+              data={downloaded_data}
+              options={{
+                title: {
+                  display: true,
+                  text: "Average Rainfall per month",
+                  fontSize: 20,
+                },
+                legend: {
+                  display: true,
+                  position: "right",
+                },
+                maintainAspectRatio: false,
+                responsive: true,
+              }}
+            />
           </Space>
 
           {/* favorite (bookmarked) statistic */}
