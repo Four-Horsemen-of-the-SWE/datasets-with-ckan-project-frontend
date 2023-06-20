@@ -8,6 +8,7 @@ const { Meta } = Card;
 const { Paragraph, Link } = Typography;
 
 export default function DatasetsCard({
+  id,
   thumbnail,
   title,
   notes,
@@ -40,7 +41,7 @@ export default function DatasetsCard({
             size="large"
             icon={<FullscreenOutlined />}
           >
-            <Link href={`/datasets/${title}`}>View</Link>
+            <Link href={`/datasets/${id}`}>View</Link>
           </Button>,
           <Button
             key="ok"
@@ -77,7 +78,7 @@ export default function DatasetsCard({
           <EyeOutlined key="bookmark" onClick={() => setIsModalOpen(true)} />,
         ]}
       >
-        <Link href={`/datasets/${title}`}>
+        <Link href={`/datasets/${id}`}>
           <Meta
             title={title}
             description={<Paragraph ellipsis={{ rows: 3 }}>{notes}</Paragraph>}

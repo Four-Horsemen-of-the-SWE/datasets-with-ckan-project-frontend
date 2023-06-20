@@ -83,6 +83,7 @@ export default function Home() {
           {allDatasets.map((item, key) => (
             <Col xxs={12} md={12} lg={6}>
               <DatasetsCard
+                id={item.id}
                 thumbnail={item?.thumbnail}
                 title={item.title}
                 notes={item.notes}

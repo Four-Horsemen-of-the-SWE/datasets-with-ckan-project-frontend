@@ -21,7 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/datasets" element={<AllDatasets />} />
-        <Route path="/datasets/:datasets_name" element={<ViewDatasets />} />
+        <Route path="/datasets/:datasets_id" element={<ViewDatasets />} />
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
