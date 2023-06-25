@@ -1,7 +1,7 @@
 import "./style.css";
 import { useState, useEffect } from "react";
 import { SearchOutlined, PushpinOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Input, Row, Space, Spin, Typography } from "antd";
+import { Button, Col, Divider, Input, Row, Space, Spin, Typography, notification } from "antd";
 import DatasetsCard from "../../components/Card/DatasetsCard";
 import axios from "axios";
 
@@ -12,6 +12,7 @@ export default function Home() {
 
   const [allDatasets, setAllDatasets] = useState([]);
   const [isHotestLoading, setIsHotestLoading] = useState(true);
+  const [api, contextHolder] = notification.useNotification();
 
   const fetchHotestDatasets = async () => {
     try {
@@ -24,6 +25,10 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
+      api.error({
+        message: 'Error',
+        description: error.message
+      });
     }
   };
 
@@ -33,6 +38,7 @@ export default function Home() {
 
   return (
     <>
+      {contextHolder}
       <section className="section--header w-100 h-96 flex justify-center items-center">
         <div className="container mx-auto text-center">
           <Title className="mt-0 uppercase" style={{ color: "#FFF" }}>
