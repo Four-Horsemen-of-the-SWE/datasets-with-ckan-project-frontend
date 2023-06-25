@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Space, Typography, Select, Divider, Card } from "antd";
+import { Col, Input, Row, Space, Typography, Select, Divider, Card, Empty } from "antd";
 import axios from "axios";
 
 // import components
@@ -8,16 +8,15 @@ import { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
 
-const tags = ['Computer Science', 'Education', 'Classification', 'Computer Vision', 'NLP', 'Data Visualizatio', 'Pre-Trained Model']
-
 export default function AllDatasets() {
 
   const [allDatasets, setAllDatasets] = useState([]);
+  const [allTags, setAllTags] = useState([]);
 
   const fetchDatasets = async() => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/current_package_list_with_resources?limit=6`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
       );
       if(response.status === 200) {
         setAllDatasets(response.data.result)
@@ -27,8 +26,22 @@ export default function AllDatasets() {
     }
   }
 
+  const fetchTags = async() => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/tags`
+      );
+      if(response.status === 200) {
+        setAllTags(response.data.result)
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
-    fetchDatasets()
+    fetchDatasets();
+    fetchTags();
   }, [])
 
   return (
@@ -84,36 +97,50 @@ export default function AllDatasets() {
               </Title>
 
               {/* tag list rendering */}
-              {tags.map((item, key) => (
-                <Card
-                  bodyStyle={{
-                    padding: 6,
-                    width: "100%",
-                    backgroundColor: "#F7F9FC",
-                    cursor: "pointer",
-                  }}
-                  key={key}
-                >
-                  {item}
-                </Card>
-              ))}
+              {allTags.length ? (
+                allTags.map((item, key) => (
+                  <Card
+                    bodyStyle={{
+                      padding: 6,
+                      width: "100%",
+                      backgroundColor: "#F7F9FC",
+                      cursor: "pointer",
+                    }}
+                    key={key}
+                  >
+                    {item}
+                  </Card>
+                ))
+              ) : (
+                <div className="w-full h-96 flex items-center justify-center">
+                  <Empty />
+                </div>
+              )}
             </Space>
           </Col>
           <Col md={20}>
             <Row gutter={[18, 18]}>
-              {allDatasets.map((item, key) => (
-                <Col xs={12} md={12} lg={6}>
-                  <DatasetsCard
-                    id={item.id}
-                    thumbnail={item?.thumbnail}
-                    title={item.title}
-                    notes={item.notes}
-                    metadata_modified={item.metadata_modified}
-                    author={item.author}
-                    key={key}
-                  />
+              {allDatasets.length ? (
+                allDatasets.map((item, key) => (
+                  <Col xs={12} md={12} lg={6} key={key}>
+                    <DatasetsCard
+                      id={item.id}
+                      thumbnail={item?.thumbnail}
+                      title={item.title}
+                      notes={item.notes}
+                      metadata_modified={item.metadata_modified}
+                      author={item.author}
+                    />
+                  </Col>
+                ))
+              ) : (
+                <Col
+                  span={24}
+                  className="w-full h-96 flex items-center justify-center"
+                >
+                  <Empty />
                 </Col>
-              ))}
+              )}
             </Row>
           </Col>
         </Row>

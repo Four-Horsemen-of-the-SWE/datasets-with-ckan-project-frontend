@@ -3,19 +3,43 @@ import {
   UserOutlined,
   ProfileOutlined,
   CameraOutlined,
-  UploadOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
-import { Form, Input, Button, Typography, message, Divider, Upload } from "antd";
+import { Form, Input, Button, Typography, message } from "antd";
+import axios from "axios";
 
 const { Title, Text, Link } = Typography;
 
 export default function Register() {
   document.title = "Register";
+
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
-  const onFinish = (value) => {
-    messageApi.success("Login Success");
+  const onFinish = async(value) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users`,
+        {
+          name: value.username,
+          email: value.email,
+          fullname: value.fullname,
+          password: value.password,
+          image_url: value.image_url
+        }
+      )
+
+      console.log(response)
+      if(response.status === 200) {
+        messageApi.success("Register Success");
+
+        setTimeout(() => {
+          window.location.replace('/login')
+        }, 1200);
+      }
+    } catch(error) {
+      messageApi.error(error.message);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -76,6 +100,22 @@ export default function Register() {
           />
         </Form.Item>
         <Form.Item
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Please input your email!",
+            },
+          ]}
+        >
+          <Input
+            type="email"
+            prefix={<MailOutlined />}
+            placeholder="Email"
+            size="large"
+          />
+        </Form.Item>
+        <Form.Item
           name="password"
           rules={[
             {
@@ -91,20 +131,12 @@ export default function Register() {
             size="large"
           />
         </Form.Item>
-        <Form.Item name="imageurl">
+        <Form.Item name="image_url">
           <Input
             prefix={<CameraOutlined />}
             placeholder="Image URL"
             size="large"
           />
-        </Form.Item>
-
-        <Divider plain>OR</Divider>
-
-        <Form.Item>
-          <Upload listType="picture">
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
         </Form.Item>
 
         <Form.Item shouldUpdate>

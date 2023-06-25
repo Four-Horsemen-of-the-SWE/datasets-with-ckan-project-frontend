@@ -10,8 +10,10 @@ export default function Login() {
   document.title = "Login";
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+
   const signIn = useSignIn();
   const isLogin = useIsAuthenticated();
+
 
   const onFinishFailed = (errorInfo) => {
     messageApi.error(JSON.stringify(errorInfo));
@@ -25,7 +27,8 @@ export default function Login() {
         expiresIn: 60000,
       });
 
-      if (response.status === 200) {
+      // if use response.status === 200. it will error
+      if (response.data.ok) {
         if (
           signIn({
             token: response.data.accessToken,
@@ -43,10 +46,13 @@ export default function Login() {
           // if error
           messageApi.error("Login Error");
         }
+      } else {
+        // if error
+        messageApi.error(response.data.message);
       }
     } catch(error) {
       // show error message
-      messageApi.error(error.message)
+      console.log(error)
     }
   };
 

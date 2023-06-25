@@ -80,7 +80,7 @@ export default function DatasetsCard({
         <Link href={`/datasets/${id}`}>
           <Meta
             title={title}
-            description={<Paragraph ellipsis={{ rows: 3 }}>{notes}</Paragraph>}
+            description={<Paragraph ellipsis={{ rows: 3 }}>{notes ? notes : "No Description"}</Paragraph>}
           />
         </Link>
       </Card>
