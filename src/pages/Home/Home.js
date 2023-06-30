@@ -1,7 +1,11 @@
 import "./style.css";
 import { useState, useEffect } from "react";
-import { SearchOutlined, PushpinOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Input, Row, Space, Spin, Typography, notification } from "antd";
+import {
+  SearchOutlined,
+  PushpinOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
+import { Button, Col, Divider, Input, Row, Space, Image, Typography, notification, Card } from "antd";
 import DatasetsCard from "../../components/Card/DatasetsCard";
 import axios from "axios";
 
@@ -72,43 +76,61 @@ export default function Home() {
         </Title>
       </section>
 
-      <section className="container mx-auto py-5">
-        <Title level={2}>
-          <Space direction="vertical">
-            <Space>
-              <PushpinOutlined />
-              Newest Datasets
-            </Space>
-            <Title level={4} type="secondary" className="mt-0">
-              รายการดาต้าเซ็ทที่ใหม่ที่สุด
+      {false && (
+        <>
+          <section className="container mx-auto py-5">
+            <Title level={2}>
+              <Space direction="vertical">
+                <Space>
+                  <PushpinOutlined />
+                  Newest Datasets
+                </Space>
+                <Title level={4} type="secondary" className="mt-0">
+                  รายการดาต้าเซ็ทที่ใหม่ที่สุด
+                </Title>
+              </Space>
             </Title>
+
+            <Divider />
+
+            <Row gutter={[18, 18]}>
+              {isHotestLoading && (
+                <Card loading className="shadow-sm h-auto w-96" />
+              )}
+              {allDatasets.map((item, key) => (
+                <Col xxs={12} md={12} lg={6}>
+                  <DatasetsCard
+                    id={item.id}
+                    thumbnail={item?.thumbnail}
+                    title={item.title}
+                    notes={item.notes}
+                    metadata_modified={item.metadata_modified}
+                    author={item.author}
+                    loading={isHotestLoading}
+                    key={key}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </section>
+        </>
+      )}
+
+      {true && (
+        <div className="container mx-auto flex items-center justify-center w-full h-96 text-center">
+          <Space direction="vertical">
+            <Image
+              preview={false}
+              src={process.env.PUBLIC_URL + "/images/the-rock.gif"}
+            />
+            <Title>ไม่สามารถโหลดชุดข้อมูลได้</Title>
+            <Text>อาจจะเพราะว่า Back-end ยังไม่เสร็จ อิอิ</Text>
+            <Typography.Link href="https://www.youtube.com/watch?v=-mEs2laCcxA&pp=ygUb4LiE4Lin4Liy4Lih4LiX4Lij4LiH4LiI4Liz">
+              รายละเอียดเพิ่มเติม แนะนำให้อ่าน
+            </Typography.Link>
           </Space>
-        </Title>
-
-        <Divider />
-
-        <Row gutter={[18, 18]}>
-          {isHotestLoading && (
-            <div className="w-full h-auto flex items-center justify-center">
-              <Spin size="large" />
-            </div>
-          )}
-          {allDatasets.map((item, key) => (
-            <Col xxs={12} md={12} lg={6}>
-              <DatasetsCard
-                id={item.id}
-                thumbnail={item?.thumbnail}
-                title={item.title}
-                notes={item.notes}
-                metadata_modified={item.metadata_modified}
-                author={item.author}
-                loading={isHotestLoading}
-                key={key}
-              />
-            </Col>
-          ))}
-        </Row>
-      </section>
+        </div>
+      )}
     </>
   );
 }

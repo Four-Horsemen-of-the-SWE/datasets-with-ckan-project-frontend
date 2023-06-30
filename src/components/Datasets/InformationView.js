@@ -1,6 +1,6 @@
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { List, Space, Statistic, Typography } from "antd";
+import { List, Space, Statistic, Tag, Typography } from "antd";
 import moment from "moment";
 
 const { Title, Text } = Typography;
@@ -18,7 +18,7 @@ const downloaded_data = {
   ],
 };
 
-export default function InformationView({ license_title, version, metadata_created, metadata_modified }) {
+export default function InformationView({ license_title, version, metadata_created, metadata_modified, tags }) {
   const additional_data = [
     {
       label: "License",
@@ -67,6 +67,18 @@ export default function InformationView({ license_title, version, metadata_creat
               </List.Item>
             )}
           />
+
+          {/* TAGS HERE */}
+          <Space direction="vertical">
+            <Title level={5}>Tags</Title>
+            <div className="flex flex-wrap">
+              {tags?.map((item, key) => (
+                <Tag color="magenta" key={key}>
+                  {item.display_name}
+                </Tag>
+              ))}
+            </div>
+          </Space>
 
           <Space direction="vertical" className="w-full">
             {/* downloaded statistic */}

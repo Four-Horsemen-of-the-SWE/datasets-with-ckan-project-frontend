@@ -122,6 +122,7 @@ export default function ViewDatasets() {
                     version={datasets.version}
                     metadata_created={datasets.metadata_created}
                     metadata_modified={datasets.metadata_modified}
+                    tags={datasets.tags}
                   />
                 </Col>
               </Row>
