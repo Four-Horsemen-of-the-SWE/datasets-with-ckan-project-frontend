@@ -1,85 +1,53 @@
-import { InboxOutlined } from "@ant-design/icons";
-import {
-  Button,
-  message,
-  Steps,
-  theme,
-  Modal,
-  Form,
-  Input,
-  Upload,
-} from "antd";
+import { InboxOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { Button, theme, Modal, Form, Input, Upload, Space, Tooltip } from "antd";
 import { useState } from "react";
-
-const { TextArea } = Input;
-const { Dragger } = Upload;
-
-const DetailForm = () => {
-  return (
-    <Form layout="vertical" className="p-4">
-      <Form.Item label="Datasets Name" name="dataset_name">
-        <Input size="large" placeholder="dataset name" />
-      </Form.Item>
-      <Form.Item label="Source" name="source">
-        <Input size="large" placeholder="reference url" />
-      </Form.Item>
-      <Form.Item label="Notes" name="notes">
-        <TextArea rows={4} placeholder="description" />
-      </Form.Item>
-    </Form>
-  );
-};
-
-const UploadForm = () => {
-  return (
-    <Dragger multiple>
-      <p className="ant-upload-drag-icon">
-        <InboxOutlined />
-      </p>
-      <p className="ant-upload-text">
-        Click or drag file to this area to upload
-      </p>
-      <p className="ant-upload-hint">
-        Support for a single or bulk upload. Strictly prohibited from uploading
-        company data or other banned files.
-      </p>
-    </Dragger>
-  );
-};
-
-const steps = [
-  {
-    title: "Fill Details",
-    content: <DetailForm />,
-  },
-  {
-    title: "Upload Resource File",
-    content: <UploadForm />,
-  },
-];
+import { useAuthHeader } from "react-auth-kit";
+import axios from "axios";
 
 export default function CreateDatasetsModal({ isModalOpen, close }) {
-  const { token } = theme.useToken();
-  const [current, setCurrent] = useState(0);
+  const authHeader = useAuthHeader();
+  const [form] = Form.useForm();
+  const [isPrivate, setIsPrivate] = useState(false);
 
-  const next = () => {
-    setCurrent(current + 1);
-  };
-  const prev = () => {
-    setCurrent(current - 1);
-  };
-  const items = steps.map((item) => ({
-    key: item.title,
-    title: item.title,
-  }));
-  const contentStyle = {
-    lineHeight: "260px",
-    textAlign: "center",
-    color: token.colorTextTertiary,
-    backgroundColor: token.colorFillAlter,
-    borderRadius: token.borderRadiusLG,
-    border: `1px dashed ${token.colorBorder}`,
-    marginTop: 16,
+  const JWTToken = authHeader().split(" ")[1];
+
+  const handleCreate = async () => {
+    try {
+      const values = await form.validateFields();
+
+      const fileList = values.file?.fileList;
+
+      // Create a new FormData object
+      const formData = new FormData();
+      fileList?.forEach((file) => {
+        formData.append("files", file.originFileObj);
+      });
+
+      // Send the formData to the backend API
+      const response = await fetch(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`,
+        {
+          headers: {
+            Authorization: JWTToken,
+          },
+        },
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      // Handle the response from the backend
+      if (response.ok) {
+        // Handle success
+        console.log("Files uploaded successfully");
+      } else {
+        // Handle error
+        console.log("Error uploading files");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
   };
 
   return (
@@ -88,39 +56,37 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
       open={isModalOpen}
       onOk={close}
       onCancel={close}
-      footer={[]}
+      footer={[
+        <Tooltip title={`Toggle to change to ${isPrivate ? "Public" : "Private"}`} placement="left">
+          <Button
+            size="large"
+            icon={isPrivate ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+            onClick={() => setIsPrivate(!isPrivate)}
+          >
+            {isPrivate ? "Private" : "Public"}
+          </Button>
+        </Tooltip>,
+        <Button type="primary" size="large" onClick={() => handleCreate()}>
+          Create
+        </Button>,
+      ]}
     >
-      <Steps current={current} items={items} />
-      <div style={contentStyle}>{steps[current].content}</div>
-      <div
-        style={{
-          marginTop: 24,
-        }}
-      >
-        {current < steps.length - 1 && (
-          <Button type="primary" onClick={() => next()}>
-            Next
-          </Button>
-        )}
-        {current > 0 && (
-          <Button
-            style={{
-              margin: "0 8px",
-            }}
-            onClick={() => prev()}
-          >
-            Previous
-          </Button>
-        )}
-        {current === steps.length - 1 && (
-          <Button
-            type="primary"
-            onClick={() => message.success("Processing complete!")}
-          >
-            Create!
-          </Button>
-        )}
-      </div>
+      <Form form={form} layout="vertical" className="mt-5">
+        <Form.Item label="Datasets Name" name="name" required>
+          <Input placeholder="the name of the new dataset" size="large" className="lowercase" />
+        </Form.Item>
+        <Form.Item label="Files" name="file">
+          <Upload.Dragger multiple={true}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="font-bold text-xl">Drag and drop files to upload</p>
+            <p className="text-slate-400">
+              Consider zipping large directories for faster uploads
+            </p>
+          </Upload.Dragger>
+        </Form.Item>
+      </Form>
     </Modal>
   );
 }

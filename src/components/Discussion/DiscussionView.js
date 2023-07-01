@@ -1,5 +1,5 @@
 import { CaretUpOutlined, CaretDownOutlined, PlusOutlined } from "@ant-design/icons";
-import { Typography, List, Avatar, Button, Input, Space } from "antd"
+import { Typography, List, Avatar, Button, Input, Space, Empty } from "antd"
 
 const { Title } = Typography
 
@@ -28,7 +28,7 @@ export default function DiscussionView() {
           <Button type="primary" size="large" icon={<PlusOutlined />}>New Topic</Button>
         </div>
 
-        <List
+        {false ? <List
           loading={false}
           itemLayout="horizontal"
           dataSource={data}
@@ -61,7 +61,9 @@ export default function DiscussionView() {
               />
             </List.Item>
           )}
-        />
+        /> : <Empty description="No Discussion" />}
+
+        
       </div>
     </>
   );

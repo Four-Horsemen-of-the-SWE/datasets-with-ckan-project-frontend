@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import {
   SearchOutlined,
   PushpinOutlined,
-  EyeOutlined,
 } from "@ant-design/icons";
 import { Button, Col, Divider, Input, Row, Space, Image, Typography, notification, Card, Empty } from "antd";
 import DatasetsCard from "../../components/Card/DatasetsCard";
@@ -93,26 +92,24 @@ export default function Home() {
           <Divider />
 
           {isHotestLoading ? (
-            <Row gutter={[18, 18]}>
-            {allDatasets.map((item, key) => (
-              <Col xxs={12} md={12} lg={6}>
-                <DatasetsCard
-                  id={item.id}
-                  thumbnail={item?.thumbnail}
-                  title={item.title}
-                  notes={item.notes}
-                  metadata_modified={item.metadata_modified}
-                  author={item.author}
-                  loading={isHotestLoading}
-                  key={key}
-                />
-              </Col>
-            ))}
-          </Row>
+            <Empty description="No Datasets" />
           ) : (
-            <Empty 
-              description="No Datasets"
-            />
+            <Row gutter={[18, 18]}>
+              {allDatasets.map((item, key) => (
+                <Col xxs={12} md={12} lg={6}>
+                  <DatasetsCard
+                    id={item.id}
+                    thumbnail={item?.thumbnail}
+                    title={item.title}
+                    notes={item.notes}
+                    metadata_modified={item.metadata_modified}
+                    author={item.author}
+                    loading={isHotestLoading}
+                    key={key}
+                  />
+                </Col>
+              ))}
+            </Row>
           )}
         </section>
       </>

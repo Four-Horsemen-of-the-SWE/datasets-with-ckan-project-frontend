@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useCreateModalStore } from "../../store";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Button, Card, Col, Divider, Empty, Row, Space, Spin, Typography, List } from "antd";
+import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List } from "antd";
 import { useEffect, useState } from "react";
 import { useIsAuthenticated, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
-const { Title } = Typography;
+const { Title, Paragraph } = Typography;
 
 export default function Profile() {
   document.title = "Datasets";
@@ -32,7 +32,7 @@ export default function Profile() {
     const fetchDataFromAPI = async () => {
       const userDetailsAPI = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/${username}`;
       const userDatasetsAPI = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/datasets`;
-      const userBookmarkAPI = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/${username}`;
+      const userBookmarkAPI = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/bookmark`;
 
       try {
         const [
@@ -50,7 +50,14 @@ export default function Profile() {
             },
             {}
           ),
-          // axios.get(userBookmarkAPI),
+          axios.get(
+            userBookmarkAPI,
+            {
+              headers: {
+                Authorization: JWTToken,
+              }
+            }
+          ),
         ]);
 
         if (userDetailsResponse.data.ok) {
@@ -62,11 +69,11 @@ export default function Profile() {
           setDatasets(userDatasetsResponse.data.result);
         }
 
-        /*
-        if (userBookmarkResponse.status === 200) {
-          setUserDetails(userBookmarkResponse.data.result);
+        console.log(userBookmarkResponse.data)
+        if (userBookmarkResponse.data.ok) {
+          setBookmark(userBookmarkResponse.data.result);
         }
-        */
+        
       } catch(error) {
         console.log(error)
       }
@@ -131,16 +138,26 @@ export default function Profile() {
 
               {/* render user's datasets here */}
               {datasets.length ? (
-                <List 
-                  size="large"
+                <List
+                  size="small"
                   bordered
                   dataSource={datasets}
                   className="mt-3"
                   renderItem={(item, index) => (
                     <List.Item>
-                      <List.Item.Meta 
-                        title={item.name}
-                        description={item.notes ? item.notes : "No Description"}
+                      <List.Item.Meta
+                        title={
+                          <a href={`/datasets/${item.name}`}>{item.name}</a>
+                        }
+                        description={
+                          item.notes ? (
+                            <Paragraph ellipsis={{ rows: 1 }}>
+                              {item.notes}
+                            </Paragraph>
+                          ) : (
+                            "No Description"
+                          )
+                        }
                       />
                     </List.Item>
                   )}
@@ -158,9 +175,32 @@ export default function Profile() {
 
               {/* render user's bookmarks here */}
               {bookmarks.length ? (
-                datasets.map((item, key) => <p>Ambatukammmm</p>)
+                <List
+                  size="small"
+                  bordered
+                  dataSource={bookmarks}
+                  className="mt-3"
+                  renderItem={(item, index) => (
+                    <List.Item>
+                      <List.Item.Meta
+                        title={
+                          <a href={`/datasets/${item.name}`}>{item.name}</a>
+                        }
+                        description={
+                          item.notes ? (
+                            <Paragraph ellipsis={{ rows: 1 }}>
+                              {item.notes}
+                            </Paragraph>
+                          ) : (
+                            "No Description"
+                          )
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
               ) : (
-                <Empty description="No Bookmarks" />
+                <Empty description="No Bookmarked Datasets" />
               )}
             </Col>
           </Row>
