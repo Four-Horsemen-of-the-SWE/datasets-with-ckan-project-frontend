@@ -2,6 +2,7 @@ import { CaretUpOutlined, CaretDownOutlined, PlusOutlined } from "@ant-design/ic
 import { Typography, List, Avatar, Button, Input, Space, Empty } from "antd"
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const { Title } = Typography
 
@@ -60,30 +61,32 @@ export default function DiscussionView({dataset_id}) {
             itemLayout="horizontal"
             dataSource={topic}
             renderItem={(item, index) => (
-              <List.Item
-                key={index}
-                actions={[
-                  <Space.Compact size="" block>
-                    <Button>
-                      <CaretUpOutlined />
-                    </Button>
-                    <Input
-                      disabled
-                      defaultValue={0}
-                      style={{ width: "40px", textAlign: "center" }}
-                    />
-                    <Button>
-                      <CaretDownOutlined />
-                    </Button>
-                  </Space.Compact>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={<Avatar src={item?.user_image_url} />}
-                  title={<a href="https://ant.design">{item.title}</a>}
-                  description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                />
-              </List.Item>
+              <Link to={`${item.id}`}>
+                <List.Item
+                  key={index}
+                  actions={[
+                    <Space.Compact size="" block>
+                      <Button>
+                        <CaretUpOutlined />
+                      </Button>
+                      <Input
+                        disabled
+                        defaultValue={0}
+                        style={{ width: "40px", textAlign: "center" }}
+                      />
+                      <Button>
+                        <CaretDownOutlined />
+                      </Button>
+                    </Space.Compact>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={<Avatar src={item?.user_image_url} />}
+                    title={item.title}
+                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                  />
+                </List.Item>
+              </Link>
             )}
           />
         ) : (
