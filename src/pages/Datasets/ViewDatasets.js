@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { MoreOutlined, EditOutlined, StarOutlined } from "@ant-design/icons";
 import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown } from "antd";
 import { useIsAuthenticated } from "react-auth-kit";
@@ -32,7 +33,9 @@ export default function ViewDatasets() {
   const [datasets, setDatasets] = useState({});
   const [isLoading ,setIsLoading] = useState(true);
   const isAuthenticated = useIsAuthenticated();
-
+  const location = useLocation();
+  const currentTab = location.pathname.split('/')[3] === "discussions" ? "discussions" : "data";
+  
   const fetchDatasets = async() => {
     try {
       const response = await axios.get(
@@ -52,6 +55,14 @@ export default function ViewDatasets() {
   useEffect(() => {
     fetchDatasets()
   }, [])
+
+  const handleTabChange = (key) => {
+    const baseURL = `/datasets/${datasets_id}`
+    if(key === 'discussions')
+      window.history.pushState(null, "", `${baseURL}/discussions`)
+    else if(key === 'data')
+      window.history.pushState(null, "", `${baseURL}`);
+  }
 
   if(isLoading) {
     return (
@@ -110,8 +121,8 @@ export default function ViewDatasets() {
         <Divider />
 
         <section className="container mx-auto">
-          <Tabs defaultActiveKey="1" size="large">
-            <TabPane tab="Data" key="1">
+          <Tabs defaultActiveKey={currentTab} onChange={handleTabChange} size="large">
+            <TabPane tab="Data" key="data">
               <Row gutter={18}>
                 <Col sm={24} md={20}>
                   <ResourceView resource={datasets?.resources} />
@@ -127,8 +138,8 @@ export default function ViewDatasets() {
                 </Col>
               </Row>
             </TabPane>
-            <TabPane tab="Discussion" key="2">
-              <DiscussionView />
+            <TabPane tab="Discussion" key="discussions">
+              <DiscussionView dataset_id={datasets.id} />
             </TabPane>
           </Tabs>
         </section>
