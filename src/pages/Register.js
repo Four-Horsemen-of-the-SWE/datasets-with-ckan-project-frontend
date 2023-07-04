@@ -43,7 +43,7 @@ export default function Register() {
   };
 
   const onFinishFailed = (errorInfo) => {
-    messageApi.error(JSON.stringify(errorInfo));
+    messageApi.error('Please fill out all required fields.');
   };
 
   return (

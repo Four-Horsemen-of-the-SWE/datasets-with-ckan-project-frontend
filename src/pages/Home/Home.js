@@ -4,7 +4,7 @@ import {
   SearchOutlined,
   PushpinOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Divider, Input, Row, Space, Image, Typography, notification, Card, Empty } from "antd";
+import { Button, Col, Divider, Input, Row, Space, Typography, notification, Empty } from "antd";
 import DatasetsCard from "../../components/Card/DatasetsCard";
 import axios from "axios";
 
@@ -30,7 +30,8 @@ export default function Home() {
       console.log(error);
       api.error({
         message: 'Error',
-        description: error.message
+        description: error.message,
+        placement: 'bottomRight'
       });
     }
   };

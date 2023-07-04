@@ -52,7 +52,7 @@ export default function Login() {
       }
     } catch(error) {
       // show error message
-      console.log(error)
+      messageApi.error('Network Error');
     }
   };
 
