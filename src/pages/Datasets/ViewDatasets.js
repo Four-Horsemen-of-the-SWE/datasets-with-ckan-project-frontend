@@ -10,6 +10,7 @@ import InformationView from "../../components/Datasets/InformationView";
 import DiscussionView from "../../components/Discussion/DiscussionView";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -22,9 +23,17 @@ const items = [
   },
   {
     key: "2",
-    label: <Text>Edit Datasets</Text>,
+    label: <Text>Edit Dataset</Text>,
     icon: <EditOutlined />,
   },
+  {
+    type: 'divider'
+  },
+  {
+    key: "3",
+    label: <Text>Delete Dataset</Text>,
+    danger: true,
+  }
 ];
 
 export default function ViewDatasets() {
@@ -80,7 +89,7 @@ export default function ViewDatasets() {
                 items,
               }}
               trigger={["click"]}
-              placement="bottomRight"
+              placement="bottomLeft"
             >
               <Button size="large">
                 <MoreOutlined />
@@ -94,7 +103,7 @@ export default function ViewDatasets() {
             justify="space-between"
             align="center"
             gutter={[18, 18]}
-            className="my-5"
+            className="my-5 w-full"
           >
             <Col md={18}>
               <Title level={2}>{datasets.title}</Title>
@@ -108,11 +117,11 @@ export default function ViewDatasets() {
                 {datasets.notes ? datasets.notes : "No Description"}
               </Paragraph>
             </Col>
-            <Col md={6}>
+            <Col md={6} className="w-full text-right">
               <Image
-                src="https://cdn.akamai.steamstatic.com/steam/apps/271590/capsule_616x353.jpg?t=1678296348"
+                src={datasets.thumbnail}
                 alt="datasets thumbnail"
-                className="rounded-md self-center"
+                className="rounded-md mx-auto block"
               />
             </Col>
           </Row>
@@ -121,7 +130,11 @@ export default function ViewDatasets() {
         <Divider />
 
         <section className="container mx-auto">
-          <Tabs defaultActiveKey={currentTab} onChange={handleTabChange} size="large">
+          <Tabs
+            defaultActiveKey={currentTab}
+            onChange={handleTabChange}
+            size="large"
+          >
             <TabPane tab="Data" key="data">
               <Row gutter={18}>
                 <Col sm={24} md={20}>
@@ -141,6 +154,11 @@ export default function ViewDatasets() {
             <TabPane tab="Discussion" key="discussions">
               <DiscussionView dataset_id={datasets.id} />
             </TabPane>
+            {isAuthenticated() && (
+              <TabPane tab="Settings" key="settings">
+                <DatasetsSettings />
+              </TabPane>
+            )}
           </Tabs>
         </section>
       </>
