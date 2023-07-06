@@ -18,6 +18,7 @@ import {
 import ImgCrop from "antd-img-crop";
 import { useAuthHeader } from "react-auth-kit";
 import { useState } from "react";
+import axios, { all } from "axios";
 
 const { Title, Text } = Typography;
 
@@ -37,7 +38,7 @@ export default function DatasetsSettings({ datasets }) {
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
   const authHeader = useAuthHeader();
 
-  const all_tags = datasets?.tags.map(item => ({ label: item.display_name, value: item.name }));
+  const all_tags = datasets?.tags.map((item) => ({ label: item.display_name, value: item.name }));
 
   const [defailed_form] = Form.useForm();
 
@@ -72,6 +73,39 @@ export default function DatasetsSettings({ datasets }) {
       return isJpgOrPng && isLt2M;
     }
   };
+
+  const updateDataset = async(values) => {
+    console.log(values.tags)
+    const tag_list = values?.tags.map((item) => ({
+      name: item,
+    }));
+    values.tags = tag_list;
+
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets.id}`,
+        values,
+        {
+          headers: {
+            Authorization: authHeader().split(" ")[1],
+          },
+        }
+      );
+
+      console.log(response)
+
+      if(response.data.ok) {
+        message.success('Update Success')
+        setTimeout(() => {
+          // window.location.href = `/datasets/${response.data.result.id}/settings`;
+          window.location.reload();
+        }, 1200);
+      }
+
+    } catch(error) {
+      message.error(error.message)
+    }
+  }
 
   return (
     <>
@@ -109,12 +143,10 @@ export default function DatasetsSettings({ datasets }) {
             url: datasets?.url,
             notes: datasets.notes,
             private: datasets.private,
-            tags: datasets?.tags.map((item) => ({
-              label: item.display_name,
-              value: item.name,
-            })),
+            tags: datasets.tags.map(item => item.name),
             version: datasets?.version,
           }}
+          onFinish={updateDataset}
         >
           <Form.Item label="Name" name="title">
             <Input
@@ -141,6 +173,7 @@ export default function DatasetsSettings({ datasets }) {
                     defaultValue={false}
                     size="large"
                     options={visibility_data}
+                    disabled
                   />
                 </Form.Item>
               </Col>
@@ -163,7 +196,7 @@ export default function DatasetsSettings({ datasets }) {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" size="large" block>
+            <Button type="primary" size="large" htmlType="submit" block>
               Save
             </Button>
           </Form.Item>
