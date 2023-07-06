@@ -9,9 +9,13 @@ import {
   Select,
   Typography,
   Upload,
-  Image
+  Image,
+  message
 } from "antd";
 import ImgCrop from "antd-img-crop";
+import { useAuthHeader } from "react-auth-kit";
+import { useState } from "react";
+import axios from "axios";
 
 const { Title } = Typography;
 
@@ -26,14 +30,56 @@ const visibility_data = [
   },
 ];
 
-export default function DatasetsSettings() {
+export default function DatasetsSettings({ datasets }) {
+  const [thumbnail, setThumbnail] = useState(datasets?.thumbnail);
+  const authHeader = useAuthHeader();
+
+  const all_tags = datasets?.tags.map(item => ({ label: item.display_name, value: item.name }));
+
+  const [defailed_form] = Form.useForm();
+
+  const props = {
+    headers: {
+      Authorization: authHeader().split(" ")[1],
+    },
+    action: `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets.id}/thumbnail`,
+    name: "thumbnail_image",
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        message.info(`${info.file.name} uploading`);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   return (
     <div className="container mx-auto">
       <Title level={3}>Settings</Title>
 
       <Title level={4}>General</Title>
 
-      <Form layout="vertical">
+      <Form
+        layout="vertical"
+        form={defailed_form}
+        initialValues={{
+          title: datasets.title,
+          url: datasets?.url,
+          notes: datasets.notes,
+          private: datasets.private,
+          tags: datasets?.tags.map((item) => ({
+            label: item.display_name,
+            value: item.name,
+          })),
+          version: datasets?.version,
+        }}
+      >
         <Form.Item label="Name" name="title">
           <Input
             showCount
@@ -44,10 +90,7 @@ export default function DatasetsSettings() {
         </Form.Item>
 
         <Form.Item label="URL" name="url">
-          <Input.TextArea
-            rows={4}
-            placeholder="A URL for the dataset’s source"
-          />
+          <Input size="large" placeholder="A URL for the dataset’s source" />
         </Form.Item>
 
         <Form.Item label="Description" name="notes">
@@ -71,7 +114,7 @@ export default function DatasetsSettings() {
                   mode="tags"
                   placeholder="Tags"
                   size="large"
-                  options={null}
+                  options={all_tags}
                 />
               </Form.Item>
             </Col>
@@ -93,21 +136,23 @@ export default function DatasetsSettings() {
       <Divider />
 
       <Form layout="vertical">
+        <Title level={4}>Thumbnail</Title>
         <Form.Item name="thumbnail">
-          <Row gutter={20}>
+          <Row gutter={20} align="middle">
             <Col>
-              <Image
-                height={226}
-                src="http://localhost:81/uploads/datasets-thumbnail/a41ed3b6-7085-4a18-9d2c-7b89b2cf2bb8_datasets-thumbnail_2023-07-06-10-13-54.jpg"
-                className="rounded-lg"
-              />
+              <Image height={70} src={thumbnail} className="rounded-lg" />
             </Col>
             <Col>
-              <Typography.Title level={5}>
+              <Typography.Title level={5} style={{ marginTop: 0 }}>
                 Change Thumbnail Image
               </Typography.Title>
               <ImgCrop>
-                <Upload accept="image/png, image/jpeg" directory={false}>
+                <Upload
+                  {...props}
+                  accept="image/png, image/jpeg"
+                  directory={false}
+                  maxCount={1}
+                >
                   <Button icon={<UploadOutlined />}>Upload New Image</Button>
                 </Upload>
               </ImgCrop>
@@ -118,3 +163,16 @@ export default function DatasetsSettings() {
     </div>
   );
 }
+
+/*
+<ImgCrop>
+                <Upload
+                  customRequest={handleUpload}
+                  accept="image/png, image/jpeg"
+                  directory={false}
+                  maxCount={1}
+                >
+                  <Button icon={<UploadOutlined />}>Upload New Image</Button>
+                </Upload>
+              </ImgCrop>
+*/

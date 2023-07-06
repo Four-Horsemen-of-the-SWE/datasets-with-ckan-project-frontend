@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { Link, useLocation } from "react-router-dom";
 import { MoreOutlined, EditOutlined, StarOutlined } from "@ant-design/icons";
 import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown } from "antd";
-import { useIsAuthenticated } from "react-auth-kit";
+import { useIsAuthenticated, useAuthUser } from "react-auth-kit";
 
 // import components
 import ResourceView from "../../components/Datasets/ResourceView";
@@ -41,9 +41,12 @@ export default function ViewDatasets() {
   const { datasets_id } = useParams();
   const [datasets, setDatasets] = useState({});
   const [isLoading ,setIsLoading] = useState(true);
-  const isAuthenticated = useIsAuthenticated();
   const location = useLocation();
-  const currentTab = location.pathname.split('/')[3] === "discussions" ? "discussions" : "data";
+  // const currentTab = location.pathname.split('/')[3] === "discussions" ? "discussions" : "data";
+  const currentTab = location.pathname.split("/")[3];
+
+  const auth = useAuthUser();
+  const isAuthenticated = useIsAuthenticated();
   
   const fetchDatasets = async() => {
     try {
@@ -71,6 +74,8 @@ export default function ViewDatasets() {
       window.history.pushState(null, "", `${baseURL}/discussions`)
     else if(key === 'data')
       window.history.pushState(null, "", `${baseURL}`);
+    else if(key === 'settings')
+      window.history.pushState(null, "", `${baseURL}/settings`);
   }
 
   if(isLoading) {
@@ -117,7 +122,7 @@ export default function ViewDatasets() {
                 {datasets.notes ? datasets.notes : "No Description"}
               </Paragraph>
             </Col>
-            <Col md={6} className="w-full text-right">
+            <Col md={6} className="w-full text-center md:text-right">
               <Image
                 src={datasets.thumbnail}
                 alt="datasets thumbnail"
@@ -154,9 +159,9 @@ export default function ViewDatasets() {
             <TabPane tab="Discussion" key="discussions">
               <DiscussionView dataset_id={datasets.id} />
             </TabPane>
-            {isAuthenticated() && (
+            {auth().id === datasets.creator_user_id && (
               <TabPane tab="Settings" key="settings">
-                <DatasetsSettings />
+                <DatasetsSettings datasets={datasets} />
               </TabPane>
             )}
           </Tabs>
