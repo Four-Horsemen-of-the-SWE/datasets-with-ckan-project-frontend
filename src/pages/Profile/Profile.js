@@ -27,7 +27,6 @@ export default function Profile() {
   const { isCreateModalShow, setIsCreateModalShow } = useCreateModalStore();
 
   useEffect(() => {
-    
     // fetchUserDetails();
     const fetchDataFromAPI = async () => {
       const userDetailsAPI = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/${username}`;

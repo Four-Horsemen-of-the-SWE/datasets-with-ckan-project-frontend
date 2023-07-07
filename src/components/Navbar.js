@@ -72,7 +72,7 @@ export default function Navbar() {
                     >
                       Create Datasets
                     </Button>
-                    <Button icon={<MessageOutlined />} />
+                    <Button icon={<MessageOutlined />} disabled />
                     <Button
                       icon={<UserOutlined />}
                       onClick={() => setIsDrawerOpen(!isDrawerOpen)}

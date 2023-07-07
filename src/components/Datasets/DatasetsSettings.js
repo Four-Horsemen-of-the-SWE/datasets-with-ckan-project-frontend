@@ -34,6 +34,7 @@ const visibility_data = [
 ];
 
 export default function DatasetsSettings({ datasets }) {
+  const [isSaving, setIsSaving] = useState(false);
   const [thumbnail, setThumbnail] = useState(datasets?.thumbnail);
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
   const authHeader = useAuthHeader();
@@ -75,7 +76,7 @@ export default function DatasetsSettings({ datasets }) {
   };
 
   const updateDataset = async(values) => {
-    console.log(values.tags)
+    setIsSaving(true);
     const tag_list = values?.tags.map((item) => ({
       name: item,
     }));
@@ -96,6 +97,7 @@ export default function DatasetsSettings({ datasets }) {
 
       if(response.data.ok) {
         message.success('Update Success')
+        setIsSaving(false);
         setTimeout(() => {
           // window.location.href = `/datasets/${response.data.result.id}/settings`;
           window.location.reload();
@@ -196,7 +198,7 @@ export default function DatasetsSettings({ datasets }) {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" size="large" htmlType="submit" block>
+            <Button type="primary" size="large" htmlType="submit" loading={isSaving} disabled={isSaving} block>
               Save
             </Button>
           </Form.Item>

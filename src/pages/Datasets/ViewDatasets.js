@@ -21,19 +21,6 @@ const items = [
     label: <Text>Bookmark</Text>,
     icon: <StarOutlined />,
   },
-  {
-    key: "2",
-    label: <Text>Edit Dataset</Text>,
-    icon: <EditOutlined />,
-  },
-  {
-    type: 'divider'
-  },
-  {
-    key: "3",
-    label: <Text>Delete Dataset</Text>,
-    danger: true,
-  }
 ];
 
 export default function ViewDatasets() {
