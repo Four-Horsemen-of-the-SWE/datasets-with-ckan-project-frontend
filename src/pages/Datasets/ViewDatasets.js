@@ -136,6 +136,7 @@ export default function ViewDatasets() {
                 src={datasets.thumbnail}
                 alt="datasets thumbnail"
                 className="rounded-md mx-auto block"
+                height={200}
               />
             </Col>
           </Row>

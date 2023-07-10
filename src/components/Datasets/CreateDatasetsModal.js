@@ -1,5 +1,5 @@
 import { InboxOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { Button, theme, Modal, Form, Input, Upload, Space, Tooltip } from "antd";
+import { Button, message, Modal, Form, Input, Upload, Space, Tooltip, List } from "antd";
 import { useState } from "react";
 import { useAuthHeader } from "react-auth-kit";
 import axios from "axios";
@@ -8,45 +8,98 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
   const authHeader = useAuthHeader();
   const [form] = Form.useForm();
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const JWTToken = authHeader().split(" ")[1];
 
-  const handleCreate = async () => {
+  const handleUpload = async (dataset_id, fileList) => {
     try {
-      const values = await form.validateFields();
+      const formData = new FormData();
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        formData.append("resources", file.originFileObj); // Append each file individually to the FormData
+      }
+      /*
+      fileList.forEach((file) => {
+        formData.append("resources", file.originFileObj);
+      });
+      */
 
+      const response = await axios.post(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/resources`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: JWTToken,
+          },
+        }
+      );
+      if (response.data.ok) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      messageApi.open({
+        type: "warning",
+        content: error.message
+      })
+    }
+  };
+
+
+  const handleCreate = async () => {
+    // create dataset then upload file
+    try {
+      setIsCreating(true);
+      const values = await form.validateFields();
       const fileList = values.file?.fileList;
 
-      // Create a new FormData object
-      const formData = new FormData();
-      fileList?.forEach((file) => {
-        formData.append("files", file.originFileObj);
-      });
-
-      // Send the formData to the backend API
-      const response = await fetch(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`,
+      const response = await axios.post(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/`,
+        {
+          name: values.name.replace(/[.!]/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").trim().toLowerCase(),
+          title: values.name,
+        },
         {
           headers: {
             Authorization: JWTToken,
           },
         },
-        {
-          method: "POST",
-          body: formData,
-        }
       );
 
-      // Handle the response from the backend
-      if (response.ok) {
-        // Handle success
-        console.log("Files uploaded successfully");
-      } else {
-        // Handle error
-        console.log("Error uploading files");
+      if(response.data.ok) {
+        // if have file, then upload
+        if(!!fileList) {
+          const upload_response = await handleUpload(response.data.result.id, fileList);
+          if(upload_response) {
+            setIsCreating(false);
+            message.success({
+              type: "success",
+              content: "Create with resoucess success."
+            })
+            setTimeout(() => {
+              window.location.href = `/datasets/${response.data.result.id}`;
+            }, 1200)
+          }
+        } else {
+          setIsCreating(false);
+          message.success({
+            type: "success",
+            content: "Create success.",
+          });
+          setTimeout(() => {
+            window.location.href = `/datasets/${response.data.result.id}`;
+          }, 1200);
+        }
       }
     } catch (error) {
-      console.log("Error:", error);
+      messageApi.open({
+        type: "warning",
+        content: error.message,
+      });
     }
   };
 
@@ -67,14 +120,14 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
             {isPrivate ? "Private" : "Public"}
           </Button>
         </Tooltip>,
-        <Button type="primary" size="large" onClick={() => handleCreate()}>
+        <Button type="primary" size="large" loading={isCreating} onClick={() => handleCreate()}>
           Create
         </Button>,
       ]}
     >
       <Form form={form} layout="vertical" className="mt-5">
         <Form.Item label="Datasets Name" name="name" required>
-          <Input placeholder="the name of the new dataset" size="large" className="lowercase" />
+          <Input placeholder="the name of the new dataset" size="large" className="lowercase" allowClear />
         </Form.Item>
         <Form.Item label="Files" name="file">
           <Upload.Dragger multiple={true}>
