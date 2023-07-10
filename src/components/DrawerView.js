@@ -29,7 +29,11 @@ export default function DrawerView({ isDrawerOpen, close }) {
     },
     {
       icon: <DatabaseOutlined />,
-      label: "Your Datasets",
+      label: (
+        <Link href={`/profile/${!!auth()?.name ? auth().name : ''}/datasets`} style={{ color: "#000" }}>
+          Your Datasets
+        </Link>
+      ),
     },
     {
       icon: <BookOutlined />,
