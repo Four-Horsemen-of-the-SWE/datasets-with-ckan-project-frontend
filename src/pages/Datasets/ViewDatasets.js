@@ -1,15 +1,15 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Link, useLocation } from "react-router-dom";
-import { MoreOutlined, EditOutlined, StarOutlined } from "@ant-design/icons";
+import { useLocation } from "react-router-dom";
+import { StarOutlined, ToolOutlined } from "@ant-design/icons";
 import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown } from "antd";
-import { useIsAuthenticated, useAuthUser } from "react-auth-kit";
+import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
+import axios from "axios";
 
 // import components
 import ResourceView from "../../components/Datasets/ResourceView";
 import InformationView from "../../components/Datasets/InformationView";
 import DiscussionView from "../../components/Discussion/DiscussionView";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 
 const { Title, Text, Paragraph } = Typography;
@@ -18,8 +18,9 @@ const { TabPane } = Tabs;
 const items = [
   {
     key: "1",
-    label: <Text>Bookmark</Text>,
+    label: <Text>Delete</Text>,
     icon: <StarOutlined />,
+    danger: true,
   },
 ];
 
@@ -28,22 +29,33 @@ export default function ViewDatasets() {
   const { datasets_id } = useParams();
   const [datasets, setDatasets] = useState({});
   const [isLoading ,setIsLoading] = useState(true);
+  const [isBookmark, setIsBookmark] = useState(false);
+  const [isBookmarking, setIsBookmarking] = useState(false);
+
   const location = useLocation();
   // const currentTab = location.pathname.split('/')[3] === "discussions" ? "discussions" : "data";
   const currentTab = location.pathname.split("/")[3];
 
   const auth = useAuthUser();
+  const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
+  const JWTToken = authHeader().split(" ")[1];
   
   const fetchDatasets = async() => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}`, {
+          headers: {
+            Authorization: JWTToken
+          }
+        }
       );
 
       if (response.status === 200) {
         setDatasets(response.data.result);
-        setIsLoading(false);
+        setIsBookmark(response.data.result.is_bookmark);
+        if(!!response.data.result)
+          setIsLoading(false);
       }
     } catch(error) {
       console.log(error)
@@ -75,18 +87,28 @@ export default function ViewDatasets() {
     return (
       <>
         {isAuthenticated() && (
-          <div className="container mx-auto mt-4 w-100 flex justify-end">
-            <Dropdown
-              menu={{
-                items,
-              }}
-              trigger={["click"]}
-              placement="bottomLeft"
+          <div className="container mx-auto mt-4 w-100 flex justify-end gap-2 pe-9">
+            <Button
+              type="primary"
+              ghost={!isBookmark}
+              size="large"
+              icon={<StarOutlined />}
             >
-              <Button size="large">
-                <MoreOutlined />
-              </Button>
-            </Dropdown>
+              Bookmark
+            </Button>
+            {auth()?.is_admin && (
+              <Dropdown
+                menu={{
+                  items,
+                }}
+                trigger={["click"]}
+                placement="bottomLeft"
+              >
+                <Button size="large" danger>
+                  <ToolOutlined />
+                </Button>
+              </Dropdown>
+            )}
           </div>
         )}
 
@@ -144,7 +166,7 @@ export default function ViewDatasets() {
               </Row>
             </TabPane>
             <TabPane tab="Discussion" key="discussions">
-              <DiscussionView dataset_id={'datasets?.id'} />
+              <DiscussionView dataset_id={"datasets?.id"} />
             </TabPane>
             {auth()?.id === datasets?.creator_user_id && (
               <TabPane tab="Settings" key="settings">
