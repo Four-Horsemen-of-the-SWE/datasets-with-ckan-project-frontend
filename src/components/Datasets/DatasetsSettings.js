@@ -12,7 +12,6 @@ import {
   Image,
   message,
   Space,
-  Card,
   Modal
 } from "antd";
 import ImgCrop from "antd-img-crop";
@@ -37,6 +36,8 @@ export default function DatasetsSettings({ datasets }) {
   const [isSaving, setIsSaving] = useState(false);
   const [thumbnail, setThumbnail] = useState(datasets?.thumbnail);
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
+  const [confirmName, setConfirmName] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
   const authHeader = useAuthHeader();
 
   const all_tags = datasets?.tags.map((item) => ({ label: item.display_name, value: item.name }));
@@ -93,8 +94,6 @@ export default function DatasetsSettings({ datasets }) {
         }
       );
 
-      console.log(response)
-
       if(response.data.ok) {
         message.success('Update Success')
         setIsSaving(false);
@@ -109,15 +108,49 @@ export default function DatasetsSettings({ datasets }) {
     }
   }
 
+  const deleteDataset = async() => {
+    console.log(datasets.name, confirmName)
+    if(datasets.name === confirmName) {
+      try {
+        const response = await axios.delete(
+          `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets.id}`,
+          {
+            headers: {
+              Authorization: authHeader().split(" ")[1],
+            },
+          }
+        );
+
+        if (response.data.ok) {
+          messageApi.open({
+            type: "success",
+            content: "Delete success."
+          });
+          setTimeout(() => {
+            window.location.href = "/datasets";
+          }, 1200);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      messageApi.open({
+        type: "warning",
+        content: "Dataset name not match."
+      })
+    }
+  }
+
   return (
     <>
+      {contextHolder}
       <Modal
         title="Delete this datasets ?"
         open={isDeleteModalShow}
         onCancel={() => setIsDeleteModalShow(false)}
         footer={[
           <Button onClick={() => setIsDeleteModalShow(false)}>Cancel</Button>,
-          <Button type="primary" onClick={null} danger>
+          <Button type="primary" onClick={() => deleteDataset()} danger>
             Delete
           </Button>,
         ]}
@@ -128,7 +161,13 @@ export default function DatasetsSettings({ datasets }) {
         </Text>
         <Space direction="vertical" className="w-full mb-2">
           <Title level={5}>Dataset name</Title>
-          <Input size="large" placeholder={datasets.name} block />
+          <Input
+            size="large"
+            placeholder={datasets.name}
+            value={confirmName}
+            onChange={(e) => setConfirmName(e.target.value)}
+            block
+          />
         </Space>
       </Modal>
 
@@ -145,7 +184,7 @@ export default function DatasetsSettings({ datasets }) {
             url: datasets?.url,
             notes: datasets.notes,
             private: datasets.private,
-            tags: datasets.tags.map(item => item.name),
+            tags: datasets.tags.map((item) => item.name),
             version: datasets?.version,
           }}
           onFinish={updateDataset}
@@ -198,7 +237,14 @@ export default function DatasetsSettings({ datasets }) {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" size="large" htmlType="submit" loading={isSaving} disabled={isSaving} block>
+            <Button
+              type="primary"
+              size="large"
+              htmlType="submit"
+              loading={isSaving}
+              disabled={isSaving}
+              block
+            >
               Save
             </Button>
           </Form.Item>

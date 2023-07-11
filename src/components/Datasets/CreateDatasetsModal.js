@@ -16,15 +16,9 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
   const handleUpload = async (dataset_id, fileList) => {
     try {
       const formData = new FormData();
-      for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        formData.append("resources", file.originFileObj); // Append each file individually to the FormData
-      }
-      /*
       fileList.forEach((file) => {
         formData.append("resources", file.originFileObj);
       });
-      */
 
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/resources`,
