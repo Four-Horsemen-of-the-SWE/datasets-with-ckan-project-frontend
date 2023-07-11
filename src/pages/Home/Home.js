@@ -4,7 +4,7 @@ import {
   SearchOutlined,
   PushpinOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Divider, Input, Row, Space, Typography, notification, Empty } from "antd";
+import { Button, Col, Divider, Input, Row, Space, Typography, notification, Empty, AutoComplete } from "antd";
 import DatasetsCard from "../../components/Card/DatasetsCard";
 import axios from "axios";
 
@@ -15,6 +15,7 @@ export default function Home() {
 
   const [allDatasets, setAllDatasets] = useState([]);
   const [isHotestLoading, setIsHotestLoading] = useState(true);
+  const [options, setOptions] = useState([]);
   const [api, contextHolder] = notification.useNotification();
 
   const fetchHotestDatasets = async () => {
@@ -36,6 +37,19 @@ export default function Home() {
     }
   };
 
+  const handleSearch = async (value) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search/auto_complete?q=${value}`
+      );
+      if(response.data.ok) {
+        setOptions(response.data.result?.map(item => ({value: item.name, label: item.title})));
+      }
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     fetchHotestDatasets();
   }, []);
@@ -43,7 +57,7 @@ export default function Home() {
   return (
     <>
       {contextHolder}
-      <section className="section--header w-100 h-96 flex justify-center items-center">
+      <section className="section--header w-full h-96 flex justify-center items-center">
         <div className="container mx-auto text-center">
           <Title className="mt-0 uppercase" style={{ color: "#FFF" }}>
             Datasets Hub
@@ -52,16 +66,19 @@ export default function Home() {
             The datasets community, built with CKAN.
           </Text>
 
-          <Space>
-            <Input
-              prefix={<SearchOutlined />}
-              placeholder="Datasets name."
-              size="large"
-            />
-            <Button type="primary" size="large">
-              Search
-            </Button>
-          </Space>
+          <AutoComplete
+            allowClear
+            options={options}
+            onSearch={handleSearch}
+            onClear={() => setOptions([])}
+            onSelect={(value) => window.location.href = `/datasets/${value}`}
+            placeholder="Search datasets."
+            size="large"
+            style={{
+              width: "400px",
+              textAlign: "left",
+            }}
+          />
         </div>
       </section>
 

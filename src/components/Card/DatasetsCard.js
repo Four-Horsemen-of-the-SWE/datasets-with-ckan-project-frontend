@@ -81,6 +81,7 @@ export default function DatasetsCard({
           <Meta
             title={title}
             description={<Paragraph ellipsis={{ rows: 3 }}>{notes ? notes : "No Description"}</Paragraph>}
+            className="h-24"
           />
         </Link>
       </Card>

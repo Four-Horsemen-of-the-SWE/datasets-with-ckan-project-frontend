@@ -1,5 +1,5 @@
-import { InboxOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { Button, message, Modal, Form, Input, Upload, Space, Tooltip, List } from "antd";
+import { InboxOutlined, EyeOutlined, EyeInvisibleOutlined, CloudUploadOutlined } from "@ant-design/icons";
+import { Button, message, Modal, Form, Input, Upload, Space, Tooltip, List, Tag } from "antd";
 import { useState } from "react";
 import { useAuthHeader } from "react-auth-kit";
 import axios from "axios";
@@ -9,9 +9,22 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
   const [form] = Form.useForm();
   const [isPrivate, setIsPrivate] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const nameValue = Form.useWatch("name", form);
   const [messageApi, contextHolder] = message.useMessage();
 
   const JWTToken = authHeader().split(" ")[1];
+
+  const props = {
+    multiple: true,
+    progress: {
+      strokeColor: {
+        "0%": "#108ee9",
+        "100%": "#87d068",
+      },
+      strokeWidth: 3,
+      format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+    },
+  };
 
   const handleUpload = async (dataset_id, fileList) => {
     try {
@@ -98,43 +111,59 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
   };
 
   return (
-    <Modal
-      title="Create Datasets"
-      open={isModalOpen}
-      onOk={close}
-      onCancel={close}
-      footer={[
-        <Tooltip title={`Toggle to change to ${isPrivate ? "Public" : "Private"}`} placement="left">
-          <Button
-            size="large"
-            icon={isPrivate ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-            onClick={() => setIsPrivate(!isPrivate)}
-            disabled
+    <>
+      {contextHolder}
+      <Modal
+        title="Create Datasets"
+        open={isModalOpen}
+        onOk={close}
+        onCancel={close}
+        footer={[
+          <Tooltip
+            title={`Toggle to change to ${isPrivate ? "Public" : "Private"}`}
+            placement="left"
           >
-            {isPrivate ? "Private" : "Public"}
-          </Button>
-        </Tooltip>,
-        <Button type="primary" size="large" loading={isCreating} onClick={() => handleCreate()}>
-          Create
-        </Button>,
-      ]}
-    >
-      <Form form={form} layout="vertical" className="mt-5">
-        <Form.Item label="Datasets Name" name="name" required>
-          <Input placeholder="the name of the new dataset" size="large" className="lowercase" allowClear />
-        </Form.Item>
-        <Form.Item label="Files" name="file">
-          <Upload.Dragger multiple={true}>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="font-bold text-xl">Drag and drop files to upload</p>
-            <p className="text-slate-400">
-              Consider zipping large directories for faster uploads
-            </p>
-          </Upload.Dragger>
-        </Form.Item>
-      </Form>
-    </Modal>
+            <Button
+              size="large"
+              icon={isPrivate ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+              onClick={() => setIsPrivate(!isPrivate)}
+              disabled
+            >
+              {isPrivate ? "Private" : "Public"}
+            </Button>
+          </Tooltip>,
+          <Button
+            type="primary"
+            size="large"
+            loading={isCreating}
+            onClick={() => handleCreate()}
+          >
+            Create
+          </Button>,
+        ]}
+      >
+        <Form form={form} layout="vertical" className="mt-5">
+          <Form.Item label="Datasets Name" name="name" required>
+            <Input
+              placeholder="the name of the new dataset"
+              size="large"
+              className="lowercase"
+              allowClear
+            />
+          </Form.Item>
+          <Form.Item label="Files" name="file">
+            <Upload.Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <CloudUploadOutlined />
+              </p>
+              <p className="font-bold text-xl">Drag and drop files to upload</p>
+              <p className="text-slate-400">
+                Consider zipping large directories for faster uploads
+              </p>
+            </Upload.Dragger>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
   );
 }

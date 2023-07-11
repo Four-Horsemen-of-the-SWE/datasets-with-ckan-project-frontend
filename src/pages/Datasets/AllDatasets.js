@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Space, Typography, Select, Divider, Card, Empty } from "antd";
+import { Col, Input, Row, Space, Typography, Select, Divider, Card, Empty, DatePicker } from "antd";
 import axios from "axios";
 
 // import components
@@ -89,7 +89,7 @@ export default function AllDatasets() {
       <Divider />
 
       <div className="container mx-auto">
-        <Row gutter={[18, 18]} justify="space-between" align="top">
+        <Row gutter={[30, 18]} justify="space-between" align="top">
           <Col md={4} className="w-full">
             <Space direction="vertical" className="w-full">
               <Title level={5} style={{ marginTop: 0 }}>
@@ -116,6 +116,11 @@ export default function AllDatasets() {
                   <Empty />
                 </div>
               )}
+
+              <Title level={5} style={{ marginTop: 5 }}>
+                Date
+              </Title>
+              <DatePicker.RangePicker size="large" placement="bottomRight" />
             </Space>
           </Col>
           <Col md={20}>
