@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { StarOutlined, ToolOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown } from "antd";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message } from "antd";
 import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
@@ -30,6 +30,7 @@ export default function ViewDatasets() {
   const [isLoading ,setIsLoading] = useState(true);
   const [isBookmark, setIsBookmark] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const location = useLocation();
   // const currentTab = location.pathname.split('/')[3] === "discussions" ? "discussions" : "data";
@@ -63,6 +64,56 @@ export default function ViewDatasets() {
     }
   }
 
+  const handleBookmark = async() => {
+    try {
+      setIsBookmarking(true);
+      if(isBookmark) {
+        unBookmarkDataset();
+      } else {
+        bookmarkDataset();
+      }
+      setIsBookmarking(false);
+    } catch(error) {
+      messageApi.error({
+        type: "error",
+        content: error.message
+      })
+    }
+  }
+
+  const bookmarkDataset = async() => {
+    const response = await axios.post(
+      `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}/bookmark/`,
+      {},
+      {
+        headers: {
+          Authorization: JWTToken,
+        },
+      }
+    );
+
+    if(response.data.ok)
+      setIsBookmark(true);
+
+    console.log(response);
+  }
+
+  const unBookmarkDataset = async() => {
+    const response = await axios.delete(
+      `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}/bookmark`,
+      {
+        headers: {
+          Authorization: JWTToken,
+        },
+      }
+    );
+
+    if(response.data.ok)
+      setIsBookmark(false);
+
+    console.log(response);
+  }
+
   // call axios here
   useEffect(() => {
     fetchDatasets()
@@ -87,6 +138,7 @@ export default function ViewDatasets() {
   } else {
     return (
       <>
+        {contextHolder}
         {isAuthenticated() && (
           <div className="container mx-auto mt-4 w-100 flex justify-end gap-2 pe-9">
             <Button
@@ -94,6 +146,8 @@ export default function ViewDatasets() {
               ghost={!isBookmark}
               size="large"
               icon={<StarOutlined />}
+              loading={isBookmarking}
+              onClick={() => handleBookmark()}
             >
               Bookmark
             </Button>
