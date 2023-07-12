@@ -67,12 +67,14 @@ export default function DatasetsCard({
             src={
               thumbnail
                 ? thumbnail
-                : "https://i.ytimg.com/vi/VHwfiPt042k/maxresdefault.jpg"
+                : "https://avatars.githubusercontent.com/u/47313528?v=4"
             }
           />
         }
         actions={[
-          <Link href={`/profile/${author ? author : 'Admin'}`}>{author ? author : "Admin"}</Link>,
+          <Link href={`/profile/${author ? author : "Admin"}`}>
+            {author ? author : "Admin"}
+          </Link>,
           moment(metadata_modified).format("MMM Do YY"),
           <EyeOutlined key="bookmark" onClick={() => setIsModalOpen(true)} />,
         ]}
@@ -80,7 +82,11 @@ export default function DatasetsCard({
         <Link href={`/datasets/${id}`}>
           <Meta
             title={title}
-            description={<Paragraph ellipsis={{ rows: 3 }}>{notes ? notes : "No Description"}</Paragraph>}
+            description={
+              <Paragraph ellipsis={{ rows: 3 }}>
+                {notes ? notes : "No Description"}
+              </Paragraph>
+            }
             className="h-24"
           />
         </Link>

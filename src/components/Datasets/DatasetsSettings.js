@@ -76,12 +76,26 @@ export default function DatasetsSettings({ datasets }) {
     }
   };
 
+  const validName = (name) => {
+    const valid_name = name
+      .replace(/[.!]/g, "-")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .trim()
+      .toLowerCase();
+    const sanitized_name = valid_name.replace(/[^a-z0-9-_]/g, "");
+    return sanitized_name;
+  };
+
   const updateDataset = async(values) => {
     setIsSaving(true);
     const tag_list = values?.tags.map((item) => ({
       name: item,
     }));
     values.tags = tag_list;
+    values.name = validName(values.title);
+    console.log(values);
 
     try {
       const response = await axios.put(
@@ -104,7 +118,8 @@ export default function DatasetsSettings({ datasets }) {
       }
 
     } catch(error) {
-      message.error(error.message)
+      message.error(error.message);
+      setIsSaving(false);
     }
   }
 

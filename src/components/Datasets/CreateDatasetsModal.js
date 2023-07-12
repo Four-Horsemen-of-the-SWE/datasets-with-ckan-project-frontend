@@ -52,8 +52,21 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
       messageApi.open({
         type: "warning",
         content: error.message
-      })
+      });
+      setIsCreating(false);
     }
+  };
+
+  const validName = (name) => {
+    const valid_name = name
+      .replace(/[.!]/g, "-")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .trim()
+      .toLowerCase();
+    const sanitized_name = valid_name.replace(/[^a-z0-9-_]/g, "");
+    return sanitized_name;
   };
 
 
@@ -67,7 +80,7 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/`,
         {
-          name: values.name.replace(/[.!]/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").trim().toLowerCase(),
+          name: validName(values.name),
           title: values.name,
         },
         {
@@ -107,6 +120,7 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
         type: "warning",
         content: error.message,
       });
+      setIsCreating(false);
     }
   };
 

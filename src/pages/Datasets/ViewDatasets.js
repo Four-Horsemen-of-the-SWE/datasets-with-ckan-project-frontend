@@ -25,7 +25,6 @@ const items = [
 ];
 
 export default function ViewDatasets() {
-  document.title = "Datasets";
   const { datasets_id } = useParams();
   const [datasets, setDatasets] = useState({});
   const [isLoading ,setIsLoading] = useState(true);
@@ -54,8 +53,10 @@ export default function ViewDatasets() {
       if (response.status === 200) {
         setDatasets(response.data.result);
         setIsBookmark(response.data.result.is_bookmark);
-        if(!!response.data.result)
+        if(!!response.data.result) {
+          document.title = response.data.result.title;
           setIsLoading(false);
+        }
       }
     } catch(error) {
       console.log(error)
