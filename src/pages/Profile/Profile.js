@@ -146,7 +146,7 @@ export default function Profile() {
                     <List.Item>
                       <List.Item.Meta
                         title={
-                          <a href={`/datasets/${item.name}`}>{item.name}</a>
+                          <a href={`/datasets/${item.id}`}>{item.name}</a>
                         }
                         description={
                           item.notes ? (

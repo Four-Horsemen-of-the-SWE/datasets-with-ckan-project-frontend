@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Space, Typography, Select, Divider, Card, Empty, DatePicker } from "antd";
+import { Col, Input, Row, Space, Typography, Select, Divider, Card, Empty, DatePicker, Button } from "antd";
 import axios from "axios";
 
 // import components
@@ -95,32 +95,38 @@ export default function AllDatasets() {
               <Title level={5} style={{ marginTop: 0 }}>
                 Tags
               </Title>
-
               {/* tag list rendering */}
-              {allTags.length ? (
-                allTags.map((item, key) => (
-                  <Card
-                    bodyStyle={{
-                      padding: 6,
-                      width: "100%",
-                      backgroundColor: "#F7F9FC",
-                      cursor: "pointer",
-                    }}
-                    key={key}
-                  >
-                    {item}
-                  </Card>
-                ))
-              ) : (
-                <div className="w-full h-96 flex items-center justify-center">
-                  <Empty />
-                </div>
-              )}
-
+              <div className="h-38 flex flex-col gap-2 overflow-y-auto">
+                {allTags.length ? (
+                  allTags.map((item, key) => (
+                    <Card
+                      bodyStyle={{
+                        padding: 6,
+                        width: "100%",
+                        backgroundColor: "#F7F9FC",
+                        cursor: "pointer",
+                      }}
+                      key={key}
+                    >
+                      {item}
+                    </Card>
+                  ))
+                ) : (
+                  <div className="w-full h-96 flex items-center justify-center">
+                    <Empty />
+                  </div>
+                )}
+              </div>
               <Title level={5} style={{ marginTop: 5 }}>
                 Date
               </Title>
               <DatePicker.RangePicker size="large" placement="bottomRight" />
+              <div className="flex gap-2">
+                <Button danger block>
+                  Clear
+                </Button>
+                <Button block>Apply</Button>
+              </div>
             </Space>
           </Col>
           <Col md={20}>

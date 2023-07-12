@@ -1,10 +1,26 @@
-import { CaretUpOutlined, CaretDownOutlined, PlusOutlined } from "@ant-design/icons";
-import { Typography, List, Avatar, Button, Input, Space, Empty } from "antd"
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import {
+  CaretUpOutlined,
+  CaretDownOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import {
+  Typography,
+  List,
+  Avatar,
+  Button,
+  Input,
+  Space,
+  Empty,
+  message,
+  Form
+} from "antd";
+import axios from "axios";
 
-const { Title } = Typography
+// import componests
+import CreateTopicModal from "./CreateTopicModal";
+
+const { Title } = Typography;
 
 const data = [
   {
@@ -21,36 +37,55 @@ const data = [
   },
 ];
 
-export default function DiscussionView({dataset_id}) {
+export default function DiscussionView({ dataset_id }) {
   const [topic, setTopic] = useState([]);
+  const [isCreateTopicModalShow, setIsTopicModalShow] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const fetchTopics = async() => {
+  const fetchTopics = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/${dataset_id}/topics`
       );
 
       if (response.data.ok) {
-        setTopic(response.data.result)
+        setTopic(response.data.result);
       }
-    } catch(error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
+
+  const createTopic = async () => {
+    try {
+    } catch (error) {
+      messageApi.error(error.message);
+    }
+  };
 
   useEffect(() => {
-    fetchTopics()
-  }, [])
+    fetchTopics();
+  }, []);
 
   return (
     <>
+      <CreateTopicModal
+        isOpen={isCreateTopicModalShow}
+        close={() => setIsTopicModalShow(false)}
+      />
+      {contextHolder}
       <div className="container mx-auto">
         <div className="flex justify-between items-center my-5">
           <Title level={3} style={{ margin: "auto 0" }}>
             Discussions
           </Title>
 
-          <Button type="primary" size="large" icon={<PlusOutlined />}>
+          <Button
+            type="primary"
+            size="large"
+            icon={<PlusOutlined />}
+            onClick={() => setIsTopicModalShow(true)}
+          >
             New Topic
           </Button>
         </div>

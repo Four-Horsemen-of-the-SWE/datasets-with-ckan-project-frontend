@@ -114,7 +114,7 @@ export default function Home() {
           ) : (
             <Row gutter={[18, 18]}>
               {allDatasets.map((item, key) => (
-                <Col xxs={12} md={12} lg={6}>
+                <Col xxs={12} md={12} lg={6} key={key}>
                   <DatasetsCard
                     id={item.id}
                     thumbnail={item?.thumbnail}

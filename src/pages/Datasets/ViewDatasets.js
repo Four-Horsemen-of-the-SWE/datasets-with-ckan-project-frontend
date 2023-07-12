@@ -222,7 +222,7 @@ export default function ViewDatasets() {
               </Row>
             </TabPane>
             <TabPane tab="Discussion" key="discussions">
-              <DiscussionView dataset_id={"datasets?.id"} />
+              <DiscussionView dataset_id={datasets?.id} />
             </TabPane>
             {auth()?.id === datasets?.creator_user_id && (
               <TabPane tab="Settings" key="settings">
