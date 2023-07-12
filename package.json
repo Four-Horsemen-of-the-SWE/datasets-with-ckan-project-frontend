@@ -12,6 +12,7 @@
     "chart.js": "^4.3.0",
     "filesize": "^10.0.7",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "react": "^18.2.0",
     "react-auth-kit": "^2.12.2",
     "react-chartjs-2": "^5.2.0",

@@ -2,6 +2,7 @@ import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import { List, Space, Statistic, Tag, Typography } from "antd";
 import moment from "moment";
+import "moment-timezone";
 
 const { Title, Text } = Typography;
 
@@ -19,6 +20,16 @@ const downloaded_data = {
 };
 
 export default function InformationView({ license_title, version, metadata_created, metadata_modified, tags }) {
+  const format_date = (date) => {
+    const result = moment.utc(date).toDate() &&
+      moment(moment.utc(date).toDate()).format(
+        "MMMM Do YYYY, h:mm:ss a"
+      );
+    return result;
+  }
+  const format_metadata_created = format_date(metadata_created);
+  const format_metadata_modified = format_date(metadata_modified);
+
   const additional_data = [
     {
       label: "License",
@@ -30,13 +41,11 @@ export default function InformationView({ license_title, version, metadata_creat
     },
     {
       label: "Created",
-      value: metadata_created,
-      type: 'date',
+      value: format_metadata_created,
     },
     {
       label: "Modified",
-      value: metadata_modified,
-      type: 'date',
+      value: format_metadata_modified,
     },
   ];
 
@@ -57,11 +66,7 @@ export default function InformationView({ license_title, version, metadata_creat
                 <List.Item.Meta
                   title={item.label}
                   description={
-                    item?.type === "date"
-                      ? moment(item.value).format("MMMMM Do YYYY, h:mm:ss a")
-                      : item.value
-                      ? item.value
-                      : "No Data"
+                    item.value
                   }
                 />
               </List.Item>
