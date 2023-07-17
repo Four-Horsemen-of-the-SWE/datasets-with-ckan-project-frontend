@@ -19,7 +19,7 @@ export default function Register() {
   const onFinish = async(value) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users`,
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/`,
         {
           name: value.username,
           email: value.email,

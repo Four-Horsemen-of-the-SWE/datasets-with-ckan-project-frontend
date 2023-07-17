@@ -66,7 +66,7 @@ export default function InformationView({ license_title, version, metadata_creat
                 <List.Item.Meta
                   title={item.label}
                   description={
-                    item.value
+                    item.value ? item.value : 'No Data'
                   }
                 />
               </List.Item>
