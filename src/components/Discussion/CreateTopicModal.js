@@ -4,11 +4,17 @@ import { Avatar, Button, Form, Input, Modal, Radio } from "antd";
 export default function createTopicModal({ isOpen, close }) {
   return (
     <>
-      <Modal 
+      <Modal
         title="Create new topic"
         open={isOpen}
         onCancel={close}
         maskClosable={false}
+        footer={[
+          <Button size="large" onClick={() => close()}>
+            Cancel
+          </Button>,
+          <Button size="large" type="primary">Create Topic</Button>,
+        ]}
         centered
       >
         <Form layout="vertical">

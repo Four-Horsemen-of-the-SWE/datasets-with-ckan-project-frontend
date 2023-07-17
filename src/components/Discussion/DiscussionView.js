@@ -15,10 +15,12 @@ import {
   message,
   Form
 } from "antd";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 // import componests
 import CreateTopicModal from "./CreateTopicModal";
+import ViewTopic from "./ViewTopic";
 
 const { Title } = Typography;
 
@@ -37,7 +39,8 @@ const data = [
   },
 ];
 
-export default function DiscussionView({ dataset_id }) {
+export default function DiscussionView({ dataset_id, dataset_creator_user_id }) {
+  const { topic_id } = useParams();
   const [topic, setTopic] = useState([]);
   const [isCreateTopicModalShow, setIsTopicModalShow] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -66,6 +69,18 @@ export default function DiscussionView({ dataset_id }) {
   useEffect(() => {
     fetchTopics();
   }, []);
+
+  // return a topic's discussion
+  if (topic_id) {
+    return (
+      <>
+        <ViewTopic
+          topic_id={topic_id}
+          dataset_creator_user_id={dataset_creator_user_id}
+        />
+      </>
+    );
+  }
 
   return (
     <>
@@ -116,7 +131,7 @@ export default function DiscussionView({ dataset_id }) {
               >
                 <List.Item.Meta
                   avatar={<Avatar src={item?.user_image_url} />}
-                  title={<a href={`discussion/${item.id}`}>{item.title}</a>}
+                  title={<a href={`discussions/${item.id}`}>{item.title}</a>}
                   description="Ant Design, a design language for background applications, is refined by Ant UED Team"
                 />
               </List.Item>
