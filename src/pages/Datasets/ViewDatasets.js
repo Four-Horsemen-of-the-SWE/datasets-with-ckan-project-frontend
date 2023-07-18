@@ -149,7 +149,7 @@ export default function ViewDatasets() {
               loading={isBookmarking}
               onClick={() => handleBookmark()}
             >
-              Bookmark
+              {isBookmark ? "Bookmarked" : "Bookmark"}
             </Button>
             {auth()?.is_admin && (
               <Dropdown
