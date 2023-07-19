@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { StarOutlined, ToolOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message } from "antd";
+import { StarOutlined, ToolOutlined, DatabaseOutlined } from "@ant-design/icons";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb } from "antd";
 import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
@@ -140,7 +140,25 @@ export default function ViewDatasets() {
       <>
         {contextHolder}
         {isAuthenticated() && (
-          <div className="container mx-auto mt-4 w-100 flex justify-end gap-2 pe-9">
+          <div className="container mx-auto mt-4 w-100 flex justify-between items-center gap-2 pe-9">
+            {/* breadcrumb */}
+            <Breadcrumb
+              items={[
+                {
+                  title: (
+                    <>
+                      <DatabaseOutlined />
+                      <Link to="/datasets">Datasets</Link>
+                    </>
+                  ),
+                },
+                {
+                  title: datasets.name,
+                },
+              ]}
+            />
+
+            {/* bookmark button */}
             <Button
               type="primary"
               ghost={!isBookmark}
