@@ -16,6 +16,7 @@ export default function Home() {
   const [allDatasets, setAllDatasets] = useState([]);
   const [isHotestLoading, setIsHotestLoading] = useState(true);
   const [options, setOptions] = useState([]);
+  const [datasetsNumber, setDatasetsNumber] = useState(0);
   const [api, contextHolder] = notification.useNotification();
 
   const fetchHotestDatasets = async () => {
@@ -37,6 +38,19 @@ export default function Home() {
     }
   };
 
+  const fetchDatasetsNumber = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/number`
+      );
+      if(response.data.ok) {
+        setDatasetsNumber(response.data.result);
+      }
+    } catch(error) {
+      console.error(error.message);
+    }
+  }
+
   const handleSearch = async (value) => {
     try {
       const response = await axios.get(
@@ -52,6 +66,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchHotestDatasets();
+    fetchDatasetsNumber();
   }, []);
 
   return (
@@ -87,7 +102,7 @@ export default function Home() {
           "Inside our platform you'll find all the datasets you need to do with
           your data science work. Over{" "}
           <Title mark className="inline">
-            {5000}
+            {datasetsNumber}
           </Title>{" "}
           data."
         </Title>
