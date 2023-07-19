@@ -12,6 +12,7 @@ import Navbar from "./components/Navbar";
 import ViewDatasets from "./pages/Datasets/ViewDatasets";
 import Profile from "./pages/Profile/Profile";
 import AllDatasets from "./pages/Datasets/AllDatasets";
+import Dashboard from "./pages/Admin/Dashboard";
 
 function App() {
   return (
@@ -27,6 +28,11 @@ function App() {
         <Route path="/datasets/:datasets_id/discussions/:topic_id" element={<ViewDatasets />} />
         <Route path="/datasets/:datasets_id/settings" element={<ViewDatasets />} />
         <Route path="/profile/:username" element={<Profile />} />
+        <Route path={"/profile/:username/dashboard"} element={
+          <RequireAuth loginPath={"/login"}>
+            <Dashboard />
+          </RequireAuth>
+        } />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </>
