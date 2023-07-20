@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { StarOutlined, ToolOutlined, DatabaseOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb } from "antd";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb, Space } from "antd";
 import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
@@ -158,30 +158,32 @@ export default function ViewDatasets() {
               ]}
             />
 
-            {/* bookmark button */}
-            <Button
-              type="primary"
-              ghost={!isBookmark}
-              size="large"
-              icon={<StarOutlined />}
-              loading={isBookmarking}
-              onClick={() => handleBookmark()}
-            >
-              {isBookmark ? "Bookmarked" : "Bookmark"}
-            </Button>
-            {auth()?.is_admin && (
-              <Dropdown
-                menu={{
-                  items,
-                }}
-                trigger={["click"]}
-                placement="bottomLeft"
+            <Space>
+              {/* bookmark button */}
+              <Button
+                type="primary"
+                ghost={!isBookmark}
+                size="large"
+                icon={<StarOutlined />}
+                loading={isBookmarking}
+                onClick={() => handleBookmark()}
               >
-                <Button size="large" danger>
-                  <ToolOutlined />
-                </Button>
-              </Dropdown>
-            )}
+                {isBookmark ? "Bookmarked" : "Bookmark"}
+              </Button>
+              {auth()?.is_admin && (
+                <Dropdown
+                  menu={{
+                    items,
+                  }}
+                  trigger={["click"]}
+                  placement="bottomLeft"
+                >
+                  <Button size="large" danger>
+                    <ToolOutlined />
+                  </Button>
+                </Dropdown>
+              )}
+            </Space>
           </div>
         )}
 

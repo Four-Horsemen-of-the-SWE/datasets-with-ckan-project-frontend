@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Space, Typography, Select, Divider, Card, Empty, DatePicker, Button } from "antd";
+import { Col, Input, Row, Space, Typography, Select, Divider, Empty, DatePicker, Button, Checkbox, Collapse } from "antd";
 import axios from "axios";
 
 // import components
@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 const { Title, Text } = Typography;
 
 export default function AllDatasets() {
-
+  const [selectedTags, setSelectedTags] = useState([]);
   const [allDatasets, setAllDatasets] = useState([]);
   const [allTags, setAllTags] = useState([]);
 
@@ -38,6 +38,13 @@ export default function AllDatasets() {
       console.log(error)
     }
   }
+
+  const handleTagSelected = (tag, checked) => {
+    const nextSelectedTags = checked
+      ? [...selectedTags, tag]
+      : selectedTags.filter((t) => t !== tag);
+    setSelectedTags(nextSelectedTags);
+  };
 
   useEffect(() => {
     fetchDatasets();
@@ -89,71 +96,28 @@ export default function AllDatasets() {
       <Divider />
 
       <div className="container mx-auto">
-        <Row gutter={[30, 18]} justify="space-between" align="top">
-          <Col md={4} className="w-full">
-            <Space direction="vertical" className="w-full">
-              <Title level={5} style={{ marginTop: 0 }}>
-                Tags
-              </Title>
-              {/* tag list rendering */}
-              <div className="h-38 flex flex-col gap-2 overflow-y-auto">
-                {allTags.length ? (
-                  allTags.map((item, key) => (
-                    <Card
-                      bodyStyle={{
-                        padding: 6,
-                        width: "100%",
-                        backgroundColor: "#F7F9FC",
-                        cursor: "pointer",
-                      }}
-                      key={key}
-                    >
-                      {item}
-                    </Card>
-                  ))
-                ) : (
-                  <div className="w-full h-96 flex items-center justify-center">
-                    <Empty />
-                  </div>
-                )}
-              </div>
-              <Title level={5} style={{ marginTop: 5 }}>
-                Date
-              </Title>
-              <DatePicker.RangePicker size="large" placement="bottomRight" />
-              <div className="flex gap-2">
-                <Button danger block>
-                  Clear
-                </Button>
-                <Button block>Apply</Button>
-              </div>
-            </Space>
-          </Col>
-          <Col md={20}>
-            <Row gutter={[18, 18]}>
-              {allDatasets.length ? (
-                allDatasets.map((item, key) => (
-                  <Col xs={12} md={12} lg={6} key={key}>
-                    <DatasetsCard
-                      id={item.id}
-                      thumbnail={item?.thumbnail}
-                      title={item.title}
-                      notes={item.notes}
-                      metadata_modified={item.metadata_modified}
-                      author={item.author}
-                    />
-                  </Col>
-                ))
-              ) : (
-                <Col
-                  span={24}
-                  className="w-full h-96 flex items-center justify-center"
-                >
-                  <Empty />
-                </Col>
-              )}
-            </Row>
-          </Col>
+        <Row gutter={[18, 18]}>
+          {allDatasets.length ? (
+            allDatasets.map((item, key) => (
+              <Col xs={12} md={12} lg={6} key={key}>
+                <DatasetsCard
+                  id={item.id}
+                  thumbnail={item?.thumbnail}
+                  title={item.title}
+                  notes={item.notes}
+                  metadata_modified={item.metadata_modified}
+                  author={item.author}
+                />
+              </Col>
+            ))
+          ) : (
+            <Col
+              span={24}
+              className="w-full h-96 flex items-center justify-center"
+            >
+              <Empty />
+            </Col>
+          )}
         </Row>
       </div>
     </>
