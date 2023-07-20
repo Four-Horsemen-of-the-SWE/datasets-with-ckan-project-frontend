@@ -1,23 +1,29 @@
-import { CloudDownloadOutlined } from "@ant-design/icons";
-import { Alert, Card, Typography, Tag, Space, Table, Button, Tooltip } from "antd"
+import { useAuthUser } from "react-auth-kit";
+import { CloudDownloadOutlined, PlusOutlined } from "@ant-design/icons";
+import { Alert, Typography, Space, Table, Button, Tooltip } from "antd";
 import moment from "moment/moment";
 import { filesize } from "filesize";
 import axios from "axios";
 
-const { Title, Text } = Typography
+const { Title, Text } = Typography;
 
-export default function ResourceView({ dataset_id, resource }) {
+export default function ResourceView({
+  creator_user_id,
+  dataset_id,
+  resource,
+}) {
+  const auth = useAuthUser();  
 
-  const handleDownload = async(url) => {
+  const handleDownload = async (url) => {
     try {
       window.open(url, "_blank");
       await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
       );
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const columns = [
     {
@@ -65,8 +71,15 @@ export default function ResourceView({ dataset_id, resource }) {
   return (
     <>
       <div className="container mx-auto">
-        <Title level={3}>Resource</Title>
-        <Text type="secondary">{resource.length} Resources</Text>
+        <div className="flex items-center justify-between">
+          <Space direction="vertical">
+            <Title level={3}>Resource</Title>
+            <Text type="secondary">{resource.length} Resources</Text>
+          </Space>
+          {auth()?.id === creator_user_id && (
+            <Button icon={<PlusOutlined />}>New File</Button>
+          )}
+        </div>
 
         {/* if data is empty */}
         {!resource.length && (
