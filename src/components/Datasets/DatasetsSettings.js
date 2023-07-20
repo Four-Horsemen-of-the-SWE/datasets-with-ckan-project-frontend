@@ -37,6 +37,7 @@ export default function DatasetsSettings({ datasets }) {
   const [thumbnail, setThumbnail] = useState(datasets?.thumbnail);
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
   const [confirmName, setConfirmName] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const authHeader = useAuthHeader();
 
@@ -124,7 +125,7 @@ export default function DatasetsSettings({ datasets }) {
   }
 
   const deleteDataset = async() => {
-    console.log(datasets.name, confirmName)
+    setIsDeleting(true);
     if(datasets.name === confirmName) {
       try {
         const response = await axios.delete(
@@ -145,6 +146,8 @@ export default function DatasetsSettings({ datasets }) {
             window.location.href = "/datasets";
           }, 1200);
         }
+
+        // setIsDeleting(false);
       } catch (error) {
         console.log(error);
       }
@@ -153,6 +156,7 @@ export default function DatasetsSettings({ datasets }) {
         type: "warning",
         content: "Dataset name not match."
       })
+      setIsDeleting(false);
     }
   }
 
@@ -165,7 +169,7 @@ export default function DatasetsSettings({ datasets }) {
         onCancel={() => setIsDeleteModalShow(false)}
         footer={[
           <Button onClick={() => setIsDeleteModalShow(false)}>Cancel</Button>,
-          <Button type="primary" onClick={() => deleteDataset()} danger>
+          <Button type="primary" onClick={() => deleteDataset()} loading={isDeleting} danger={true}>
             Delete
           </Button>,
         ]}
