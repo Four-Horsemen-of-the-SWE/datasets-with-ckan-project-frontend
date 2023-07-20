@@ -1,46 +1,67 @@
 import { CloudDownloadOutlined } from "@ant-design/icons";
-import { Alert, Card, Typography, Tag, Space, Table } from "antd"
+import { Alert, Card, Typography, Tag, Space, Table, Button, Tooltip } from "antd"
 import moment from "moment/moment";
 import { filesize } from "filesize";
+import axios from "axios";
 
 const { Title, Text } = Typography
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-    sorter: (a, b) => a.name.length - b.name.length,
-    sortDirections: ["descend"],
-    render: (text) => <b>{text}</b>,
-  },
-  {
-    title: "Last Modified",
-    dataIndex: "last_modified",
-    key: "last_modified",
-    render: (text) => moment(text).format("LL"),
-  },
-  {
-    title: "File Size",
-    dataIndex: "size",
-    key: "size",
-    sorter: (a, b) => a.size - b.size,
-    sortDirections: ["descend"],
-    render: (text) => filesize(text),
-  },
-  {
-    title: "Download",
-    dataIndex: "url",
-    key: "url",
-    width: "10px",
-    align: "center",
-    render: (url) => <a href={url}>
-      <CloudDownloadOutlined />
-    </a>
-  }
-];
+export default function ResourceView({ dataset_id, resource }) {
 
-export default function ResourceView({ resource }) {
+  const handleDownload = async(url) => {
+    try {
+      window.open(url, "_blank");
+      await axios.post(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
+      );
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortDirections: ["descend"],
+      render: (text) => <b>{text}</b>,
+    },
+    {
+      title: "Last Modified",
+      dataIndex: "last_modified",
+      key: "last_modified",
+      render: (text) => moment(text).format("LL"),
+    },
+    {
+      title: "File Size",
+      dataIndex: "size",
+      key: "size",
+      sorter: (a, b) => a.size - b.size,
+      sortDirections: ["descend"],
+      render: (text) => filesize(text),
+    },
+    {
+      title: "Download",
+      dataIndex: "url",
+      key: "url",
+      width: "10px",
+      align: "center",
+      render: (url) => (
+        <Tooltip title="Click to Download">
+          <Button
+            icon={<CloudDownloadOutlined />}
+            onClick={() => handleDownload(url)}
+            shape="circle"
+            size="small"
+            type="primary"
+          />
+        </Tooltip>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="container mx-auto">

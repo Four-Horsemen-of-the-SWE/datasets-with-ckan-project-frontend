@@ -228,7 +228,7 @@ export default function ViewDatasets() {
             <TabPane tab="Data" key="data">
               <Row gutter={18}>
                 <Col sm={24} md={20}>
-                  <ResourceView resource={datasets?.resources} />
+                  <ResourceView dataset_id={datasets.id} resource={datasets?.resources} />
                 </Col>
                 <Col sm={24} md={4}>
                   <InformationView
