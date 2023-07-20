@@ -60,6 +60,13 @@ export default function Navbar() {
             >
               Datasets
             </Link>
+            <Link
+              href="/article"
+              className="ml-2 sm:ml-4"
+              style={{ color: "#000", textTransform: "uppercase" }}
+            >
+              Article
+            </Link>
           </div>
           <div className="flex items-center sm:mt-0">
             <div className="flex sm:mt-0 ml-2 sm:ml-4 items-center">
