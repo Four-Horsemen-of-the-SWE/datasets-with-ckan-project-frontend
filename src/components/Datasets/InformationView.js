@@ -1,25 +1,30 @@
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { List, Space, Statistic, Tag, Typography } from "antd";
+import { List, Space, Spin, Statistic, Tag, Typography } from "antd";
 import moment from "moment";
 import "moment-timezone";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 
 const downloaded_data = {
-  labels: ["January", "February", "March", "April", "May"],
+  labels: ["2023-07-20"],
   datasets: [
     {
-      label: "Donwloaded",
+      label: "Downloaded",
       backgroundColor: "#1677FF",
       borderColor: "#1677FF",
       borderWidth: 2,
-      data: [65, 59, 80, 81, 56],
+      data: [4],
     },
   ],
 };
 
-export default function InformationView({ license_title, version, metadata_created, metadata_modified, tags }) {
+export default function InformationView({ dataset_id, license_title, version, metadata_created, metadata_modified, tags }) {
+  const [downloadStatistic, setDownloadStatistic] = useState({});
+  const [downloadStatisticSuccess, setDownloadStatisticSuccess] = useState(false);
+  
   const format_date = (date) => {
     const result = moment.utc(date).toDate() &&
       moment(moment.utc(date).toDate()).format(
@@ -49,6 +54,40 @@ export default function InformationView({ license_title, version, metadata_creat
     },
   ];
 
+  const fetchDownloadStatistic = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
+      );
+      if (response.data.ok) {
+        setDownloadStatistic({
+          labels: response.data.result.map((item) =>
+            moment(item.download_date).format('LL')
+          ),
+          datasets: [
+            {
+              label: "Download",
+              backgroundColor: "#1677FF",
+              borderColor: "#1677FF",
+              borderWidth: 2,
+              data: response.data.result.map((item) => item.download_count),
+            },
+          ],
+          total_download: response.data.total_download,
+        });
+        setDownloadStatisticSuccess(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  console.log(downloadStatistic)
+
+  useEffect(() => {
+    fetchDownloadStatistic();
+  }, []);
+
   return (
     <>
       <div className="container mx-auto">
@@ -65,9 +104,7 @@ export default function InformationView({ license_title, version, metadata_creat
               <List.Item>
                 <List.Item.Meta
                   title={item.label}
-                  description={
-                    item.value ? item.value : 'No Data'
-                  }
+                  description={item.value ? item.value : "No Data"}
                 />
               </List.Item>
             )}
@@ -76,7 +113,7 @@ export default function InformationView({ license_title, version, metadata_creat
           {/* TAGS HERE */}
           <Space direction="vertical">
             <Title level={5}>Tags</Title>
-            <div className="flex flex-wrap">
+            <div className="flex flex-wrap gap-1">
               {tags?.map((item, key) => (
                 <Tag color="magenta" key={key}>
                   {item.display_name}
@@ -85,27 +122,30 @@ export default function InformationView({ license_title, version, metadata_creat
             </div>
           </Space>
 
-          <Space direction="vertical" className="w-full">
-            {/* downloaded statistic */}
-            <Statistic title="Downloaded" value={25668} />
-
-            <Line
-              data={downloaded_data}
-              options={{
-                title: {
-                  display: true,
-                  text: "Average Rainfall per month",
-                  fontSize: 20,
-                },
-                legend: {
-                  display: true,
-                  position: "right",
-                },
-                maintainAspectRatio: false,
-                responsive: true,
-              }}
-            />
-          </Space>
+          {/* downloaded statistic */}
+          {downloadStatisticSuccess ? (
+            <Space direction="vertical" className="w-full">
+              <Statistic title="Downloaded" value={downloadStatistic.total_download} />
+              <Line
+                data={downloadStatistic}
+                options={{
+                  title: {
+                    display: true,
+                    text: "Download",
+                    fontSize: 20,
+                  },
+                  legend: {
+                    display: true,
+                    position: "right",
+                  },
+                  maintainAspectRatio: false,
+                  responsive: true,
+                }}
+              />
+            </Space>
+          ) : (
+            <Spin size="large" />
+          )}
 
           {/* favorite (bookmarked) statistic */}
           <Statistic title="Bookmarked" value={14538} />

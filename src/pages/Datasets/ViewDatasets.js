@@ -232,6 +232,7 @@ export default function ViewDatasets() {
                 </Col>
                 <Col sm={24} md={4}>
                   <InformationView
+                    dataset_id={datasets.id}
                     license_title={datasets.license_title}
                     version={datasets.version}
                     metadata_created={datasets.metadata_created}
