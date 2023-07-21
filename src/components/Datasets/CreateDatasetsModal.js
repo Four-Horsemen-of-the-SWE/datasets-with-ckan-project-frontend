@@ -114,6 +114,12 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
             window.location.href = `/datasets/${response.data.result.id}`;
           }, 1200);
         }
+      } else {
+        messageApi.open({
+          type: "error",
+          content: response.data?.message
+        }); 
+        setIsCreating(false);
       }
     } catch (error) {
       messageApi.open({
