@@ -3,7 +3,7 @@ import { useCreateModalStore } from "../../store";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List } from "antd";
 import { useEffect, useState } from "react";
-import { useIsAuthenticated, useAuthHeader } from "react-auth-kit";
+import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";
 import axios from "axios";
 
 const { Title, Paragraph } = Typography;
@@ -11,6 +11,7 @@ const { Title, Paragraph } = Typography;
 export default function Profile() {
   document.title = "Datasets";
 
+  const auth = useAuthUser();
   const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
@@ -103,7 +104,7 @@ export default function Profile() {
                 {userDetails.about ? userDetails.about : "No Bio"}
               </Title>
 
-              {isAuthenticated() && (
+              {auth()?.id === userDetails.id && (
                 <>
                   <Divider>Options</Divider>
 
