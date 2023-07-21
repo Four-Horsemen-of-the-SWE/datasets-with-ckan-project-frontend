@@ -5,9 +5,23 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { useSignOut, useAuthUser } from "react-auth-kit";
-import { Button, Drawer, List, Space, Popconfirm, Typography } from "antd"
+import { Button, Drawer, List, Space, Popconfirm, Typography, Avatar } from "antd"
 
 const { Link } = Typography
+
+const ProfileBox = ({ image_url, username, fullname }) => {
+  return (
+    <div className="flex items-center justify-start gap-4">
+      <Avatar size="large" src={image_url} alt="user profile" />
+      <div className="flex flex-col">
+        <b>{username}</b>
+        <small className="text-slate-600 font-normal">
+          {fullname}
+        </small>
+      </div>
+    </div>
+  );
+}
 
 export default function DrawerView({ isDrawerOpen, close }) {
   const signOut = useSignOut();
@@ -63,7 +77,7 @@ export default function DrawerView({ isDrawerOpen, close }) {
 
   return (
     <Drawer
-      title="Profile"
+      title={<ProfileBox image_url={auth().image_url} username={auth().name}  fullname={auth().fullname} />}
       placement="right"
       open={isDrawerOpen}
       onClose={close}
