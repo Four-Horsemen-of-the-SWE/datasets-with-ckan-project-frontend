@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useCreateModalStore } from "../../store";
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List } from "antd";
+import { PlusOutlined, EditOutlined, DatabaseOutlined, BookOutlined } from "@ant-design/icons";
+import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";
 import axios from "axios";
 
+const { TabPane } = Tabs;
 const { Title, Paragraph } = Typography;
 
 export default function Profile() {
@@ -93,6 +94,7 @@ export default function Profile() {
       <>
         <section className="container mx-auto">
           <Row gutter={[32, 15]} justify="space-between" className="my-10">
+            {/* user details */}
             <Col xs={24} xl={6} className="text-center">
               <Avatar
                 src={userDetails.image_display_url}
@@ -108,12 +110,12 @@ export default function Profile() {
                 <>
                   <Divider>Options</Divider>
 
-                  <Space direction="vertical" className="w-full">
+                  <Space className="w-full">
                     <Button
                       icon={<PlusOutlined />}
                       size="large"
                       type="primary"
-                      block
+                      className="w-full"
                       onClick={() => setIsCreateModalShow(!isCreateModalShow)}
                     >
                       Create Datasets
@@ -122,7 +124,7 @@ export default function Profile() {
                       icon={<EditOutlined />}
                       size="large"
                       type="dashed"
-                      block
+                      className="w-full"
                     >
                       Edit Profile
                     </Button>
@@ -130,78 +132,83 @@ export default function Profile() {
                 </>
               )}
             </Col>
+
+            {/* data */}
             <Col xs={24} xl={18}>
-              {/* datasets */}
-              <Title level={4} type="secondary" style={{ margin: 0 }}>
-                Datasets
-              </Title>
-
-              {/* render user's datasets here */}
-              {datasets.length ? (
-                <List
-                  size="small"
-                  bordered
-                  dataSource={datasets}
-                  className="mt-3"
-                  renderItem={(item, index) => (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={
-                          <a href={`/datasets/${item.id}`}>{item.name}</a>
-                        }
-                        description={
-                          item.notes ? (
-                            <Paragraph ellipsis={{ rows: 1 }}>
-                              {item.notes}
-                            </Paragraph>
-                          ) : (
-                            "No Description"
-                          )
-                        }
-                      />
-                    </List.Item>
+              <Tabs defaultActiveKey="datasets" size="large">
+                {/* datasets */}
+                <TabPane ane tab="Datasets" key="datasets">
+                  {/* render user's datasets here */}
+                  {datasets.length ? (
+                    <List
+                      size="small"
+                      bordered
+                      dataSource={datasets}
+                      className="mt-3"
+                      renderItem={(item, index) => (
+                        <List.Item>
+                          <List.Item.Meta
+                            title={
+                              <a href={`/datasets/${item.id}`}>{item.name}</a>
+                            }
+                            description={
+                              item.notes ? (
+                                <Paragraph ellipsis={{ rows: 1 }}>
+                                  {item.notes}
+                                </Paragraph>
+                              ) : (
+                                "No Description"
+                              )
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  ) : (
+                    <Empty description="No Datasets" />
                   )}
-                />
-              ) : (
-                <Empty description="No Datasets" />
-              )}
+                </TabPane>
 
-              <Divider />
-
-              {/* bookmarks */}
-              <Title level={4} type="secondary" style={{ margin: 0 }}>
-                Bookmark
-              </Title>
-
-              {/* render user's bookmarks here */}
-              {bookmarks.length ? (
-                <List
-                  size="small"
-                  bordered
-                  dataSource={bookmarks}
-                  className="mt-3"
-                  renderItem={(item, index) => (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={
-                          <a href={`/datasets/${item.name}`}>{item.name}</a>
-                        }
-                        description={
-                          item.notes ? (
-                            <Paragraph ellipsis={{ rows: 1 }}>
-                              {item.notes}
-                            </Paragraph>
-                          ) : (
-                            "No Description"
-                          )
-                        }
-                      />
-                    </List.Item>
+                {/* bookmarks */}
+                <TabPane tab="Bookmarks" key="bookmarks">
+                  {/* render user's bookmarks here */}
+                  {bookmarks.length ? (
+                    <List
+                      size="small"
+                      bordered
+                      dataSource={bookmarks}
+                      className="mt-3"
+                      renderItem={(item, index) => (
+                        <List.Item>
+                          <List.Item.Meta
+                            title={
+                              <a href={`/datasets/${item.name}`}>{item.name}</a>
+                            }
+                            description={
+                              item.notes ? (
+                                <Paragraph ellipsis={{ rows: 1 }}>
+                                  {item.notes}
+                                </Paragraph>
+                              ) : (
+                                "No Description"
+                              )
+                            }
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  ) : (
+                    <Empty description="No Bookmarked Datasets" />
                   )}
-                />
-              ) : (
-                <Empty description="No Bookmarked Datasets" />
-              )}
+                </TabPane>
+
+                {/* articles */}
+                <TabPane
+                  tab="Articles"
+                  key="articles"
+                  disabled={true}
+                ></TabPane>
+              </Tabs>
             </Col>
           </Row>
         </section>
