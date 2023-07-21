@@ -48,7 +48,7 @@ export default function DrawerView({ isDrawerOpen, close }) {
         <Popconfirm
           title="Logout ?"
           description="Are you sure to logout ?"
-          placement="right"
+          placement="bottomLeft"
           onConfirm={signOutHandle}
           okText="Yes"
           cancelText="No"
