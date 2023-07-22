@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
 import {
@@ -12,10 +12,8 @@ import {
   Empty,
   DatePicker,
   Button,
-  Checkbox,
-  Collapse,
+  message,
   Card,
-  List,
   Tag,
   AutoComplete,
 } from "antd";
@@ -23,7 +21,6 @@ import axios from "axios";
 
 // import components
 import DatasetsCard from "../../components/Card/DatasetsCard";
-import { useEffect, useState } from "react";
 
 const { Title, Text } = Typography;
 
@@ -81,13 +78,16 @@ const license_data = [
 ];
 
 export default function AllDatasets() {
-  const selectedTagsRef = useRef([]);
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState([]);
   const [allDatasets, setAllDatasets] = useState([]);
+  // tags
   const [allTags, setAllTags] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [messageApi, contextHolder] = message.useMessage();
 
   const fetchDatasets = async () => {
     try {
@@ -116,15 +116,69 @@ export default function AllDatasets() {
   };
 
   const handleFilterSelected = (key, item) => {
-    // get current params
-    const params = new URLSearchParams(location.search);
-    // apeend with new params
-    params.append(key, item);
+    let params = new URLSearchParams(location.search);
 
-    selectedTagsRef.current.push(item);
-    // update current params
+    // Check if the incoming key and value already exist in the selectedFilter
+    const filterIndex = selectedFilter.findIndex(
+      (selectedItem) => selectedItem[key] === item
+    );
+
+    if (filterIndex === -1) {
+      // If not in the list, add it to the selectedItems and update the URL
+      setSelectedFilter([...selectedFilter, { [key]: item }]);
+      params.append(key, item);
+    } else {
+      // If already in the list, remove it from the selectedItems and the URL
+      setSelectedFilter(
+        selectedFilter.filter((selectedItem) => selectedItem[key] !== item)
+      );
+
+      // Manually remove all occurrences of the specified key-value pair from the URL
+      const updatedParams = new URLSearchParams();
+      for (const [paramKey, paramValue] of params.entries()) {
+        if (paramKey === key && paramValue === item) {
+          // Skip the key-value pair to remove it
+          continue;
+        }
+        updatedParams.append(paramKey, paramValue);
+      }
+      // Update the params with the updated values
+      params = updatedParams;
+    }
+
+    // Update the current params and navigate to the new URL
     navigate({ search: "?" + params.toString() });
   };
+
+  const handleClearFilter = () => {
+    // clear all selected items
+    setSelectedFilter([]);
+
+    // then set new path
+    window.history.replaceState(null, "", `/datasets?q=${searchName}`);
+  }
+
+  const handleSearch = async (name) => {
+    setSearchName(name);
+    // update the query param in URL
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set("q", name);
+    navigate({ search: queryParams.toString() });
+
+    // search from api
+    try {
+      const tag_list = selectedFilter.map((item) =>`${Object.keys(item)}=${encodeURIComponent(Object.values(item))}`).join("&");
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&${tag_list}`
+      );
+      if (response.data.ok) {
+        setAllDatasets(response.data.result);
+      }
+      console.log(response.data)
+    } catch (error) {
+      messageApi.error("Searcing Error...");
+    }
+  }
 
   useEffect(() => {
     fetchDatasets();
@@ -133,6 +187,7 @@ export default function AllDatasets() {
 
   return (
     <>
+      {contextHolder}
       <div className="container mx-auto">
         <Row justify="center" align="bottom" gutter={18}>
           <Col sm={24} md={9}>
@@ -153,6 +208,7 @@ export default function AllDatasets() {
                 size="large"
                 placeholder="Search datasets"
                 style={{ width: "100%" }}
+                onChange={(e) => handleSearch(e.target.value)}
               />
               <Select
                 defaultValue="hotest"
@@ -180,8 +236,6 @@ export default function AllDatasets() {
           {/* show filter options, such asssssss date, tag, license */}
           <Col xs={24} lg={6}>
             <Card>
-              <div>Selected Tags: {selectedTagsRef.current.join(", ")}</div>
-
               {/* Tag Section */}
               <div className="mb-10">
                 <Title level={5} style={{ marginTop: 0 }}>
@@ -248,13 +302,21 @@ export default function AllDatasets() {
               </div>
 
               {/* Clear button */}
-              <Button block={true} danger={true}>
+              <Button block={true} danger={true} onClick={() => handleClearFilter()}>
                 Clear
               </Button>
             </Card>
           </Col>
           {/* show all datasets in database (ckan) */}
           <Col xs={24} lg={18}>
+            <div className="container mx-auto mb-4 -mt-2 flex justify-between items-center">
+              <div>Datasets {6}</div>
+              <div>
+                {selectedFilter.map((item) => (
+                  <Tag closable>{Object.values(item)}</Tag>
+                ))}
+              </div>
+            </div>
             <Row gutter={[18, 18]}>
               {allDatasets.length ? (
                 allDatasets.map((item, key) => (
