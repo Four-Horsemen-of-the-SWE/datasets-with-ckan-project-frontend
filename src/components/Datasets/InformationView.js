@@ -8,19 +8,6 @@ import axios from "axios";
 
 const { Title, Text } = Typography;
 
-const downloaded_data = {
-  labels: ["2023-07-20"],
-  datasets: [
-    {
-      label: "Downloaded",
-      backgroundColor: "#1677FF",
-      borderColor: "#1677FF",
-      borderWidth: 2,
-      data: [4],
-    },
-  ],
-};
-
 export default function InformationView({ dataset_id, license_title, version, metadata_created, metadata_modified, tags }) {
   const [downloadStatistic, setDownloadStatistic] = useState({});
   const [downloadStatisticSuccess, setDownloadStatisticSuccess] = useState(false);
@@ -82,8 +69,6 @@ export default function InformationView({ dataset_id, license_title, version, me
     }
   };
 
-  console.log(downloadStatistic)
-
   useEffect(() => {
     fetchDownloadStatistic();
   }, []);
@@ -125,7 +110,10 @@ export default function InformationView({ dataset_id, license_title, version, me
           {/* downloaded statistic */}
           {downloadStatisticSuccess ? (
             <Space direction="vertical" className="w-full">
-              <Statistic title="Downloaded" value={downloadStatistic.total_download} />
+              <Statistic
+                title="Downloaded"
+                value={downloadStatistic.total_download}
+              />
               <Line
                 data={downloadStatistic}
                 options={{
@@ -140,6 +128,19 @@ export default function InformationView({ dataset_id, license_title, version, me
                   },
                   maintainAspectRatio: false,
                   responsive: true,
+                  scales: {
+                    y: {
+                      ticks: {
+                        beginAtZero: false,
+                        stepSize: 1,
+                        callback: function (value) {
+                          if (value % 1 === 0) {
+                            return value;
+                          }
+                        },
+                      },
+                    },
+                  },
                 }}
               />
             </Space>
