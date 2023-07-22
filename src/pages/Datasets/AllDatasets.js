@@ -1,10 +1,29 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Col, Input, Row, Space, Typography, Select, Divider, Empty, DatePicker, Button, Checkbox, Collapse, Card, List, Tag, AutoComplete } from "antd";
+import React, { useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { SearchOutlined } from "@ant-design/icons";
+import {
+  Col,
+  Input,
+  Row,
+  Space,
+  Typography,
+  Select,
+  Divider,
+  Empty,
+  DatePicker,
+  Button,
+  Checkbox,
+  Collapse,
+  Card,
+  List,
+  Tag,
+  AutoComplete,
+} from "antd";
 import axios from "axios";
 
 // import components
 import DatasetsCard from "../../components/Card/DatasetsCard";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const { Title, Text } = Typography;
 
@@ -62,47 +81,55 @@ const license_data = [
 ];
 
 export default function AllDatasets() {
+  const selectedTagsRef = useRef([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [allDatasets, setAllDatasets] = useState([]);
   const [allTags, setAllTags] = useState([]);
 
-  const fetchDatasets = async() => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const fetchDatasets = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
       );
-      if(response.status === 200) {
-        setAllDatasets(response.data.result)
+      if (response.status === 200) {
+        setAllDatasets(response.data.result);
       }
-    } catch(error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
 
-  const fetchTags = async() => {
+  const fetchTags = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/tags`
       );
-      if(response.status === 200) {
-        setAllTags(response.data.result)
+      if (response.status === 200) {
+        setAllTags(response.data.result);
       }
-    } catch(error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
 
-  const handleTagSelected = (tag, checked) => {
-    const nextSelectedTags = checked
-      ? [...selectedTags, tag]
-      : selectedTags.filter((t) => t !== tag);
-    setSelectedTags(nextSelectedTags);
+  const handleFilterSelected = (key, item) => {
+    // get current params
+    const params = new URLSearchParams(location.search);
+    // apeend with new params
+    params.append(key, item);
+
+    selectedTagsRef.current.push(item);
+    // update current params
+    navigate({ search: "?" + params.toString() });
   };
 
   useEffect(() => {
     fetchDatasets();
     fetchTags();
-  }, [])
+  }, []);
 
   return (
     <>
@@ -153,6 +180,8 @@ export default function AllDatasets() {
           {/* show filter options, such asssssss date, tag, license */}
           <Col xs={24} lg={6}>
             <Card>
+              <div>Selected Tags: {selectedTagsRef.current.join(", ")}</div>
+
               {/* Tag Section */}
               <div className="mb-10">
                 <Title level={5} style={{ marginTop: 0 }}>
@@ -172,6 +201,7 @@ export default function AllDatasets() {
                         borderRadius: "7px",
                         cursor: "pointer",
                       }}
+                      onClick={() => handleFilterSelected("tags", item)}
                     >
                       {item}
                     </div>
@@ -198,6 +228,7 @@ export default function AllDatasets() {
                         borderRadius: "7px",
                         cursor: "pointer",
                       }}
+                      onClick={() => handleFilterSelected("licenses", item)}
                     >
                       {item}
                     </div>

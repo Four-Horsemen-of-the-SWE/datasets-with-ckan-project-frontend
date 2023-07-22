@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   LockOutlined,
   UserOutlined,
@@ -6,6 +7,7 @@ import {
   MailOutlined,
 } from "@ant-design/icons";
 import { Form, Input, Button, Typography, message } from "antd";
+import { useIsAuthenticated } from "react-auth-kit";
 import axios from "axios";
 
 const { Title, Text, Link } = Typography;
@@ -13,10 +15,11 @@ const { Title, Text, Link } = Typography;
 export default function Register() {
   document.title = "Register";
 
+  const isLogin = useIsAuthenticated();
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
-  const onFinish = async(value) => {
+  const onFinish = async (value) => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/`,
@@ -25,26 +28,32 @@ export default function Register() {
           email: value.email,
           fullname: value.fullname,
           password: value.password,
-          image_url: value.image_url
+          image_url: value.image_url,
         }
-      )
+      );
 
-      console.log(response)
-      if(response.status === 200) {
+      console.log(response);
+      if (response.status === 200) {
         messageApi.success("Register Success");
 
         setTimeout(() => {
-          window.location.replace('/login')
+          window.location.replace("/login");
         }, 1200);
       }
-    } catch(error) {
+    } catch (error) {
       messageApi.error(error.message);
     }
   };
 
   const onFinishFailed = (errorInfo) => {
-    messageApi.error('Please fill out all required fields.');
+    messageApi.error("Please fill out all required fields.");
   };
+
+  useEffect(() => {
+    if (isLogin()) {
+      window.location.href = "/";
+    }
+  }, []);
 
   return (
     <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 lg:flex">
@@ -134,7 +143,7 @@ export default function Register() {
         <Form.Item name="image_url">
           <Input
             prefix={<CameraOutlined />}
-            placeholder="Image URL"
+            placeholder="Image URL (https://example.com)"
             size="large"
           />
         </Form.Item>
