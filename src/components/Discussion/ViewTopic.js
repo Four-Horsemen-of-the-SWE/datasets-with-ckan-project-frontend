@@ -6,7 +6,7 @@ import {
   CalendarOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag, Tooltip, message, Form } from "antd";
+import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag, Tooltip, message, Form, Popconfirm } from "antd";
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -98,11 +98,35 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
     }
   }
 
+  const handleDeleteComment = async(comment_id) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${comment_id}`,
+        {
+          headers: {
+            Authorization: JWTToken
+          }
+        }
+      );
+
+      if(response.data.ok) {
+        messageApi.success("Delete success.");
+
+        // rhen remove from state
+        const new_comments = discussion.comments.filter(item => item.id !== response.data.result)
+        setDiscussion({
+          ...discussion,
+          comments: new_comments
+        })
+      }
+    } catch(error) {
+      messageApi.error(error.message);
+    }
+  }
+
   useEffect(() => {
     fetchDiscussion();
   }, []);
-
-  console.log(discussion)
 
   return (
     <>
@@ -148,7 +172,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       <Title level={4} style={{ marginTop: 0 }}>
         <Space>
           <CommentOutlined />
-          <p>{discussion.comments_count} Comments</p>
+          <p>{discussion.comments?.length} Comments</p>
         </Space>
       </Title>
 
@@ -169,14 +193,22 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
             extra={
               <>
                 {auth()?.id === item.user_id && (
-                  <Button
-                    shape="square"
-                    type="dashed"
-                    danger={true}
-                    size="small"
+                  <Popconfirm
+                    title="Delete this comment ?"
+                    description="Are you sure to delete this"
+                    icon={<DeleteOutlined style={{ color: "red" }} />}
+                    placement="right"
+                    onConfirm={() => handleDeleteComment(item.id)}
                   >
-                    <DeleteOutlined />
-                  </Button>
+                    <Button
+                      shape="square"
+                      type="dashed"
+                      danger={true}
+                      size="small"
+                    >
+                      <DeleteOutlined />
+                    </Button>
+                  </Popconfirm>
                 )}
               </>
             }
@@ -259,16 +291,14 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
           </Form.Item>
         </div>
         <Form.Item style={{ alignSelf: "end" }}>
-          <Tooltip title="Add Comment." placement="left">
-            <Button
-              type="primary"
-              size="large"
-              className="self-end"
-              htmlType="submit"
-            >
-              Create Comment
-            </Button>
-          </Tooltip>
+          <Button
+            type="primary"
+            size="large"
+            className="self-end"
+            htmlType="submit"
+          >
+            Create Comment
+          </Button>
         </Form.Item>
       </Form>
     </>
