@@ -77,7 +77,7 @@ export default function DrawerView({ isDrawerOpen, close }) {
 
   return (
     <Drawer
-      title={<ProfileBox image_url={auth().image_url} username={auth().name}  fullname={auth().fullname} />}
+      title={<ProfileBox image_url={auth()?.image_url} username={auth()?.name}  fullname={auth()?.fullname} />}
       placement="right"
       open={isDrawerOpen}
       onClose={close}

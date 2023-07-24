@@ -1,14 +1,26 @@
 import { CaretUpOutlined, CaretDownOutlined, CommentOutlined, LeftOutlined, CalendarOutlined } from "@ant-design/icons";
-import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag } from "antd";
+import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag, Tooltip, message } from "antd";
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuthUser } from "react-auth-kit";
 
 const { Title, Paragraph } = Typography;
 
+const IconText = ({ icon, text }) => (
+  <Space>
+    {React.createElement(icon)}
+    {text}
+  </Space>
+);
+
 export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
+  const auth = useAuthUser();
+
+  const [messageApi, contextHolder] = message.useMessage();
   const [discussion, setDiscussion] = useState({});
+
   const fetchDiscussion = async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/topic/${topic_id}`
@@ -18,12 +30,21 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
     }
   };
 
-  const IconText = ({ icon, text }) => (
-    <Space>
-      {React.createElement(icon)}
-      {text}
-    </Space>
-  );
+  const handleCreateComment = async() => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${topic_id}`
+      );
+
+      if(response.data.ok) {
+        messageApi.success("Create comment success.");
+        // if success. then add new comment into state
+        setDiscussion(prevState => [...prevState, response.data.result])
+      }
+    } catch(error) {
+      messageApi.error(error.message);
+    }
+  }
 
   useEffect(() => {
     fetchDiscussion();
@@ -31,6 +52,8 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
 
   return (
     <>
+      {contextHolder}
+
       <Link
         to={`/${window.location.pathname.split("/").slice(1, 4).join("/")}`}
       >
@@ -42,7 +65,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       <Card bordered={true}>
         <div className="flex justify-between w-full items-center space-x-4">
           <Space split="•">
-            <Avatar />
+            <Avatar src={discussion.user_image_url} />
             <small>{discussion.user_name}</small>
             <Tag color="green">DATASET CREATOR</Tag>
           </Space>
@@ -102,6 +125,25 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
           </List.Item>
         )}
       />
+
+      <Divider />
+
+      {/* create comment section */}
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2 items-start">
+          <Avatar src={auth()?.image_url} />
+          <Input.TextArea
+            rows={6}
+            placeholder="Reply to comments on this topic."
+            size="large"
+          />
+        </div>
+        <Tooltip title="Add Comment." placement="left">
+          <Button type="primary" size="large" className="self-end">
+            Create Comment
+          </Button>
+        </Tooltip>
+      </div>
     </>
   );
 }

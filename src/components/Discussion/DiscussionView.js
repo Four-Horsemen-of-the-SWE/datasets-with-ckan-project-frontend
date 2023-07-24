@@ -13,9 +13,11 @@ import {
   Space,
   Empty,
   message,
-  Form
+  Form,
+  Tag
 } from "antd";
 import { useParams } from "react-router-dom";
+import { useAuthUser } from "react-auth-kit";
 import axios from "axios";
 
 // import componests
@@ -40,6 +42,8 @@ const data = [
 ];
 
 export default function DiscussionView({ dataset_id, dataset_creator_user_id }) {
+  const auth = useAuthUser();
+
   const { topic_id } = useParams();
   const [topic, setTopic] = useState([]);
   const [isCreateTopicModalShow, setIsTopicModalShow] = useState(false);
@@ -132,7 +136,14 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
               >
                 <List.Item.Meta
                   avatar={<Avatar src={item?.user_image_url} />}
-                  title={<a href={`discussions/${item.id}`}>{item.title}</a>}
+                  title={
+                    <>
+                      <a href={`discussions/${item.id}`}>{item.title}</a>{" "}
+                      {item.user_id === auth()?.id && (
+                        <Tag color="red">Your Topic</Tag>
+                      )}
+                    </>
+                  }
                   description="Ant Design, a design language for background applications, is refined by Ant UED Team"
                 />
               </List.Item>
