@@ -3,7 +3,8 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
   PlusOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  EditOutlined
 } from "@ant-design/icons";
 import {
   Typography,
@@ -119,6 +120,8 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
         dataset_id={dataset_id}
         isOpen={isCreateTopicModalShow}
         close={() => setIsTopicModalShow(false)}
+        topics={topics}
+        setTopics={setTopics}
       />
       <div className="container mx-auto">
         <div className="flex justify-between items-center my-5">
@@ -170,6 +173,11 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                         <DeleteOutlined style={{ color: "red" }} />
                       </Button>
                     </Popconfirm>
+                  ),
+                  auth()?.id === item.user_id && (
+                    <Button>
+                      <EditOutlined style={{ color: "red" }} />
+                    </Button>
                   ),
                 ]}
               >
