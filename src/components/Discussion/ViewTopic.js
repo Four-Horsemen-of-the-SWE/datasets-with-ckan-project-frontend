@@ -25,7 +25,7 @@ const IconText = ({ icon, text }) => (
 export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
-   const JWTToken = authHeader().split(" ")[1];
+  const JWTToken = authHeader().split(" ")[1];
 
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
@@ -195,7 +195,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
                 {auth()?.id === item.user_id && (
                   <Popconfirm
                     title="Delete this comment ?"
-                    description="Are you sure to delete this"
+                    description="Are you sure to delete this comment."
                     icon={<DeleteOutlined style={{ color: "red" }} />}
                     placement="right"
                     onConfirm={() => handleDeleteComment(item.id)}

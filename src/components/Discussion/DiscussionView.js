@@ -3,6 +3,7 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
   PlusOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import {
   Typography,
@@ -14,10 +15,11 @@ import {
   Empty,
   message,
   Form,
-  Tag
+  Tag,
+  Popconfirm,
 } from "antd";
 import { useParams } from "react-router-dom";
-import { useAuthUser } from "react-auth-kit";
+import { useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
 // import componests
@@ -43,11 +45,14 @@ const data = [
 
 export default function DiscussionView({ dataset_id, dataset_creator_user_id }) {
   const auth = useAuthUser();
+  const authHeader = useAuthHeader();
+  const JWTToken = authHeader().split(" ")[1];
 
   const { topic_id } = useParams();
-  const [topic, setTopic] = useState([]);
+  const [topics, setTopics] = useState([]);
   const [isCreateTopicModalShow, setIsTopicModalShow] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  
 
   const fetchTopics = async () => {
     try {
@@ -56,7 +61,7 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
       );
 
       if (response.data.ok) {
-        setTopic(response.data.result);
+        setTopics(response.data.result);
       }
     } catch (error) {
       console.log(error);
@@ -69,6 +74,27 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
       messageApi.error(error.message);
     }
   };
+
+  const handleDelteTopic = async(topic_id) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/${topic_id}/topics`,
+        {
+          headers: {
+            Authorization: JWTToken
+          }
+        }
+      );
+      if(response.data.ok) {
+        messageApi.success("success");
+        // then remove from list
+        const new_topics = topics.filter(item => item.id !== response.data.result);
+        setTopics(new_topics)
+      }
+    } catch(error) {
+      messageApi.error(error.message);
+    }
+  }
 
   useEffect(() => {
     fetchTopics();
@@ -88,12 +114,12 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
 
   return (
     <>
+      {contextHolder}
       <CreateTopicModal
         dataset_id={dataset_id}
         isOpen={isCreateTopicModalShow}
         close={() => setIsTopicModalShow(false)}
       />
-      {contextHolder}
       <div className="container mx-auto">
         <div className="flex justify-between items-center my-5">
           <Title level={3} style={{ margin: "auto 0" }}>
@@ -110,11 +136,11 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
           </Button>
         </div>
 
-        {topic.length ? (
+        {topics.length ? (
           <List
             loading={false}
             itemLayout="horizontal"
-            dataSource={topic}
+            dataSource={topics}
             renderItem={(item, index) => (
               <List.Item
                 key={index}
@@ -132,6 +158,19 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                       <CaretDownOutlined />
                     </Button>
                   </Space.Compact>,
+                  auth()?.id === item.user_id && (
+                    <Popconfirm
+                      title="Delete this topic ?"
+                      description="Are you sure to delete this topic."
+                      icon={<DeleteOutlined style={{ color: "red" }} />}
+                      placement="right"
+                      onConfirm={() => handleDelteTopic(item.id)}
+                    >
+                      <Button>
+                        <DeleteOutlined style={{ color: "red" }} />
+                      </Button>
+                    </Popconfirm>
+                  ),
                 ]}
               >
                 <List.Item.Meta
