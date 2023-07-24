@@ -61,6 +61,9 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
             comments: [response.data.result],
           });
         }
+
+        // clear text area
+        form.resetFields(["body"]);
       }
     } catch(error) {
       messageApi.error(error.message);
