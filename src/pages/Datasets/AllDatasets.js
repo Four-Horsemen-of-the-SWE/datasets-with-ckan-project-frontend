@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, SortAscendingOutlined, SortDescendingOutlined, FireOutlined } from "@ant-design/icons";
 import {
   Col,
   Input,
@@ -24,23 +24,23 @@ import DatasetsCard from "../../components/Card/DatasetsCard";
 
 const { Title, Text } = Typography;
 
-const tag_data = [
-  "Technology",
-  "Programming",
-  "Web Development",
-  "Software",
-  "Data Science",
-  "Machine Learning",
-  "Artificial Intelligence",
-  "Cybersecurity",
-  "Cloud Computing",
-  "Mobile App Development",
-  "IoT (Internet of Things)",
-  "Big Data",
-  "Blockchain",
-  "DevOps",
-  "Frontend Development",
-  "Backend Development",
+const sort_data = [
+  {
+    value: "relevance desc",
+    label: "Relevance",
+  },
+  {
+    value: "name asc",
+    label: "Name ASC",
+  },
+  {
+    value: "name desc",
+    label: "Name DESC",
+  },
+  {
+    value: "metadata_modified desc",
+    label: "Latest",
+  },
 ];
 
 const license_data = [
@@ -83,6 +83,8 @@ export default function AllDatasets() {
   const [allDatasets, setAllDatasets] = useState([]);
   // tags
   const [allTags, setAllTags] = useState([]);
+  // sort
+  const [sort, setSort] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -154,9 +156,40 @@ export default function AllDatasets() {
     // clear all selected items
     setSelectedFilter([]);
 
-    // then set new path
-    window.history.replaceState(null, "", `/datasets?q=${searchName}`);
-  }
+    // then set delete params and set new path
+    // window.history.replaceState(null, "", `/datasets?q=${searchName}`);
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.delete("tags");
+    queryParams.delete("licenses");
+    navigate({ search: queryParams.toString() });
+  };
+
+  const handleCloseTags = (filter_item, params) => {
+    // remove object from array
+    const result = selectedFilter.filter((item) => {
+      return (
+        Object.entries(item).toString() !==
+        Object.entries(filter_item).toString()
+      );
+    });
+    setSelectedFilter(result);
+
+    // Manually remove all occurrences of the specified key-value pair from the URL
+    const updatedParams = new URLSearchParams();
+    for (const [paramKey, paramValue] of params.entries()) {
+      if (
+        paramKey === Object.keys(filter_item)[0] &&
+        paramValue === Object.values(filter_item)[0]
+      ) {
+        // Skip the key-value pair to remove it
+        continue;
+      }
+      updatedParams.append(paramKey, paramValue);
+    }
+
+    // Update the current params and navigate to the new URL
+    navigate({ search: "?" + updatedParams.toString() });
+  };
 
   const handleSearch = async (name) => {
     // prevent uiser enter soecial character
@@ -175,12 +208,11 @@ export default function AllDatasets() {
     try {
       const tag_list = selectedFilter.map((item) =>`${Object.keys(item)}=${encodeURIComponent(Object.values(item))}`).join("&");
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&${tag_list}`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&${tag_list}&sort=${sort}`
       );
       if (response.data.ok) {
         setAllDatasets(response.data.result);
       }
-      console.log(response.data)
     } catch (error) {
       messageApi.error("Searcing Error...");
     }
@@ -190,6 +222,11 @@ export default function AllDatasets() {
     fetchDatasets();
     fetchTags();
   }, []);
+
+  // call these function when tags is update or sort
+  useEffect(() => {
+    handleSearch(searchName);
+  }, [selectedFilter, sort])
 
   return (
     <>
@@ -210,25 +247,18 @@ export default function AllDatasets() {
             <div className="flex gap-2">
               <Input
                 prefix={<SearchOutlined />}
-                allowClear
+                allowClear={true}
                 size="large"
                 placeholder="Search datasets"
-                style={{ width: "100%" }}
+                style={{ width: "85%" }}
                 onChange={(e) => handleSearch(e.target.value)}
               />
               <Select
-                defaultValue="hotest"
+                defaultValue="relevance"
                 size="large"
-                options={[
-                  {
-                    value: "hotest",
-                    label: "Hotest",
-                  },
-                  {
-                    value: "newest",
-                    label: "Newest",
-                  },
-                ]}
+                options={sort_data}
+                style={{ width: "15%" }}
+                onChange={(value) => setSort(value)}
               />
             </div>
           </Col>
@@ -252,7 +282,7 @@ export default function AllDatasets() {
                   className="w-full mb-2"
                 />
                 <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {tag_data.map((item) => (
+                  {allTags.map((item) => (
                     <div
                       style={{
                         backgroundColor: "#F7F9FC",
@@ -296,19 +326,12 @@ export default function AllDatasets() {
                 </div>
               </div>
 
-              {/* Date section */}
-              <div className="mb-10">
-                <Title level={5} style={{ marginTop: 0 }}>
-                  Date
-                </Title>
-                <DatePicker.RangePicker
-                  placement="bottomRight"
-                  className="w-full"
-                />
-              </div>
-
               {/* Clear button */}
-              <Button block={true} danger={true} onClick={() => handleClearFilter()}>
+              <Button
+                block={true}
+                danger={true}
+                onClick={() => handleClearFilter()}
+              >
                 Clear
               </Button>
             </Card>
@@ -316,10 +339,20 @@ export default function AllDatasets() {
           {/* show all datasets in database (ckan) */}
           <Col xs={24} lg={18}>
             <div className="container mx-auto mb-4 -mt-2 flex justify-between items-center">
-              <div>Datasets {6}</div>
+              <div>Datasets {allDatasets?.length}</div>
               <div>
                 {selectedFilter.map((item) => (
-                  <Tag closable>{Object.values(item)}</Tag>
+                  <Tag
+                    closable={true}
+                    onClose={() =>
+                      handleCloseTags(
+                        item,
+                        new URLSearchParams(location.search)
+                      )
+                    }
+                  >
+                    {Object.values(item)}
+                  </Tag>
                 ))}
               </div>
             </div>
