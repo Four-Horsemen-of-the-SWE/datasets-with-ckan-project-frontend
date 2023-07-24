@@ -1,9 +1,46 @@
 import React, { useState } from "react";
-import { Avatar, Button, Form, Input, Modal, Radio } from "antd";
+import { Button, Form, Input, Modal, message } from "antd";
+import { useAuthHeader } from "react-auth-kit";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export default function createTopicModal({ isOpen, close }) {
+export default function CreateTopicModal({ dataset_id, isOpen, close }) {
+  const authHeader = useAuthHeader();
+  const [messageApi, contextHolder] = message.useMessage();
+  const [form] = Form.useForm();
+  const JWTToken = authHeader().split(" ")[1];
+  const navigate = useNavigate();
+
+  const handleCreateTopic = async () => {
+    try {
+      const values = await form.validateFields();
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/${dataset_id}/topics`,
+        values,
+        {
+          headers: {
+            Authorization: JWTToken,
+          },
+        }
+      );
+    
+      if(response.data.ok) {
+        // then redirect to topic view page
+        messageApi.success("Create success.")
+        setTimeout(() => {
+          console.log(response.data.result)
+          return navigate(response.data.result);
+        }, 1000);
+      }
+    } catch (error) {
+      messageApi.error(error?.response.data.message)
+    }
+  };
+
   return (
     <>
+      {contextHolder}
       <Modal
         title="Create new topic"
         open={isOpen}
@@ -13,12 +50,24 @@ export default function createTopicModal({ isOpen, close }) {
           <Button size="large" onClick={() => close()}>
             Cancel
           </Button>,
-          <Button size="large" type="primary">Create Topic</Button>,
+          <Button size="large" type="primary" onClick={handleCreateTopic}>
+            Create Topic
+          </Button>,
         ]}
-        centered
+        centered={true}
+        forceRender={true}
       >
-        <Form layout="vertical">
-          <Form.Item label="Title" name="title">
+        <Form layout="vertical" form={form}>
+          <Form.Item
+            label="Title"
+            name="title"
+            rules={[
+              {
+                required: true,
+                message: "Please enter a title for the topic",
+              },
+            ]}
+          >
             <Input
               placeholder="Topic Title"
               size="large"
@@ -26,7 +75,16 @@ export default function createTopicModal({ isOpen, close }) {
               showCount={true}
             />
           </Form.Item>
-          <Form.Item label="Message" name="body">
+          <Form.Item
+            label="Message"
+            name="body"
+            rules={[
+              {
+                required: true,
+                message: "Please enter a message for the topic",
+              },
+            ]}
+          >
             <Input.TextArea
               rows={6}
               maxLength={255}

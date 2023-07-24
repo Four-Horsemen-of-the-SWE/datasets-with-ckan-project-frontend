@@ -85,6 +85,7 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
   return (
     <>
       <CreateTopicModal
+        dataset_id={dataset_id}
         isOpen={isCreateTopicModalShow}
         close={() => setIsTopicModalShow(false)}
       />
