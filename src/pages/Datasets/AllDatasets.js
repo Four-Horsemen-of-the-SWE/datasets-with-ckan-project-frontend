@@ -159,6 +159,12 @@ export default function AllDatasets() {
   }
 
   const handleSearch = async (name) => {
+    // prevent uiser enter soecial character
+    const special_character_regex = /:/g;
+    if(special_character_regex.test(name)) {
+      return messageApi.info("Can not find with special character.")
+    }
+
     setSearchName(name);
     // update the query param in URL
     const queryParams = new URLSearchParams(location.search);
