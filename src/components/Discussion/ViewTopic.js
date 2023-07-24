@@ -1,4 +1,11 @@
-import { CaretUpOutlined, CaretDownOutlined, CommentOutlined, LeftOutlined, CalendarOutlined } from "@ant-design/icons";
+import {
+  CaretUpOutlined,
+  CaretDownOutlined,
+  CommentOutlined,
+  LeftOutlined,
+  CalendarOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag, Tooltip, message, Form } from "antd";
 import axios from "axios";
 import moment from "moment";
@@ -32,8 +39,6 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       setDiscussion(response.data.result);
     }
   };
-  
-  console.log(discussion.comments)
 
   const handleCreateComment = async(value) => {
     try {
@@ -70,9 +75,34 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
     }
   }
 
+  const handleUpdateComment = async(comment_id, value) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${comment_id}`,
+        {body: value},
+        {
+          Authorization: JWTToken
+        }
+      );
+
+      console.log(response.data.result)
+      if(response.data.ok) {
+        const new_comments = discussion.comments.map(item => item.id === response.data.result.id ? response.data.result : item)
+        setDiscussion({
+          ...discussion,
+          comments: [...new_comments]
+        })
+      }
+    } catch(error) {
+      messageApi.error(error.message);
+    }
+  }
+
   useEffect(() => {
     fetchDiscussion();
   }, []);
+
+  console.log(discussion)
 
   return (
     <>
@@ -122,6 +152,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
         </Space>
       </Title>
 
+      {/* comments list */}
       <List
         itemLayout="vertical"
         size="large"
@@ -136,15 +167,62 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
               />,
             ]}
             extra={
-              dataset_creator_user_id === item.user_id && (
-                <Tag color="green">DATASET CREATOR</Tag>
-              )
+              <>
+                {auth()?.id === item.user_id && (
+                  <Button
+                    shape="square"
+                    type="dashed"
+                    danger={true}
+                    size="small"
+                  >
+                    <DeleteOutlined />
+                  </Button>
+                )}
+              </>
             }
           >
             <List.Item.Meta
               avatar={<Avatar src={item?.user_image_url} />}
-              title={item.user_name}
-              description={item.body}
+              title={
+                <>
+                  {item.user_name}{" "}
+                  {dataset_creator_user_id === item.user_id && (
+                    <Tag color="green">DATASET CREATOR</Tag>
+                  )}
+                </>
+              }
+              description={
+                auth()?.id === item.user_id ? (
+                  <Typography.Paragraph
+                    ellipsis={{
+                      rows: 4,
+                      expandable: false,
+                      symbol: "more",
+                    }}
+                    editable={{
+                      maxLength: 1000,
+                      autoSize: {
+                        minRows: 4,
+                        maxRows: 12,
+                      },
+                      onChange: (value) => handleUpdateComment(item.id, value),
+                      tooltip: "Edit Comment.",
+                    }}
+                  >
+                    {item.body}
+                  </Typography.Paragraph>
+                ) : (
+                  <Typography.Paragraph
+                    ellipsis={{
+                      rows: 4,
+                      expandable: false,
+                      symbol: "more",
+                    }}
+                  >
+                    {item.body}
+                  </Typography.Paragraph>
+                )
+              }
             />
           </List.Item>
         )}
