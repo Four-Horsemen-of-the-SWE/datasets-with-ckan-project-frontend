@@ -3,7 +3,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { Modal, message, Space, Form, Input, Button, Popconfirm } from "antd";
 import { useResourcesStore } from "../../store";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function EditResourceModal({ dataset_id, name, description, open, close }) {
   const authHeader = useAuthHeader();
@@ -40,13 +40,17 @@ export default function EditResourceModal({ dataset_id, name, description, open,
 
   const handleUpdate = async () => {
     try {
-      if(form.getFieldValue("name") === "") {
-        return message.info("Please input file name.")
+      const new_name = form.getFieldValue("name");
+      const new_description = form.getFieldValue("description");
+
+      if (new_name === "") {
+        return message.info("Please input file name.");
       }
 
       const formData = new FormData();
-      formData.append("name", form.getFieldValue("name"));
-      formData.append("description", form.getFieldValue("description"));
+      formData.append("name", new_name);
+      formData.append("description", new_description);
+
       const response = await axios.put(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/resources/${dataset_id}`,
         formData,
@@ -73,12 +77,15 @@ export default function EditResourceModal({ dataset_id, name, description, open,
   };
 
   useEffect(() => {
-    // set input with default value
-    form.setFieldsValue({
-      name: name,
-      description: description,
-    });
-  }, [dataset_id]);
+    // Check if name and description are not null or undefined
+    if (name && description) {
+      // Set the default input values in the form
+      form.setFieldsValue({
+        name: name,
+        description: description,
+      });
+    }
+  });
 
   return (
     <>
@@ -123,6 +130,7 @@ export default function EditResourceModal({ dataset_id, name, description, open,
               rows={4}
               placeholder="More details about this file."
               value={description}
+              allowClear={true}
             />
           </Form.Item>
         </Form>
