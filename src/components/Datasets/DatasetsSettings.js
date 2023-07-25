@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -12,11 +13,10 @@ import {
   Image,
   message,
   Space,
-  Modal
+  Modal,
 } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useAuthHeader } from "react-auth-kit";
-import { useState } from "react";
 import axios, { all } from "axios";
 
 const { Title, Text } = Typography;
@@ -41,7 +41,13 @@ export default function DatasetsSettings({ datasets }) {
   const [messageApi, contextHolder] = message.useMessage();
   const authHeader = useAuthHeader();
 
-  const all_tags = datasets?.tags.map((item) => ({ label: item.display_name, value: item.name }));
+  // licenses
+  const [allLicenses, setAllLicenses] = useState([]);
+
+  const all_tags = datasets?.tags.map((item) => ({
+    label: item.display_name,
+    value: item.name,
+  }));
 
   const [defailed_form] = Form.useForm();
 
@@ -65,7 +71,8 @@ export default function DatasetsSettings({ datasets }) {
       }
     },
     beforeUpload: (file) => {
-      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+      const isJpgOrPng =
+        file.type === "image/jpeg" || file.type === "image/png";
       if (!isJpgOrPng) {
         message.error("You can only upload JPG/PNG files!");
       }
@@ -74,6 +81,20 @@ export default function DatasetsSettings({ datasets }) {
         message.error("Image must be smaller than 2MB!");
       }
       return isJpgOrPng && isLt2M;
+    },
+  };
+
+  const fetchLicenses = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/licenses`
+      );
+      if (response.data.ok) {
+        const licenses = response.data.result.map((item) => ({value: item.id, label: item.title}));
+        setAllLicenses(licenses);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -89,14 +110,13 @@ export default function DatasetsSettings({ datasets }) {
     return sanitized_name;
   };
 
-  const updateDataset = async(values) => {
+  const updateDataset = async (values) => {
     setIsSaving(true);
     const tag_list = values?.tags.map((item) => ({
       name: item,
     }));
     values.tags = tag_list;
     values.name = validName(values.title);
-    console.log(values);
 
     try {
       const response = await axios.put(
@@ -109,24 +129,23 @@ export default function DatasetsSettings({ datasets }) {
         }
       );
 
-      if(response.data.ok) {
-        message.success('Update Success')
+      if (response.data.ok) {
+        message.success("Update Success");
         setIsSaving(false);
         setTimeout(() => {
           // window.location.href = `/datasets/${response.data.result.id}/settings`;
           window.location.reload();
         }, 1200);
       }
-
-    } catch(error) {
+    } catch (error) {
       message.error(error.message);
       setIsSaving(false);
     }
-  }
+  };
 
-  const deleteDataset = async() => {
+  const deleteDataset = async () => {
     setIsDeleting(true);
-    if(datasets.name === confirmName) {
+    if (datasets.name === confirmName) {
       try {
         const response = await axios.delete(
           `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets.id}`,
@@ -140,7 +159,7 @@ export default function DatasetsSettings({ datasets }) {
         if (response.data.ok) {
           messageApi.open({
             type: "success",
-            content: "Delete success."
+            content: "Delete success.",
           });
           setTimeout(() => {
             window.location.href = "/datasets";
@@ -154,11 +173,15 @@ export default function DatasetsSettings({ datasets }) {
     } else {
       messageApi.open({
         type: "warning",
-        content: "Dataset name not match."
-      })
+        content: "Dataset name not match.",
+      });
       setIsDeleting(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchLicenses();
+  }, []);
 
   return (
     <>
@@ -169,7 +192,12 @@ export default function DatasetsSettings({ datasets }) {
         onCancel={() => setIsDeleteModalShow(false)}
         footer={[
           <Button onClick={() => setIsDeleteModalShow(false)}>Cancel</Button>,
-          <Button type="primary" onClick={() => deleteDataset()} loading={isDeleting} danger={true}>
+          <Button
+            type="primary"
+            onClick={() => deleteDataset()}
+            loading={isDeleting}
+            danger={true}
+          >
             Delete
           </Button>,
         ]}
@@ -227,7 +255,7 @@ export default function DatasetsSettings({ datasets }) {
 
           <Form.Item label="Others">
             <Row gutter={8}>
-              <Col span={8}>
+              <Col span={6}>
                 <Form.Item label="Visibility" name="private">
                   <Select
                     defaultValue={false}
@@ -237,7 +265,7 @@ export default function DatasetsSettings({ datasets }) {
                   />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={6}>
                 <Form.Item label="Tags" name="tags">
                   <Select
                     mode="tags"
@@ -247,7 +275,16 @@ export default function DatasetsSettings({ datasets }) {
                   />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col span={6}>
+                <Form.Item label="Version" name="license_id">
+                  <Select
+                    placeholder="Licenses"
+                    size="large"
+                    options={allLicenses}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
                 <Form.Item label="Version" name="version">
                   <Input size="large" placeholder="1.0.0" />
                 </Form.Item>

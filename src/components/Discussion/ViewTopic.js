@@ -22,6 +22,14 @@ const IconText = ({ icon, text }) => (
   </Space>
 );
 
+const format_date = (date) => {
+  const result = moment.utc(date).toDate() &&
+    moment(moment.utc(date).toDate()).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+  return result;
+}
+
 export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
@@ -187,7 +195,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
             actions={[
               <IconText
                 icon={CalendarOutlined}
-                text={moment(item.created).format("LLL")}
+                text={format_date(item.created)}
               />,
             ]}
             extra={

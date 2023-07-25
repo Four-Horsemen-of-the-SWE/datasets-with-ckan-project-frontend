@@ -19,6 +19,7 @@ export default function InformationView({ dataset_id, license_title, version, me
       );
     return result;
   }
+  
   const format_metadata_created = format_date(metadata_created);
   const format_metadata_modified = format_date(metadata_modified);
 

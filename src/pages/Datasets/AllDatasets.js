@@ -31,11 +31,11 @@ const sort_data = [
   },
   {
     value: "name asc",
-    label: "Name ASC",
+    label: "Name (A - Z)",
   },
   {
     value: "name desc",
-    label: "Name DESC",
+    label: "Name (Z - A)",
   },
   {
     value: "metadata_modified desc",
@@ -81,8 +81,11 @@ export default function AllDatasets() {
   const [searchName, setSearchName] = useState("");
   const [selectedFilter, setSelectedFilter] = useState([]);
   const [allDatasets, setAllDatasets] = useState([]);
+
   // tags
   const [allTags, setAllTags] = useState([]);
+  // licenses
+  const [allLicenses, setAllLicenses] = useState([]);
   // sort
   const [sort, setSort] = useState("");
 
@@ -111,6 +114,19 @@ export default function AllDatasets() {
       );
       if (response.status === 200) {
         setAllTags(response.data.result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchLicenses = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/licenses`
+      );
+      if (response.data.ok) {
+        setAllLicenses(response.data.result);
       }
     } catch (error) {
       console.log(error);
@@ -160,7 +176,7 @@ export default function AllDatasets() {
     // window.history.replaceState(null, "", `/datasets?q=${searchName}`);
     const queryParams = new URLSearchParams(location.search);
     queryParams.delete("tags");
-    queryParams.delete("licenses");
+    queryParams.delete("license");
     navigate({ search: queryParams.toString() });
   };
 
@@ -221,6 +237,7 @@ export default function AllDatasets() {
   useEffect(() => {
     fetchDatasets();
     fetchTags();
+    fetchLicenses();
   }, []);
 
   // call these function when tags is update or sort
@@ -309,7 +326,7 @@ export default function AllDatasets() {
                   className="w-full mb-2"
                 />
                 <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {license_data.map((item) => (
+                  {allLicenses?.map((item) => (
                     <div
                       style={{
                         backgroundColor: "#F7F9FC",
@@ -318,9 +335,9 @@ export default function AllDatasets() {
                         borderRadius: "7px",
                         cursor: "pointer",
                       }}
-                      onClick={() => handleFilterSelected("licenses", item)}
+                      onClick={() => handleFilterSelected("license", item.id)}
                     >
-                      {item}
+                      {item.title}
                     </div>
                   ))}
                 </div>
