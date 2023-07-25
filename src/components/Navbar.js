@@ -56,6 +56,17 @@ export default function Navbar() {
               />
             </Link>
             <Link
+              href="/"
+              className="ml-2 sm:ml-4"
+              style={{
+                color: "#1890ff",
+                textTransform: "uppercase",
+                fontWeight: "bold",
+              }}
+            >
+              DATASETS HUB
+            </Link>
+            <Link
               href="/datasets"
               className="ml-2 sm:ml-4"
               style={{ color: "#000", textTransform: "uppercase" }}
