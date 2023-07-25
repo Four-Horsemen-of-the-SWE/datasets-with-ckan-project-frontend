@@ -47,7 +47,7 @@ export default function ResourceView({
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => a.name?.length - b.name?.length,
       sortDirections: ["descend"],
       render: (text, record) => (
         <p className="flex flex-col">
@@ -105,6 +105,7 @@ export default function ResourceView({
                 type="ghost"
                 onClick={() =>
                   handleResourceSelected({
+                    id: record.id,
                     name: record.name,
                     description: record.description,
                   })
@@ -122,6 +123,7 @@ export default function ResourceView({
     <>
       {/* for edit resouce file */}
       <EditResourceModal
+        dataset_id={selectedResource.id}
         name={selectedResource.name}
         description={selectedResource.description}
         open={isEditModalShow}
@@ -152,7 +154,7 @@ export default function ResourceView({
         </div>
 
         {/* if data is empty */}
-        {!resource.length && (
+        {!resource?.length && (
           <Alert
             showIcon
             type="info"

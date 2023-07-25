@@ -11,6 +11,7 @@ import ResourceView from "../../components/Datasets/ResourceView";
 import InformationView from "../../components/Datasets/InformationView";
 import DiscussionView from "../../components/Discussion/DiscussionView";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
+import { useResourcesStore } from "../../store";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -31,6 +32,7 @@ export default function ViewDatasets() {
   const [isBookmark, setIsBookmark] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const { resources, setResources } = useResourcesStore();
 
   const location = useLocation();
   // const currentTab = location.pathname.split('/')[3] === "discussions" ? "discussions" : "data";
@@ -54,8 +56,10 @@ export default function ViewDatasets() {
       if (response.status === 200) {
         setDatasets(response.data.result);
         setIsBookmark(response.data.result.is_bookmark);
+
         if(!!response.data.result) {
           document.title = response.data.result.title;
+          setResources(response.data.result?.resources);
           setIsLoading(false);
         }
       }
@@ -117,6 +121,11 @@ export default function ViewDatasets() {
   // call axios here
   useEffect(() => {
     fetchDatasets()
+  }, [])
+
+  // remove store
+  useEffect(() => {
+    return () => setResources([]);
   }, [])
 
   const handleTabChange = (key) => {
@@ -231,7 +240,7 @@ export default function ViewDatasets() {
                   <ResourceView
                     creator_user_id={datasets.creator_user_id}
                     dataset_id={datasets.id}
-                    resource={datasets?.resources}
+                    resource={resources}
                   />
                 </Col>
                 <Col sm={24} md={4}>

@@ -52,6 +52,10 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
 
         // clear field
         form.resetFields();
+        // clar selected file
+        setSelectedFile(null);
+
+        close();
       } else {
         message.error("Cannot create file.")
       }

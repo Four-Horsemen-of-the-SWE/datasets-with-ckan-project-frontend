@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useCreateModalStore } from "../../store";
-import { PlusOutlined, EditOutlined, DatabaseOutlined, BookOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";

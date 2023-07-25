@@ -1,7 +1,41 @@
-import { InboxOutlined, EditOutlined } from "@ant-design/icons";
+import { useAuthHeader } from "react-auth-kit";
+import { EditOutlined } from "@ant-design/icons";
 import { Modal, message, Space, Form, Input, Button } from "antd";
+import axios from "axios";
+import { useResourcesStore } from "../../store";
 
-export default function EditResourceModal({ name, description, open, close }) {
+export default function EditResourceModal({ dataset_id, name, description, open, close }) {
+  const authHeader = useAuthHeader();
+  const JWTToken = authHeader().split(" ")[1];
+
+  // state
+  const { resources, setResources } = useResourcesStore();
+
+  const handleDelete = async() => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/resources/${dataset_id}`,
+        {
+          headers: {
+            Authorization: JWTToken,
+          },
+        }
+      );
+
+      if(response.data.ok) {
+        message.success('Delete success.');
+        // set with new resouces
+        const new_data =resources.filter((item) => item.id !== response.data.result);
+        setResources(new_data);
+
+        // then close modal
+        close();
+      }
+    } catch(error) {
+      message.error(error.message);
+    }
+  }
+
   return (
     <>
       <Modal
@@ -15,7 +49,7 @@ export default function EditResourceModal({ name, description, open, close }) {
         onCancel={close}
         centered={true}
         footer={[
-          <Button key="delete" danger={true}>
+          <Button key="delete" danger={true} onClick={handleDelete}>
             Delete
           </Button>,
           <Button onClick={close}>Cancel</Button>,
