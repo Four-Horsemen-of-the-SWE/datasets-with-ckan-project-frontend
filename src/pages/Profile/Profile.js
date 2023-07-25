@@ -4,6 +4,7 @@ import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 const { TabPane } = Tabs;
@@ -11,6 +12,9 @@ const { Title, Paragraph } = Typography;
 
 export default function Profile() {
   document.title = "Datasets";
+
+  const location = useLocation();
+  const currentTab = location.pathname.split("/")[3];
 
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
@@ -83,6 +87,14 @@ export default function Profile() {
     fetchDataFromAPI()
   }, []);
 
+  const handleTabChange = (key) => {
+    const baseURL = `/profile/${auth().name}`;
+    if (key === "datasets")
+      window.history.pushState(null, "", `${baseURL}/datasets`);
+    else if (key === "bookmarks") 
+      window.history.pushState(null, "", `${baseURL}/bookmarks`);
+  };
+
   if (isLoading) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
@@ -135,7 +147,11 @@ export default function Profile() {
 
             {/* data */}
             <Col xs={24} xl={18}>
-              <Tabs defaultActiveKey="datasets" size="large">
+              <Tabs
+                defaultActiveKey={currentTab}
+                size="large"
+                onChange={handleTabChange}
+              >
                 {/* datasets */}
                 <TabPane ane tab="Datasets" key="datasets">
                   {/* render user's datasets here */}

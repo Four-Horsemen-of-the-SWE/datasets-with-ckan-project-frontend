@@ -28,6 +28,8 @@ function App() {
         <Route path="/datasets/:datasets_id/discussions/:topic_id" element={<ViewDatasets />} />
         <Route path="/datasets/:datasets_id/settings" element={<ViewDatasets />} />
         <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/profile/:username/datasets" element={<Profile />} />
+        <Route path="/profile/:username/bookmarks" element={<Profile />} />
         <Route path={"/dashboard"} element={
           <RequireAuth loginPath={"/login"}>
             <Dashboard />

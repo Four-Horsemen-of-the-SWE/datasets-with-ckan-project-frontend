@@ -36,7 +36,7 @@ export default function DrawerView({ isDrawerOpen, close }) {
     {
       icon: <UserOutlined />,
       label: (
-        <Link href={`/profile/${!!auth()?.name ? auth().name : ''}`} style={{ color: "#000" }}>
+        <Link href={`/profile/${!!auth()?.name ? auth()?.name : ''}`} style={{ color: "#000" }}>
           Your Profile
         </Link>
       ),
@@ -44,14 +44,18 @@ export default function DrawerView({ isDrawerOpen, close }) {
     {
       icon: <DatabaseOutlined />,
       label: (
-        <Link href={`/profile/${!!auth()?.name ? auth().name : ''}/datasets`} style={{ color: "#000" }}>
+        <Link href={`/profile/${!!auth()?.name ? auth()?.name : ''}/datasets`} style={{ color: "#000" }}>
           Your Datasets
         </Link>
       ),
     },
     {
       icon: <BookOutlined />,
-      label: "Your Bookmarked",
+      label: (
+        <Link href={`/profile/${!!auth()?.name ? auth()?.name : ''}/bookmarks`} style={{ color: "#000" }}>
+          Your Bookmarked
+        </Link>
+      ),
     },
     {
       icon: <EditOutlined />,
