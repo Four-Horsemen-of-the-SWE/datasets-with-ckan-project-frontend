@@ -4,7 +4,7 @@ import { useAuthHeader } from "react-auth-kit";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function CreateTopicModal({ dataset_id, isOpen, close }) {
+export default function CreateTopicModal({ dataset_id, isOpen, close, topics, setTopics }) {
   const authHeader = useAuthHeader();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
@@ -24,14 +24,18 @@ export default function CreateTopicModal({ dataset_id, isOpen, close }) {
           },
         }
       );
-    
+
+        
       if(response.data.ok) {
         // then redirect to topic view page
-        messageApi.success("Create success.")
+        messageApi.success("Create success.");
+
+        // add create topic into list
+        setTopics(prevState => [...prevState, response.data.result])
         setTimeout(() => {
-          console.log(response.data.result)
-          return navigate(response.data.result);
-        }, 1000);
+          close();
+          return navigate(response.data.result?.id);
+        }, 650);
       }
     } catch (error) {
       messageApi.error(error?.response.data.message)
@@ -64,7 +68,7 @@ export default function CreateTopicModal({ dataset_id, isOpen, close }) {
             rules={[
               {
                 required: true,
-                message: "Please enter a title for the topic",
+                message: "Please enter a title for the topic.",
               },
             ]}
           >
@@ -81,7 +85,7 @@ export default function CreateTopicModal({ dataset_id, isOpen, close }) {
             rules={[
               {
                 required: true,
-                message: "Please enter a message for the topic",
+                message: "Please enter a message for the topic.",
               },
             ]}
           >
