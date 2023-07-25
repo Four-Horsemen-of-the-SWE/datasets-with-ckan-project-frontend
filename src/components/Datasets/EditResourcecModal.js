@@ -1,6 +1,6 @@
 import { useAuthHeader } from "react-auth-kit";
 import { EditOutlined } from "@ant-design/icons";
-import { Modal, message, Space, Form, Input, Button } from "antd";
+import { Modal, message, Space, Form, Input, Button, Popconfirm } from "antd";
 import axios from "axios";
 import { useResourcesStore } from "../../store";
 
@@ -80,9 +80,16 @@ export default function EditResourceModal({ dataset_id, name, description, open,
         onCancel={close}
         centered={true}
         footer={[
-          <Button key="delete" danger={true} onClick={handleDelete}>
-            Delete
-          </Button>,
+          <Popconfirm
+            title="Delete the file."
+            description="Are you sure to delete this file?"
+            onConfirm={handleDelete}
+            placement="bottom"
+          >
+            <Button key="delete" danger={true}>
+              Delete
+            </Button>
+          </Popconfirm>,
           <Button onClick={close}>Cancel</Button>,
           <Button type="primary" key="update" onClick={handleUpdate}>
             Update
