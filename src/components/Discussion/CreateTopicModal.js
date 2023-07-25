@@ -11,8 +11,11 @@ export default function CreateTopicModal({ dataset_id, isOpen, close, topics, se
   const JWTToken = authHeader().split(" ")[1];
   const navigate = useNavigate();
 
+  const [isCreating, setIsCreating] = useState(false);
+
   const handleCreateTopic = async () => {
     try {
+      setIsCreating(true);
       const values = await form.validateFields();
 
       const response = await axios.post(
@@ -33,12 +36,13 @@ export default function CreateTopicModal({ dataset_id, isOpen, close, topics, se
         setTopics(prevState => [...prevState, response.data.result])
         setTimeout(() => {
           close();
+          setIsCreating(false);
           return navigate(response.data.result?.id);
-        }, 650);
+        }, 550);
       }
     } catch (error) {
+      setIsCreating(false);
       messageApi.error("Cannot createtopic.");
-      console.log(error);
     }
   };
 
@@ -54,7 +58,7 @@ export default function CreateTopicModal({ dataset_id, isOpen, close, topics, se
           <Button size="large" onClick={() => close()}>
             Cancel
           </Button>,
-          <Button size="large" type="primary" onClick={handleCreateTopic}>
+          <Button size="large" type="primary" onClick={handleCreateTopic} loading={isCreating}>
             Create Topic
           </Button>,
         ]}

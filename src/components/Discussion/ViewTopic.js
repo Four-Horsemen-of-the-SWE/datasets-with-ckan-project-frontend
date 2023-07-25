@@ -227,9 +227,13 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
               avatar={<Avatar src={item?.user_image_url} />}
               title={
                 <>
-                  {item.user_name}{" "}
+                  {item.user_name} {/* if user is dataset creator */}
                   {dataset_creator_user_id === item.user_id && (
                     <Tag color="green">DATASET CREATOR</Tag>
+                  )}
+                  {/* if user is admin */}
+                  {item.is_admin && (
+                    <Tag color="red">ADMIN</Tag>
                   )}
                 </>
               }

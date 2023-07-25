@@ -179,19 +179,6 @@ export default function ViewDatasets() {
               >
                 {isBookmark ? "Bookmarked" : "Bookmark"}
               </Button>
-              {auth()?.is_admin && (
-                <Dropdown
-                  menu={{
-                    items,
-                  }}
-                  trigger={["click"]}
-                  placement="bottomLeft"
-                >
-                  <Button size="large" danger>
-                    <ToolOutlined />
-                  </Button>
-                </Dropdown>
-              )}
             </Space>
           </div>
         )}
