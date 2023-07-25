@@ -135,7 +135,7 @@ export default function DatasetsSettings({ datasets }) {
         setTimeout(() => {
           // window.location.href = `/datasets/${response.data.result.id}/settings`;
           window.location.reload();
-        }, 1200);
+        }, 700);
       }
     } catch (error) {
       message.error(error.message);
@@ -163,7 +163,7 @@ export default function DatasetsSettings({ datasets }) {
           });
           setTimeout(() => {
             window.location.href = "/datasets";
-          }, 1200);
+          }, 700);
         }
 
         // setIsDeleting(false);

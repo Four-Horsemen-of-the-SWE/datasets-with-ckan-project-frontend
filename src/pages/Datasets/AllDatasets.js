@@ -48,40 +48,6 @@ const sort_data = [
   },
 ];
 
-const license_data = [
-  "MIT License",
-  "Apache License 2.0",
-  "GNU General Public License (GPL)",
-  'BSD 3-Clause "New" or "Revised" License',
-  "Mozilla Public License (MPL)",
-  "GNU Lesser General Public License (LGPL)",
-  "Eclipse Public License (EPL)",
-  "Creative Commons Licenses",
-  "ISC License",
-  "Boost Software License",
-  "GNU Affero General Public License (AGPL)",
-  "GNU General Public License (GPL) v3",
-  "Common Development and Distribution License (CDDL)",
-  "Artistic License 2.0",
-  "WTFPL – Do What the F*ck You Want to Public License",
-  "Unlicense",
-  "Microsoft Public License (MS-PL)",
-  "Eclipse Distribution License (EDL)",
-  "Open Software License (OSL)",
-  "Dojo Foundation License",
-  "Perl License",
-  "Python Software Foundation License (PSF)",
-  "SIL Open Font License (OFL)",
-  "European Union Public License (EUPL)",
-  "Apple Public Source License (APSL)",
-  "Zend Framework License",
-  "Facebook BSD + Patents License",
-  "Amazon Software License",
-  "Google Open Source Project License",
-  "Netflix Software License",
-  "MongoDB Server Side Public License (SSPL)",
-];
-
 export default function AllDatasets() {
   const [searchName, setSearchName] = useState("");
   const [selectedFilter, setSelectedFilter] = useState([]);
@@ -193,6 +159,7 @@ export default function AllDatasets() {
         Object.entries(filter_item).toString()
       );
     });
+
     setSelectedFilter(result);
 
     // Manually remove all occurrences of the specified key-value pair from the URL
@@ -238,7 +205,7 @@ export default function AllDatasets() {
       messageApi.error("Searcing Error...");
     }
   }
-
+  
   useEffect(() => {
     fetchDatasets();
     fetchTags();
@@ -248,8 +215,8 @@ export default function AllDatasets() {
   // call these function when tags is update or sort
   useEffect(() => {
     handleSearch(searchName);
-  }, [selectedFilter, sort])
-
+  }, [selectedFilter, sort]);
+  
   return (
     <>
       {contextHolder}

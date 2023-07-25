@@ -1,5 +1,11 @@
-import { InboxOutlined, EyeOutlined, EyeInvisibleOutlined, CloudUploadOutlined } from "@ant-design/icons";
-import { Button, message, Modal, Form, Input, Upload, Space, Tooltip, List, Tag } from "antd";
+import {
+  FileOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  CloudUploadOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import { Button, message, Modal, Form, Input, Upload, Tooltip,Typography, Card } from "antd";
 import { useState } from "react";
 import { useAuthHeader } from "react-auth-kit";
 import axios from "axios";
@@ -11,6 +17,7 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
   const [isCreating, setIsCreating] = useState(false);
   const nameValue = Form.useWatch("name", form);
   const [messageApi, contextHolder] = message.useMessage();
+  const [fileList, setFileList] = useState([]);
 
   const JWTToken = authHeader().split(" ")[1];
 
@@ -23,6 +30,9 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
       },
       strokeWidth: 3,
       format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+    },
+    onChange: ({ fileList: newFileList }) => {
+      setFileList(newFileList);
     },
   };
 
@@ -58,6 +68,12 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
     }
   };
 
+  const handleRemoveFile = (uid) => {
+    // Filter out the file with the specified uid
+    const updatedFileList = fileList.filter((file) => file.uid !== uid);
+    setFileList(updatedFileList);
+  };
+
   const validName = (name) => {
     const valid_name = name
       .replace(/[.!]/g, "-")
@@ -70,13 +86,17 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
     return sanitized_name;
   };
 
-
   const handleCreate = async () => {
     // create dataset then upload file
     try {
       setIsCreating(true);
       const values = await form.validateFields();
-      const fileList = values.file?.fileList;
+      const localfileList = fileList;
+
+      if(values.name === "" || values.name === undefined) {
+        setIsCreating(false);
+        return message.info("Please enter dataset name.");
+      }
 
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/`,
@@ -93,8 +113,8 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
 
       if(response.data.ok) {
         // if have file, then upload
-        if(!!fileList) {
-          const upload_response = await handleUpload(response.data.result.id, fileList);
+        if(localfileList?.length) {
+          const upload_response = await handleUpload(response.data.result.id, localfileList);
           if(upload_response) {
             setIsCreating(false);
             message.success({
@@ -182,6 +202,29 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
                 Consider zipping large directories for faster uploads.
               </p>
             </Upload.Dragger>
+
+            {fileList &&
+              fileList.map((item) => (
+                <Card size="small mt-2">
+                  <div className="flex items-baseline justify-between w-full">
+                    <div className="flex gap-2 items-center">
+                      <FileOutlined style={{ fontSize: "30px" }} />
+                      <Typography.Paragraph
+                        strong={true}
+                        style={{ marginBottom: 0 }}
+                      >
+                        {item.name}
+                      </Typography.Paragraph>
+                    </div>
+                    <Button
+                      onClick={() => handleRemoveFile(item.uid)}
+                      ghost={true}
+                    >
+                      <DeleteOutlined style={{ color: "red" }} />
+                    </Button>
+                  </div>
+                </Card>
+              ))}
           </Form.Item>
         </Form>
       </Modal>
