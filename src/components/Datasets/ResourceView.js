@@ -1,17 +1,27 @@
+import { useState } from "react";
 import { useAuthUser } from "react-auth-kit";
 import {
   CloudDownloadOutlined,
   PlusOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Alert, Typography, Space, Table, Button, Tooltip, Popover } from "antd";
-import moment from "moment/moment";
+import {
+  Alert,
+  Typography,
+  Space,
+  Table,
+  Button,
+  Tooltip,
+  Popover,
+} from "antd";
 import { filesize } from "filesize";
-import axios from "axios";
-import EditResourceModal from "./EditResourcecModal";
-import { useState } from "react";
-import CreateResourceModal from "./CreateResourceModal";
 import { Link } from "react-router-dom";
+import moment from "moment/moment";
+import axios from "axios";
+
+// import components
+import EditResourceModal from "./EditResourcecModal";
+import CreateResourceModal from "./CreateResourceModal";
 
 const { Title, Text } = Typography;
 
@@ -41,7 +51,7 @@ export default function ResourceView({
   const handleResourceSelected = (resource) => {
     setSelectedResource(resource);
     setIsEditModalShow(true);
-  }
+  };
 
   const columns = [
     {

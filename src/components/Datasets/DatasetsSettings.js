@@ -276,7 +276,7 @@ export default function DatasetsSettings({ datasets }) {
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Form.Item label="Version" name="license_id">
+                <Form.Item label="License" name="license_id">
                   <Select
                     placeholder="Licenses"
                     size="large"

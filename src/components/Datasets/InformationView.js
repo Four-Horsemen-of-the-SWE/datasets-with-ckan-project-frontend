@@ -5,10 +5,11 @@ import moment from "moment";
 import "moment-timezone";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
-export default function InformationView({ dataset_id, license_title, version, metadata_created, metadata_modified, tags }) {
+export default function InformationView({ dataset_id, author, license_title, version, metadata_created, metadata_modified, tags }) {
   const [downloadStatistic, setDownloadStatistic] = useState({});
   const [downloadStatisticSuccess, setDownloadStatisticSuccess] = useState(false);
   
@@ -24,6 +25,12 @@ export default function InformationView({ dataset_id, license_title, version, me
   const format_metadata_modified = format_date(metadata_modified);
 
   const additional_data = [
+    {
+      label: "Created by",
+      value: (
+        <Link to={`/profile/${author}`}>{author}</Link>
+      )
+    },
     {
       label: "License",
       value: license_title,
