@@ -35,10 +35,12 @@ export default function CreateTopicModal({ dataset_id, isOpen, close, topics, se
         // add create topic into list
         setTopics(prevState => [...prevState, response.data.result])
         setTimeout(() => {
-          close();
           setIsCreating(false);
-          return navigate(response.data.result?.id);
-        }, 550);
+          close();
+
+          // return navigate(response.data.result.id);
+          return window.location.href = (`${window.location.href}/${response.data.result.id}`);
+        }, 500);
       }
     } catch (error) {
       setIsCreating(false);
