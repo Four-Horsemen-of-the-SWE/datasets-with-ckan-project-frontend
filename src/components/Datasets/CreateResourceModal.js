@@ -1,5 +1,14 @@
 import { InboxOutlined, FileOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, Modal, Upload, message } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  Modal,
+  Upload,
+  message,
+  Typography,
+} from "antd";
 import { useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 import { useState } from "react";
@@ -96,12 +105,10 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
         onCancel={close}
         centered={true}
         footer={[
-          <Button onClick={close}>
-            Cancel
-          </Button>,
+          <Button onClick={close}>Cancel</Button>,
           <Button type="primary" loading={isCreating} onClick={handleCreate}>
             Create
-          </Button>
+          </Button>,
         ]}
       >
         <Form layout="vertical" form={form}>
@@ -121,7 +128,9 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
                 <div className="flex items-center justify-between">
                   <div className="flex gap-2 items-center">
                     <FileOutlined style={{ fontSize: "30px" }} />
-                    <b>{form?.getFieldValue("name")}</b>
+                    <Typography.Paragraph strong={true}>
+                      {form?.getFieldValue("name")}
+                    </Typography.Paragraph>
                   </div>
                   <Button type="ghost" onClick={handleClear}>
                     <DeleteOutlined style={{ color: "red" }} />
