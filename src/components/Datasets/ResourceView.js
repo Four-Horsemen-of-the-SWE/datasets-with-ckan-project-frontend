@@ -29,7 +29,7 @@ export default function ResourceView({
 
   const handleDownload = async (url) => {
     try {
-      // window.open(url, "_blank");
+      window.open(url, "_blank");
       await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
       );

@@ -294,10 +294,7 @@ export default function AllDatasets() {
                 <Title level={5} style={{ marginTop: 0 }}>
                   Tags
                 </Title>
-                <AutoComplete
-                  placeholder="Search tags here."
-                  className="w-full mb-2"
-                />
+                {/* <AutoComplete placeholder="Search tags here." className="w-full mb-2" /> */}
                 <div className="overflow-y-auto overflow-x-hidden max-h-56">
                   {allTags.map((item) => (
                     <div
@@ -321,10 +318,7 @@ export default function AllDatasets() {
                 <Title level={5} style={{ marginTop: 0 }}>
                   License
                 </Title>
-                <AutoComplete
-                  placeholder="Search license here."
-                  className="w-full mb-2"
-                />
+                {/* <AutoComplete placeholder="Search license here." className="w-full mb-2" /> */}
                 <div className="overflow-y-auto overflow-x-hidden max-h-56">
                   {allLicenses?.map((item) => (
                     <div
