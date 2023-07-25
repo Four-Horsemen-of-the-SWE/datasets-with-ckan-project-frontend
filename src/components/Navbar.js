@@ -2,7 +2,7 @@ import Logo from "../images/folders.svg";
 import { useCreateModalStore } from "../store";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { useIsAuthenticated } from "react-auth-kit";
+import { useIsAuthenticated, useAuthUser} from "react-auth-kit";
 import { UserOutlined, PlusOutlined, MessageOutlined } from "@ant-design/icons";
 import { Button, Card, Typography, Space } from "antd";
 
@@ -17,6 +17,8 @@ export default function Navbar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(useIsAuthenticated());
   const { isCreateModalShow, setIsCreateModalShow } = useCreateModalStore()
+  const user = useAuthUser();
+  const isAdmin = user() && user()?.is_admin;
 
   // Check if the current route is the login or register page
   const isLoginPage = location.pathname === "/login";
@@ -78,7 +80,22 @@ export default function Navbar() {
             >
               Article
             </Link>
+
+            {/* Render the admin-specific links */}
+            {isAdmin && (
+              <>
+                <Link
+                  href="/Dashboard"
+                  className="ml-2 sm:ml-4"
+                  style={{ color: "#000", textTransform: "uppercase" }}
+                >
+                  Dashboard
+                </Link>
+              </>
+            )}
+
           </div>
+
           <div className="flex items-center sm:mt-0">
             <div className="flex sm:mt-0 ml-2 sm:ml-4 items-center">
               {isLogin ? (

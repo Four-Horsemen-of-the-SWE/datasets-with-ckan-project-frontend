@@ -1,9 +1,17 @@
 import { useAuthUser } from "react-auth-kit";
-import { CloudDownloadOutlined, PlusOutlined } from "@ant-design/icons";
-import { Alert, Typography, Space, Table, Button, Tooltip } from "antd";
+import {
+  CloudDownloadOutlined,
+  PlusOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import { Alert, Typography, Space, Table, Button, Tooltip, Popover } from "antd";
 import moment from "moment/moment";
 import { filesize } from "filesize";
 import axios from "axios";
+import EditResourceModal from "./EditResourcecModal";
+import { useState } from "react";
+import CreateResourceModal from "./CreateResourceModal";
+import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -12,7 +20,12 @@ export default function ResourceView({
   dataset_id,
   resource,
 }) {
-  const auth = useAuthUser();  
+  const auth = useAuthUser();
+
+  // states
+  const [isEditModalShow, setIsEditModalShow] = useState(false);
+  const [isCreateModalShow, setIsCreateModalShow] = useState(false);
+  const [selectedResource, setSelectedResource] = useState({});
 
   const handleDownload = async (url) => {
     try {
@@ -25,14 +38,31 @@ export default function ResourceView({
     }
   };
 
+  const handleResourceSelected = (resource) => {
+    setSelectedResource(resource);
+    setIsEditModalShow(true);
+  }
+
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => a.name?.length - b.name?.length,
       sortDirections: ["descend"],
-      render: (text) => <b>{text}</b>,
+      render: (text, record) => (
+        <p className="flex flex-col">
+          <b>{text}</b>
+          {record.description && (
+            <Typography.Paragraph
+              ellipsis={{ rows: 1, symbol: "more", expandable: true }}
+              type="secondary"
+            >
+              {record.description}
+            </Typography.Paragraph>
+          )}
+        </p>
+      ),
     },
     {
       title: "Last Modified",
@@ -66,23 +96,66 @@ export default function ResourceView({
         </Tooltip>
       ),
     },
+    ...(creator_user_id === auth()?.id
+      ? [
+          {
+            title: "Edit",
+            align: "center",
+            render: (record) => (
+              <Button
+                type="ghost"
+                onClick={() =>
+                  handleResourceSelected({
+                    id: record.id,
+                    name: record.name,
+                    description: record.description,
+                  })
+                }
+              >
+                <EditOutlined />
+              </Button>
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (
     <>
+      {/* for edit resouce file */}
+      <EditResourceModal
+        dataset_id={selectedResource.id}
+        name={selectedResource.name}
+        description={selectedResource.description}
+        open={isEditModalShow}
+        close={() => setIsEditModalShow(false)}
+      />
+
+      {/* for create new resouce file. ambatukammmm */}
+      <CreateResourceModal
+        dataset_id={dataset_id}
+        open={isCreateModalShow}
+        close={() => setIsCreateModalShow(false)}
+      />
+
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
           <Space direction="vertical">
             <Title level={3}>Resource</Title>
-            <Text type="secondary">{resource.length} Resources</Text>
+            <Text type="secondary">{resource?.length} Resources</Text>
           </Space>
           {auth()?.id === creator_user_id && (
-            <Button icon={<PlusOutlined />}>New File</Button>
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => setIsCreateModalShow(true)}
+            >
+              New File
+            </Button>
           )}
         </div>
 
         {/* if data is empty */}
-        {!resource.length && (
+        {!resource?.length && (
           <Alert
             showIcon
             type="info"
@@ -97,14 +170,7 @@ export default function ResourceView({
           pagination={false}
           columns={columns}
           dataSource={resource}
-          expandable={{
-            expandedRowRender: (record) => (
-              <Typography.Paragraph ellipsis={{ rows: "1" }}>
-                {record.description}
-              </Typography.Paragraph>
-            ),
-            rowExpandable: (record) => record.description !== "",
-          }}
+          size="large"
         />
       </div>
     </>

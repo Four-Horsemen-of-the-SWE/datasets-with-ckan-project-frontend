@@ -9,6 +9,7 @@ import {
 import { Form, Input, Button, Typography, message } from "antd";
 import { useIsAuthenticated } from "react-auth-kit";
 import axios from "axios";
+import Logo from "../images/folders.svg";
 
 const { Title, Text, Link } = Typography;
 
@@ -58,7 +59,7 @@ export default function Register() {
   return (
     <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 lg:flex">
       {contextHolder}
-      <img
+        <img
         src={process.env.PUBLIC_URL + "/images/team.svg"}
         alt="register"
         className="h-32 md:h-64 hidden lg:block"
@@ -72,12 +73,22 @@ export default function Register() {
         autoComplete="off"
         className="w-full lg:w-1/3"
       >
-        <div className="mb-5">
-          <Title>Register</Title>
-          <Text type="secondary" strong>
-            Register to visit the best dataset repository.
-          </Text>
+        <div className="mb-5 flex justify-evenly items-center ">
+        <img
+                src={Logo}
+                alt="logo"
+                width={60}
+                height={60}
+                className="m-0 p-0 hidden sm:block"
+          />
+          <div className="flex flex-col items-start  w-full lg:w-2/3 ">
+            <Title class="inline-title">Register</Title> 
+            <Text type="secondary" >
+              Register to visit the best dataset repository.
+            </Text>
+          </div>
         </div>
+
         <Form.Item
           name="username"
           rules={[

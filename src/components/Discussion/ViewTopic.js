@@ -1,10 +1,17 @@
-import { CaretUpOutlined, CaretDownOutlined, CommentOutlined, LeftOutlined, CalendarOutlined } from "@ant-design/icons";
-import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag, Tooltip, message } from "antd";
+import {
+  CaretUpOutlined,
+  CaretDownOutlined,
+  CommentOutlined,
+  LeftOutlined,
+  CalendarOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag, Tooltip, message, Form, Popconfirm } from "antd";
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuthUser } from "react-auth-kit";
+import { useAuthUser, useAuthHeader } from "react-auth-kit";
 
 const { Title, Paragraph } = Typography;
 
@@ -15,9 +22,20 @@ const IconText = ({ icon, text }) => (
   </Space>
 );
 
+const format_date = (date) => {
+  const result = moment.utc(date).toDate() &&
+    moment(moment.utc(date).toDate()).format(
+      "MMMM Do YYYY, h:mm:ss a"
+    );
+  return result;
+}
+
 export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   const auth = useAuthUser();
+  const authHeader = useAuthHeader();
+  const JWTToken = authHeader().split(" ")[1];
 
+  const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [discussion, setDiscussion] = useState({});
 
@@ -30,16 +48,84 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
     }
   };
 
-  const handleCreateComment = async() => {
+  const handleCreateComment = async(value) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${topic_id}`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${topic_id}`,
+        value,
+        {
+          headers: {
+            Authorization: JWTToken
+          }
+        }
       );
 
       if(response.data.ok) {
         messageApi.success("Create comment success.");
         // if success. then add new comment into state
-        setDiscussion(prevState => [...prevState, response.data.result])
+        if(discussion.comments?.length) {
+          setDiscussion({
+            ...discussion,
+            comments: [...discussion.comments, response.data.result],
+          });
+        } else {
+          setDiscussion({
+            ...discussion,
+            comments: [response.data.result],
+          });
+        }
+
+        // clear text area
+        form.resetFields(["body"]);
+      }
+    } catch(error) {
+      messageApi.error(error.message);
+    }
+  }
+
+  const handleUpdateComment = async(comment_id, value) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${comment_id}`,
+        {body: value},
+        {
+          Authorization: JWTToken
+        }
+      );
+
+      console.log(response.data.result)
+      if(response.data.ok) {
+        const new_comments = discussion.comments.map(item => item.id === response.data.result.id ? response.data.result : item)
+        setDiscussion({
+          ...discussion,
+          comments: [...new_comments]
+        })
+      }
+    } catch(error) {
+      messageApi.error(error.message);
+    }
+  }
+
+  const handleDeleteComment = async(comment_id) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${comment_id}`,
+        {
+          headers: {
+            Authorization: JWTToken
+          }
+        }
+      );
+
+      if(response.data.ok) {
+        messageApi.success("Delete success.");
+
+        // rhen remove from state
+        const new_comments = discussion.comments.filter(item => item.id !== response.data.result)
+        setDiscussion({
+          ...discussion,
+          comments: new_comments
+        })
       }
     } catch(error) {
       messageApi.error(error.message);
@@ -94,10 +180,11 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       <Title level={4} style={{ marginTop: 0 }}>
         <Space>
           <CommentOutlined />
-          <p>{discussion.comments_count} Comments</p>
+          <p>{discussion.comments?.length} Comments</p>
         </Space>
       </Title>
 
+      {/* comments list */}
       <List
         itemLayout="vertical"
         size="large"
@@ -108,19 +195,74 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
             actions={[
               <IconText
                 icon={CalendarOutlined}
-                text={moment(item.created).format("LLL")}
+                text={format_date(item.created)}
               />,
             ]}
             extra={
-              dataset_creator_user_id === item.user_id && (
-                <Tag color="green">DATASET CREATOR</Tag>
-              )
+              <>
+                {auth()?.id === item.user_id && (
+                  <Popconfirm
+                    title="Delete this comment ?"
+                    description="Are you sure to delete this comment."
+                    icon={<DeleteOutlined style={{ color: "red" }} />}
+                    placement="right"
+                    onConfirm={() => handleDeleteComment(item.id)}
+                  >
+                    <Button
+                      shape="square"
+                      type="dashed"
+                      danger={true}
+                      size="small"
+                    >
+                      <DeleteOutlined />
+                    </Button>
+                  </Popconfirm>
+                )}
+              </>
             }
           >
             <List.Item.Meta
               avatar={<Avatar src={item?.user_image_url} />}
-              title={item.user_name}
-              description={item.body}
+              title={
+                <>
+                  {item.user_name}{" "}
+                  {dataset_creator_user_id === item.user_id && (
+                    <Tag color="green">DATASET CREATOR</Tag>
+                  )}
+                </>
+              }
+              description={
+                auth()?.id === item.user_id ? (
+                  <Typography.Paragraph
+                    ellipsis={{
+                      rows: 4,
+                      expandable: false,
+                      symbol: "more",
+                    }}
+                    editable={{
+                      maxLength: 1000,
+                      autoSize: {
+                        minRows: 4,
+                        maxRows: 12,
+                      },
+                      onChange: (value) => handleUpdateComment(item.id, value),
+                      tooltip: "Edit Comment.",
+                    }}
+                  >
+                    {item.body}
+                  </Typography.Paragraph>
+                ) : (
+                  <Typography.Paragraph
+                    ellipsis={{
+                      rows: 4,
+                      expandable: false,
+                      symbol: "more",
+                    }}
+                  >
+                    {item.body}
+                  </Typography.Paragraph>
+                )
+              }
             />
           </List.Item>
         )}
@@ -129,21 +271,44 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       <Divider />
 
       {/* create comment section */}
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-2 items-start">
+      <Form
+        form={form}
+        style={{ width: "100%", display: "flex", flexDirection: "column" }}
+        onFinish={handleCreateComment}
+        layout="vertical"
+      >
+        <div className="flex gap-2 items-start w-full">
           <Avatar src={auth()?.image_url} />
-          <Input.TextArea
-            rows={6}
-            placeholder="Reply to comments on this topic."
-            size="large"
-          />
+          <Form.Item
+            style={{ width: "100%" }}
+            name="body"
+            rules={[
+              {
+                required: true,
+                message: "Please enter a message for comment.",
+              },
+            ]}
+          >
+            <Input.TextArea
+              rows={6}
+              placeholder="Reply to comments on this topic."
+              allowClear={true}
+              showCount={true}
+              maxLength={1000}
+            />
+          </Form.Item>
         </div>
-        <Tooltip title="Add Comment." placement="left">
-          <Button type="primary" size="large" className="self-end">
+        <Form.Item style={{ alignSelf: "end" }}>
+          <Button
+            type="primary"
+            size="large"
+            className="self-end"
+            htmlType="submit"
+          >
             Create Comment
           </Button>
-        </Tooltip>
-      </div>
+        </Form.Item>
+      </Form>
     </>
   );
 }

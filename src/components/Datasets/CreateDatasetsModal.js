@@ -43,6 +43,7 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
           },
         }
       );
+      
       if (response.data.ok) {
         return true;
       } else {
@@ -178,7 +179,7 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
               </p>
               <p className="font-bold text-xl">Drag and drop files to upload</p>
               <p className="text-slate-400">
-                Consider zipping large directories for faster uploads
+                Consider zipping large directories for faster uploads.
               </p>
             </Upload.Dragger>
           </Form.Item>

@@ -19,6 +19,7 @@ export default function InformationView({ dataset_id, license_title, version, me
       );
     return result;
   }
+  
   const format_metadata_created = format_date(metadata_created);
   const format_metadata_modified = format_date(metadata_modified);
 
@@ -94,19 +95,21 @@ export default function InformationView({ dataset_id, license_title, version, me
               </List.Item>
             )}
           />
-
           {/* TAGS HERE */}
           <Space direction="vertical">
             <Title level={5}>Tags</Title>
             <div className="flex flex-wrap gap-1">
-              {tags?.map((item, key) => (
-                <Tag color="magenta" key={key}>
-                  {item.display_name}
-                </Tag>
-              ))}
+              {tags?.length ? (
+                tags?.map((item, key) => (
+                  <Tag color="magenta" key={key}>
+                    {item.display_name}
+                  </Tag>
+                ))
+              ) : (
+                <p className="text-slate-500">No tag</p>
+              )}
             </div>
           </Space>
-
           {/* downloaded statistic */}
           {downloadStatisticSuccess ? (
             <Space direction="vertical" className="w-full">
@@ -147,12 +150,11 @@ export default function InformationView({ dataset_id, license_title, version, me
           ) : (
             <Spin size="large" />
           )}
+          {/* favorite (bookmarked) statistic */}
+          {/* <Statistic title="Bookmarked" value={14538} /> */}
 
           {/* favorite (bookmarked) statistic */}
-          <Statistic title="Bookmarked" value={14538} />
-
-          {/* favorite (bookmarked) statistic */}
-          <Statistic title="Topics" value={5} />
+          {/* <Statistic title="Topics" value={5} /> */}
         </Space>
       </div>
     </>
