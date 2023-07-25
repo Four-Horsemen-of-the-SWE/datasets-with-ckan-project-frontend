@@ -94,7 +94,6 @@ export default function InformationView({ dataset_id, license_title, version, me
               </List.Item>
             )}
           />
-
           {/* TAGS HERE */}
           <Space direction="vertical">
             <Title level={5}>Tags</Title>
@@ -106,7 +105,6 @@ export default function InformationView({ dataset_id, license_title, version, me
               ))}
             </div>
           </Space>
-
           {/* downloaded statistic */}
           {downloadStatisticSuccess ? (
             <Space direction="vertical" className="w-full">
@@ -147,12 +145,11 @@ export default function InformationView({ dataset_id, license_title, version, me
           ) : (
             <Spin size="large" />
           )}
+          {/* favorite (bookmarked) statistic */}
+          {/* <Statistic title="Bookmarked" value={14538} /> */}
 
           {/* favorite (bookmarked) statistic */}
-          <Statistic title="Bookmarked" value={14538} />
-
-          {/* favorite (bookmarked) statistic */}
-          <Statistic title="Topics" value={5} />
+          {/* <Statistic title="Topics" value={5} /> */}
         </Space>
       </div>
     </>
