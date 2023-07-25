@@ -43,6 +43,7 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
           },
         }
       );
+      
       if (response.data.ok) {
         return true;
       } else {

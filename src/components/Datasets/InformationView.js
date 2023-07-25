@@ -98,11 +98,15 @@ export default function InformationView({ dataset_id, license_title, version, me
           <Space direction="vertical">
             <Title level={5}>Tags</Title>
             <div className="flex flex-wrap gap-1">
-              {tags?.map((item, key) => (
-                <Tag color="magenta" key={key}>
-                  {item.display_name}
-                </Tag>
-              ))}
+              {tags?.length ? (
+                tags?.map((item, key) => (
+                  <Tag color="magenta" key={key}>
+                    {item.display_name}
+                  </Tag>
+                ))
+              ) : (
+                <p className="text-slate-500">No tag</p>
+              )}
             </div>
           </Space>
           {/* downloaded statistic */}

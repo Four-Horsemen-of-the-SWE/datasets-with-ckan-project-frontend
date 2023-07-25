@@ -95,17 +95,31 @@ export default function ResourceView({
         </Tooltip>
       ),
     },
-    creator_user_id === auth()?.id && {
-      title: "Edit",
-      align: "center",
-      render: (record) => <Button type="ghost" onClick={() => handleResourceSelected({name: record.name, description: record.description})}>
-        <EditOutlined />
-      </Button>,
-    },
+    ...(creator_user_id === auth()?.id
+      ? [
+          {
+            title: "Edit",
+            align: "center",
+            render: (record) => (
+              <Button
+                type="ghost"
+                onClick={() =>
+                  handleResourceSelected({
+                    name: record.name,
+                    description: record.description,
+                  })
+                }
+              >
+                <EditOutlined />
+              </Button>
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (
-    <> 
+    <>
       {/* for edit resouce file */}
       <EditResourceModal
         name={selectedResource.name}
@@ -116,6 +130,7 @@ export default function ResourceView({
 
       {/* for create new resouce file. ambatukammmm */}
       <CreateResourceModal
+        dataset_id={dataset_id}
         open={isCreateModalShow}
         close={() => setIsCreateModalShow(false)}
       />
@@ -127,7 +142,12 @@ export default function ResourceView({
             <Text type="secondary">{resource?.length} Resources</Text>
           </Space>
           {auth()?.id === creator_user_id && (
-            <Button icon={<PlusOutlined />} onClick={() => setIsCreateModalShow(true)}>New File</Button>
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => setIsCreateModalShow(true)}
+            >
+              New File
+            </Button>
           )}
         </div>
 
