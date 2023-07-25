@@ -1,8 +1,9 @@
 import { useAuthHeader } from "react-auth-kit";
 import { EditOutlined } from "@ant-design/icons";
 import { Modal, message, Space, Form, Input, Button, Popconfirm } from "antd";
-import axios from "axios";
 import { useResourcesStore } from "../../store";
+import axios from "axios";
+import { useEffect } from "react";
 
 export default function EditResourceModal({ dataset_id, name, description, open, close }) {
   const authHeader = useAuthHeader();
@@ -39,6 +40,10 @@ export default function EditResourceModal({ dataset_id, name, description, open,
 
   const handleUpdate = async () => {
     try {
+      if(form.getFieldValue("name") === "") {
+        return message.info("Please input file name.")
+      }
+
       const formData = new FormData();
       formData.append("name", form.getFieldValue("name"));
       formData.append("description", form.getFieldValue("description"));
@@ -67,6 +72,14 @@ export default function EditResourceModal({ dataset_id, name, description, open,
     }
   };
 
+  useEffect(() => {
+    // set input with default value
+    form.setFieldsValue({
+      name: name,
+      description: description,
+    });
+  }, [dataset_id]);
+
   return (
     <>
       <Modal
@@ -79,6 +92,7 @@ export default function EditResourceModal({ dataset_id, name, description, open,
         open={open}
         onCancel={close}
         centered={true}
+        afterClose={form.resetFields()}
         footer={[
           <Popconfirm
             title="Delete the file."
@@ -99,10 +113,6 @@ export default function EditResourceModal({ dataset_id, name, description, open,
         <Form
           form={form}
           layout="vertical"
-          initialValues={{
-            name: name,
-            description: description,
-          }}
         >
           <Form.Item label="File name" name="name">
             <Input placeholder="file name." size="large" />
@@ -112,6 +122,7 @@ export default function EditResourceModal({ dataset_id, name, description, open,
             <Input.TextArea
               rows={4}
               placeholder="More details about this file."
+              value={description}
             />
           </Form.Item>
         </Form>
