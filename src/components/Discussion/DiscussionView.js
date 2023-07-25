@@ -184,7 +184,7 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                       )}
                     </>
                   }
-                  description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                  description={item?.body}
                 />
               </List.Item>
             )}

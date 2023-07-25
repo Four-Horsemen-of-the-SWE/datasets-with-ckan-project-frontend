@@ -25,7 +25,6 @@ export default function CreateTopicModal({ dataset_id, isOpen, close, topics, se
         }
       );
 
-        
       if(response.data.ok) {
         // then redirect to topic view page
         messageApi.success("Create success.");
@@ -38,7 +37,8 @@ export default function CreateTopicModal({ dataset_id, isOpen, close, topics, se
         }, 650);
       }
     } catch (error) {
-      messageApi.error(error?.response.data.message)
+      messageApi.error("Cannot createtopic.");
+      console.log(error);
     }
   };
 

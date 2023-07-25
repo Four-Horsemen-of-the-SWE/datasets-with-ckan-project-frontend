@@ -49,6 +49,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   };
 
   const handleCreateComment = async(value) => {
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${topic_id}`,
@@ -59,6 +60,8 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
           }
         }
       );
+
+      console.log(response)
 
       if(response.data.ok) {
         messageApi.success("Create comment success.");
