@@ -3,6 +3,7 @@ import { Button, Card, Form, Input, Modal, Upload, message } from "antd";
 import { useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 import { useState } from "react";
+import { useResourcesStore } from "../../store";
 
 export default function CreateResourceModal({ dataset_id, open, close }) {
   const authHeader = useAuthHeader();
@@ -10,6 +11,9 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [form] = Form.useForm();
+
+  // store
+  const { resources, setResources } = useResourcesStore();
 
   const props = {
     name: "file",
@@ -46,7 +50,7 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
           },
         }
       );
-      
+
       if (response.data.ok) {
         message.success("Create success.");
 
@@ -55,9 +59,13 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
         // clar selected file
         setSelectedFile(null);
 
+        // add new file into list
+        setResources([...resources, ...response.data.result]);
+
+        // close modal
         close();
       } else {
-        message.error("Cannot create file.")
+        message.error("Cannot create file.");
       }
     } catch (error) {
       message.error(error.message);
@@ -67,7 +75,7 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
   const handleClear = () => {
     form.resetFields();
     setSelectedFile(null);
-  }
+  };
 
   return (
     <>

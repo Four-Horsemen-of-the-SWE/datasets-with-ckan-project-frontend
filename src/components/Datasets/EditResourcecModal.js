@@ -8,7 +8,7 @@ export default function EditResourceModal({ dataset_id, name, description, open,
   const authHeader = useAuthHeader();
   const JWTToken = authHeader().split(" ")[1];
 
-  // state
+  // store
   const { resources, setResources } = useResourcesStore();
 
   const handleDelete = async() => {
