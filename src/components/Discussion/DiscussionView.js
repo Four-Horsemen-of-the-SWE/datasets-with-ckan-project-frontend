@@ -69,13 +69,6 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
     }
   };
 
-  const createTopic = async () => {
-    try {
-    } catch (error) {
-      messageApi.error(error.message);
-    }
-  };
-
   const handleDelteTopic = async(topic_id) => {
     try {
       const response = await axios.delete(

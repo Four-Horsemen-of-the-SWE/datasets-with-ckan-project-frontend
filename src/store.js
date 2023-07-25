@@ -6,4 +6,10 @@ const createModalStore = (set) => ({
     set(() => ({ isCreateModalShow: value })),
 });
 
+const resourcesStore = (set) => ({
+  resources: [],
+  setResources: (value) => set(() => ({ resources: value })),
+});
+
 export const useCreateModalStore = create(createModalStore);
+export const useResourcesStore = create(resourcesStore);
