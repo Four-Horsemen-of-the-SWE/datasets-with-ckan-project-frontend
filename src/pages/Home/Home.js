@@ -72,7 +72,7 @@ export default function Home() {
   return (
     <>
       {contextHolder}
-      <section className="section--header w-full h-96 flex justify-center items-center">
+      <section className="section--header w-full h-96 flex justify-center items-center bg-gradient-to-r from-blue-500 to-indigo-600">
         <div className="container mx-auto text-center">
           <Title className="mt-0 uppercase" style={{ color: "#FFF" }}>
             Datasets Hub
@@ -93,29 +93,27 @@ export default function Home() {
               width: "400px",
               textAlign: "left",
             }}
+            className="rounded-lg"
           />
         </div>
       </section>
 
       <section className="container mx-auto text-center my-16">
         <Title style={{ lineHeight: "1.6em" }}>
-          "Inside our platform you'll find all the datasets you need to do with
-          your data science work. Over{" "}
+          "Inside our platform, you'll find all the datasets you need for your data science work. Over{" "}
           <Title mark className="inline">
             {datasetsNumber}
           </Title>{" "}
-          data."
+          datasets."
         </Title>
       </section>
 
       <>
         <section className="container mx-auto py-5">
-          <Title level={2}>
-            <Space direction="vertical">
-              <Space>
-                <PushpinOutlined />
-                Newest Datasets
-              </Space>
+          <Title level={2} className="text-center mb-8">
+            <Space direction="vertical" align="center">
+              <PushpinOutlined style={{ fontSize: "24px" }} />
+              <span>Newest Datasets</span>
               <Title level={4} type="secondary" className="mt-0">
                 รายการดาต้าเซ็ทที่ใหม่ที่สุด
               </Title>
@@ -129,7 +127,7 @@ export default function Home() {
           ) : (
             <Row gutter={[18, 18]}>
               {allDatasets.map((item, key) => (
-                <Col xxs={12} md={12} lg={6} key={key}>
+                <Col xs={24} sm={12} md={8} lg={6} key={key}>
                   <DatasetsCard
                     id={item.id}
                     thumbnail={item?.thumbnail}
