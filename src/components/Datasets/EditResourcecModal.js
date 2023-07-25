@@ -7,6 +7,7 @@ import { useResourcesStore } from "../../store";
 export default function EditResourceModal({ dataset_id, name, description, open, close }) {
   const authHeader = useAuthHeader();
   const JWTToken = authHeader().split(" ")[1];
+  const [form] = Form.useForm();
 
   // store
   const { resources, setResources } = useResourcesStore();
@@ -25,7 +26,7 @@ export default function EditResourceModal({ dataset_id, name, description, open,
       if(response.data.ok) {
         message.success('Delete success.');
         // set with new resouces
-        const new_data =resources.filter((item) => item.id !== response.data.result);
+        const new_data = resources.filter((item) => item.id !== response.data.result);
         setResources(new_data);
 
         // then close modal
@@ -35,6 +36,36 @@ export default function EditResourceModal({ dataset_id, name, description, open,
       message.error(error.message);
     }
   }
+
+  const handleUpdate = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("name", form.getFieldValue("name"));
+      formData.append("description", form.getFieldValue("description"));
+      const response = await axios.put(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/resources/${dataset_id}`,
+        formData,
+        {
+          headers: {
+            Authorization: JWTToken,
+          },
+        }
+      );
+
+      if (response.data.ok) {
+        message.success("Update success.");
+
+        // set with new resouces
+        const new_data = resources.map((item) => item.id === response.data.result.id ? response.data.result : item);
+        setResources(new_data);
+
+        // then close modal
+        close();
+      }
+    } catch (error) {
+      message.error(error.message);
+    }
+  };
 
   return (
     <>
@@ -53,21 +84,27 @@ export default function EditResourceModal({ dataset_id, name, description, open,
             Delete
           </Button>,
           <Button onClick={close}>Cancel</Button>,
-          <Button type="primary" key="update">
+          <Button type="primary" key="update" onClick={handleUpdate}>
             Update
           </Button>,
         ]}
       >
-        <Form layout="vertical">
-          <Form.Item label="File name">
-            <Input placeholder="file name." size="large" value={name} />
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{
+            name: name,
+            description: description,
+          }}
+        >
+          <Form.Item label="File name" name="name">
+            <Input placeholder="file name." size="large" />
           </Form.Item>
 
-          <Form.Item label="Description">
+          <Form.Item label="Description" name="description">
             <Input.TextArea
               rows={4}
               placeholder="More details about this file."
-              value={description}
             />
           </Form.Item>
         </Form>

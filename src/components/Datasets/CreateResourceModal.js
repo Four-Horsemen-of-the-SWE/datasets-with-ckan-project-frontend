@@ -12,6 +12,9 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
 
   const [form] = Form.useForm();
 
+  // state 
+  const [isCreating, setIsCreating] = useState(false);
+
   // store
   const { resources, setResources } = useResourcesStore();
 
@@ -32,13 +35,17 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
 
   const handleCreate = async () => {
     try {
+      setIsCreating(true);
+
       const formData = new FormData();
       const fileValue = form.getFieldValue("file");
 
       // set filed to formData
       formData.append("resources", fileValue?.file.originFileObj);
       formData.append("name", form.getFieldValue("name"));
-      formData.append("description", form.getFieldValue("description"));
+      if(form.getFieldValue("description")) {
+        formData.append("description", form.getFieldValue("description"));
+      }
 
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/resources`,
@@ -62,12 +69,16 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
         // add new file into list
         setResources([...resources, ...response.data.result]);
 
+        setIsCreating(false);
+
         // close modal
         close();
       } else {
+        setIsCreating(false);
         message.error("Cannot create file.");
       }
     } catch (error) {
+      setIsCreating(false);
       message.error(error.message);
     }
   };
@@ -83,8 +94,15 @@ export default function CreateResourceModal({ dataset_id, open, close }) {
         title="Create new resouce."
         open={open}
         onCancel={close}
-        onOk={() => handleCreate()}
         centered={true}
+        footer={[
+          <Button onClick={close}>
+            Cancel
+          </Button>,
+          <Button type="primary" loading={isCreating} onClick={handleCreate}>
+            Create
+          </Button>
+        ]}
       >
         <Form layout="vertical" form={form}>
           <Form.Item label="Name" name="name">
