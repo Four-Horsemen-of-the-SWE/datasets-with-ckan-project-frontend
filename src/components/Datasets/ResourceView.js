@@ -10,6 +10,7 @@ import { filesize } from "filesize";
 import axios from "axios";
 import EditResourceModal from "./EditResourcecModal";
 import { useState } from "react";
+import CreateResourceModal from "./CreateResourceModal";
 
 const { Title, Text } = Typography;
 
@@ -22,6 +23,7 @@ export default function ResourceView({
 
   // states
   const [isEditModalShow, setIsEditModalShow] = useState(false);
+  const [isCreateModalShow, setIsCreateModalShow] = useState(false);
   const [selectedResource, setSelectedResource] = useState({});
 
   const handleDownload = async (url) => {
@@ -103,21 +105,29 @@ export default function ResourceView({
   ];
 
   return (
-    <>
+    <> 
+      {/* for edit resouce file */}
       <EditResourceModal
         name={selectedResource.name}
         description={selectedResource.description}
         open={isEditModalShow}
         close={() => setIsEditModalShow(false)}
       />
+
+      {/* for create new resouce file. ambatukammmm */}
+      <CreateResourceModal
+        open={isCreateModalShow}
+        close={() => setIsCreateModalShow(false)}
+      />
+
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
           <Space direction="vertical">
             <Title level={3}>Resource</Title>
-            <Text type="secondary">{resource.length} Resources</Text>
+            <Text type="secondary">{resource?.length} Resources</Text>
           </Space>
           {auth()?.id === creator_user_id && (
-            <Button icon={<PlusOutlined />}>New File</Button>
+            <Button icon={<PlusOutlined />} onClick={() => setIsCreateModalShow(true)}>New File</Button>
           )}
         </div>
 
