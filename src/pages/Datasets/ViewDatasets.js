@@ -154,24 +154,21 @@ export default function ViewDatasets() {
               },
             ]}
           />
+
+          {/* bookmark button */}
+          {isAuthenticated() && (
+            <Button
+              type="primary"
+              ghost={!isBookmark}
+              size="large"
+              icon={<StarOutlined />}
+              loading={isBookmarking}
+              onClick={() => handleBookmark()}
+            >
+              {isBookmark ? "Bookmarked" : "Bookmark"}
+            </Button>
+          )}
         </div>
-        {isAuthenticated() && (
-          <div className="container mx-auto mt-4 w-100 flex justify-between items-center gap-2 pe-9">
-            <Space>
-              {/* bookmark button */}
-              <Button
-                type="primary"
-                ghost={!isBookmark}
-                size="large"
-                icon={<StarOutlined />}
-                loading={isBookmarking}
-                onClick={() => handleBookmark()}
-              >
-                {isBookmark ? "Bookmarked" : "Bookmark"}
-              </Button>
-            </Space>
-          </div>
-        )}
 
         <div className="container mx-auto">
           <Row
