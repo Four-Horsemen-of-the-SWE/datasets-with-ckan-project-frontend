@@ -30,7 +30,7 @@ export default function Dashboard({
 
   useEffect(() => {
     // if user is not admin.
-    if(!auth().is_admin) {
+    if(!auth()?.is_admin) {
       redirect('/');
     }
   }, []);
