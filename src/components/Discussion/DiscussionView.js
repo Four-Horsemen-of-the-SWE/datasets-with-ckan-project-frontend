@@ -20,7 +20,7 @@ import {
   Popconfirm,
 } from "antd";
 import { useParams } from "react-router-dom";
-import { useAuthUser, useAuthHeader } from "react-auth-kit";
+import { useAuthUser, useAuthHeader, useIsAuthenticated } from "react-auth-kit";
 import axios from "axios";
 
 // import componests
@@ -47,6 +47,7 @@ const data = [
 export default function DiscussionView({ dataset_id, dataset_creator_user_id }) {
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
+  const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
 
   const { topic_id } = useParams();
@@ -122,14 +123,16 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
             Discussions
           </Title>
 
-          <Button
-            type="primary"
-            size="large"
-            icon={<PlusOutlined />}
-            onClick={() => setIsTopicModalShow(true)}
-          >
-            New Topic
-          </Button>
+          {isAuthenticated() && (
+            <Button
+              type="primary"
+              size="large"
+              icon={<PlusOutlined />}
+              onClick={() => setIsTopicModalShow(true)}
+            >
+              New Topic
+            </Button>
+          )}
         </div>
 
         {topics.length ? (

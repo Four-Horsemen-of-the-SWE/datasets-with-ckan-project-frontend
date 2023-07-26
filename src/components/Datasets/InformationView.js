@@ -12,7 +12,7 @@ const { Title, Text } = Typography;
 export default function InformationView({ dataset_id, author, license_title, version, metadata_created, metadata_modified, tags }) {
   const [downloadStatistic, setDownloadStatistic] = useState({});
   const [downloadStatisticSuccess, setDownloadStatisticSuccess] = useState(false);
-  
+
   const format_date = (date) => {
     const result = moment.utc(date).toDate() &&
       moment(moment.utc(date).toDate()).format(

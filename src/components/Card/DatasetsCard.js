@@ -1,11 +1,11 @@
 import { EyeOutlined, CheckOutlined, FullscreenOutlined } from "@ant-design/icons";
 import { Button, Card, Modal, Typography } from "antd";
 import { useState } from "react";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import moment from "moment/moment";
 
 const { Meta } = Card;
-const { Paragraph, Link } = Typography;
+const { Paragraph } = Typography;
 
 export default function DatasetsCard({
   id,
@@ -41,7 +41,7 @@ export default function DatasetsCard({
             size="large"
             icon={<FullscreenOutlined />}
           >
-            <Link href={`/datasets/${id}`}>View</Link>
+            <Link to={`/datasets/${id}`}>View</Link>
           </Button>,
           <Button
             key="ok"
@@ -72,14 +72,14 @@ export default function DatasetsCard({
           />
         }
         actions={[
-          <Link href={`/profile/${author ? author : "Admin"}`}>
+          <Link to={`/profile/${author ? author : "Admin"}`}>
             {author ? author : "Admin"}
           </Link>,
           moment(metadata_modified).format("MMM Do YY"),
           <EyeOutlined key="bookmark" onClick={() => setIsModalOpen(true)} />,
         ]}
       >
-        <Link href={`/datasets/${id}`}>
+        <Link to={`/datasets/${id}`}>
           <Meta
             title={title}
             description={

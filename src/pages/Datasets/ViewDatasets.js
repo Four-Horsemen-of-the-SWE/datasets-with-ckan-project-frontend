@@ -16,19 +16,10 @@ import { useResourcesStore } from "../../store";
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 
-const items = [
-  {
-    key: "1",
-    label: <Text>Delete</Text>,
-    icon: <StarOutlined />,
-    danger: true,
-  },
-];
-
 export default function ViewDatasets() {
   const { datasets_id } = useParams();
   const [datasets, setDatasets] = useState({});
-  const [isLoading ,setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isBookmark, setIsBookmark] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -42,14 +33,15 @@ export default function ViewDatasets() {
   const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
-  
-  const fetchDatasets = async() => {
+
+  const fetchDatasets = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}`, {
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}`,
+        {
           headers: {
-            Authorization: JWTToken
-          }
+            Authorization: JWTToken,
+          },
         }
       );
 
@@ -57,35 +49,35 @@ export default function ViewDatasets() {
         setDatasets(response.data.result);
         setIsBookmark(response.data.result.is_bookmark);
 
-        if(!!response.data.result) {
+        if (!!response.data.result) {
           document.title = response.data.result.title;
           setResources(response.data.result?.resources);
           setIsLoading(false);
         }
       }
-    } catch(error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
 
-  const handleBookmark = async() => {
+  const handleBookmark = async () => {
     try {
       setIsBookmarking(true);
-      if(isBookmark) {
+      if (isBookmark) {
         unBookmarkDataset();
       } else {
         bookmarkDataset();
       }
       setIsBookmarking(false);
-    } catch(error) {
+    } catch (error) {
       messageApi.error({
         type: "error",
-        content: error.message
-      })
+        content: error.message,
+      });
     }
-  }
+  };
 
-  const bookmarkDataset = async() => {
+  const bookmarkDataset = async () => {
     const response = await axios.post(
       `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}/bookmark/`,
       {},
@@ -96,13 +88,12 @@ export default function ViewDatasets() {
       }
     );
 
-    if(response.data.ok)
-      setIsBookmark(true);
+    if (response.data.ok) setIsBookmark(true);
 
     console.log(response);
-  }
+  };
 
-  const unBookmarkDataset = async() => {
+  const unBookmarkDataset = async () => {
     const response = await axios.delete(
       `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${datasets_id}/bookmark`,
       {
@@ -112,33 +103,31 @@ export default function ViewDatasets() {
       }
     );
 
-    if(response.data.ok)
-      setIsBookmark(false);
+    if (response.data.ok) setIsBookmark(false);
 
     console.log(response);
-  }
+  };
 
   // call axios here
   useEffect(() => {
-    fetchDatasets()
-  }, [])
+    fetchDatasets();
+  }, []);
 
   // remove store
   useEffect(() => {
     return () => setResources([]);
-  }, [])
+  }, []);
 
   const handleTabChange = (key) => {
-    const baseURL = `/datasets/${datasets_id}`
-    if(key === 'discussions')
-      window.history.pushState(null, "", `${baseURL}/discussions`)
-    else if(key === 'data')
-      window.history.pushState(null, "", `${baseURL}`);
-    else if(key === 'settings')
+    const baseURL = `/datasets/${datasets_id}`;
+    if (key === "discussions")
+      window.history.pushState(null, "", `${baseURL}/discussions`);
+    else if (key === "data") window.history.pushState(null, "", `${baseURL}`);
+    else if (key === "settings")
       window.history.pushState(null, "", `${baseURL}/settings`);
-  }
+  };
 
-  if(isLoading) {
+  if (isLoading) {
     return (
       <div className="w-100 h-screen flex justify-center items-center">
         <Spin size="large" />
@@ -148,25 +137,26 @@ export default function ViewDatasets() {
     return (
       <>
         {contextHolder}
+        <div className="container mx-auto mt-4 w-100 flex justify-between items-center gap-2 pe-9">
+          {/* breadcrumb */}
+          <Breadcrumb
+            items={[
+              {
+                title: (
+                  <>
+                    <DatabaseOutlined />
+                    <Link to="/datasets">Datasets</Link>
+                  </>
+                ),
+              },
+              {
+                title: datasets.name,
+              },
+            ]}
+          />
+        </div>
         {isAuthenticated() && (
           <div className="container mx-auto mt-4 w-100 flex justify-between items-center gap-2 pe-9">
-            {/* breadcrumb */}
-            <Breadcrumb
-              items={[
-                {
-                  title: (
-                    <>
-                      <DatabaseOutlined />
-                      <Link to="/datasets">Datasets</Link>
-                    </>
-                  ),
-                },
-                {
-                  title: datasets.name,
-                },
-              ]}
-            />
-
             <Space>
               {/* bookmark button */}
               <Button

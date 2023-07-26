@@ -116,24 +116,26 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
         if(localfileList?.length) {
           const upload_response = await handleUpload(response.data.result.id, localfileList);
           if(upload_response) {
-            setIsCreating(false);
             message.success({
               type: "success",
               content: "Create with resoucess success."
             })
+            
+
             setTimeout(() => {
+              setIsCreating(false);
               window.location.href = `/datasets/${response.data.result.id}`;
-            }, 1200)
+            }, 500)
           }
         } else {
-          setIsCreating(false);
           message.success({
             type: "success",
             content: "Create success.",
           });
           setTimeout(() => {
+            setIsCreating(false);
             window.location.href = `/datasets/${response.data.result.id}`;
-          }, 1200);
+          }, 500);
         }
       } else {
         messageApi.open({

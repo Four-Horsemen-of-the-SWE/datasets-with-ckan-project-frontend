@@ -68,7 +68,7 @@ export default function AllDatasets() {
   const fetchDatasets = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search`
       );
       if (response.status === 200) {
         setAllDatasets(response.data.result);
@@ -226,7 +226,7 @@ export default function AllDatasets() {
             <Space direction="vertical" className="my-3">
               <Title>Our Datasets</Title>
               <Text>
-                Browse 10+ open source datasets for your next machine learning
+                Browse open source datasets for your next machine learning
                 project. Our list of free datasets keeps growing, so make sure
                 you visit it frequently.
               </Text>

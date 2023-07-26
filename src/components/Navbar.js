@@ -5,12 +5,11 @@ import { useState } from "react";
 import { useIsAuthenticated, useAuthUser} from "react-auth-kit";
 import { UserOutlined, PlusOutlined, MessageOutlined } from "@ant-design/icons";
 import { Button, Card, Typography, Space } from "antd";
+import { Link } from "react-router-dom";
 
 // import component
 import DrawerView from "./DrawerView";
 import CreateDatasetsModal from "./Datasets/CreateDatasetsModal";
-
-const { Link } = Typography;
 
 export default function Navbar() {
   const location = useLocation();
@@ -46,7 +45,7 @@ export default function Navbar() {
       <Card bordered size="small" className="w-full shadow-md rounded-lg">
         <div className="container mx-auto flex flex-row justify-between items-center">
           <div className="flex items-center">
-            <Link href="/">
+            <Link to="/">
               <img
                 src={Logo}
                 alt="logo"
@@ -56,7 +55,7 @@ export default function Navbar() {
               />
             </Link>
             <Link
-              href="/"
+              to="/"
               className="ml-2 sm:ml-4"
               style={{
                 color: "#1890ff",
@@ -67,14 +66,14 @@ export default function Navbar() {
               DATASETS HUB
             </Link>
             <Link
-              href="/datasets"
+              to="/datasets"
               className="ml-2 sm:ml-4"
               style={{ color: "#000", textTransform: "uppercase" }}
             >
               Datasets
             </Link>
             <Link
-              href="/article"
+              to="/article"
               className="ml-2 sm:ml-4"
               style={{ color: "#000", textTransform: "uppercase" }}
             >
@@ -85,7 +84,7 @@ export default function Navbar() {
             {isAdmin && (
               <>
                 <Link
-                  href="/Dashboard"
+                  to="/Dashboard"
                   className="ml-2 sm:ml-4"
                   style={{ color: "#000", textTransform: "uppercase" }}
                 >
@@ -93,7 +92,6 @@ export default function Navbar() {
                 </Link>
               </>
             )}
-
           </div>
 
           <div className="flex items-center sm:mt-0">
@@ -118,10 +116,10 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <Link href="/login">
+                  <Link to="/login">
                     <Button className="mr-2 sm:mr-4">Login</Button>
                   </Link>
-                  <Link href="/register">
+                  <Link to="/register">
                     <Button type="primary">Register</Button>
                   </Link>
                 </>
