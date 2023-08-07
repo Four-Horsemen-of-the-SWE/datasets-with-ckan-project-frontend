@@ -41,13 +41,9 @@ export default function DatasetsSettings({ datasets }) {
   const [messageApi, contextHolder] = message.useMessage();
   const authHeader = useAuthHeader();
 
-  // licenses
+  // licenses and tags
   const [allLicenses, setAllLicenses] = useState([]);
-
-  const all_tags = datasets?.tags.map((item) => ({
-    label: item.display_name,
-    value: item.name,
-  }));
+  const [allTags, setAllTags] = useState([]);
 
   const [defailed_form] = Form.useForm();
 
@@ -84,14 +80,28 @@ export default function DatasetsSettings({ datasets }) {
     },
   };
 
+  // get licenses from backend
   const fetchLicenses = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/licenses`
       );
       if (response.data.ok) {
-        const licenses = response.data.result.map((item) => ({value: item.id, label: item.title}));
-        setAllLicenses(licenses);
+        setAllLicenses(response.data.result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get tags from backend
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/tags`
+      );
+      if (response.status === 200) {
+        setAllTags(response.data.result);
       }
     } catch (error) {
       console.log(error);
@@ -113,7 +123,7 @@ export default function DatasetsSettings({ datasets }) {
   const updateDataset = async (values) => {
     setIsSaving(true);
     const tag_list = values?.tags.map((item) => ({
-      name: item,
+      name: item.toLowerCase().replaceAll(" ", "-"),
     }));
     values.tags = tag_list;
     values.name = validName(values.title);
@@ -181,6 +191,7 @@ export default function DatasetsSettings({ datasets }) {
 
   useEffect(() => {
     fetchLicenses();
+    fetchTags();
   }, []);
 
   return (
@@ -232,6 +243,7 @@ export default function DatasetsSettings({ datasets }) {
             notes: datasets.notes,
             private: datasets.private,
             tags: datasets.tags.map((item) => item.name),
+            license_id: datasets?.license_id,
             version: datasets?.version,
           }}
           onFinish={updateDataset}
@@ -271,7 +283,10 @@ export default function DatasetsSettings({ datasets }) {
                     mode="tags"
                     placeholder="Tags"
                     size="large"
-                    options={all_tags}
+                    options={allTags.map((item) => ({
+                      label: item.display_name,
+                      value: item.name,
+                    }))}
                   />
                 </Form.Item>
               </Col>
@@ -280,7 +295,10 @@ export default function DatasetsSettings({ datasets }) {
                   <Select
                     placeholder="Licenses"
                     size="large"
-                    options={allLicenses}
+                    options={allLicenses.map((item) => ({
+                      value: item.id,
+                      label: item.title,
+                    }))}
                   />
                 </Form.Item>
               </Col>

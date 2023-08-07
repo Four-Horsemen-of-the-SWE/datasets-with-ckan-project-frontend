@@ -268,7 +268,8 @@ export default function AllDatasets() {
                 </Title>
                 {/* <AutoComplete placeholder="Search tags here." className="w-full mb-2" /> */}
                 <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {allTags.map((item) => (
+                  {allTags.length ? (
+                    allTags.map((item) => (
                     <div
                       style={{
                         backgroundColor: "#F7F9FC",
@@ -277,11 +278,14 @@ export default function AllDatasets() {
                         borderRadius: "7px",
                         cursor: "pointer",
                       }}
-                      onClick={() => handleFilterSelected("tags", item)}
+                      onClick={() => handleFilterSelected("tags", item.name)}
                     >
-                      {item}
+                      {item.name}
                     </div>
-                  ))}
+                  ))
+                  ) : (
+                    <Empty description="No Tags" />
+                  )}
                 </div>
               </div>
 
