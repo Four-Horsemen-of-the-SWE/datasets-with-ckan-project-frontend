@@ -5,13 +5,15 @@ import {
   LeftOutlined,
   CalendarOutlined,
   DeleteOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { Avatar, Card, Divider, Space, Typography, Button, Input, List, Tag, Tooltip, message, Form, Popconfirm } from "antd";
 import axios from "axios";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthUser, useAuthHeader } from "react-auth-kit";
+import EditTopicView from "./EditTopicView";
 
 const { Title, Paragraph } = Typography;
 
@@ -38,6 +40,9 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [discussion, setDiscussion] = useState({});
+
+  // states
+  const [editableTopic, setEditableTopic] = useState(false);
 
   const fetchDiscussion = async () => {
     const response = await axios.get(
@@ -142,40 +147,16 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
     <>
       {contextHolder}
 
-      <Link
-        to={`/${window.location.pathname.split("/").slice(1, 4).join("/")}`}
+      <a
+        href={`/${window.location.pathname.split("/").slice(1, 4).join("/")}`}
       >
         <Button type="dashed" icon={<LeftOutlined />} className="mb-3">
           Back to Topic
         </Button>
-      </Link>
+      </a>
 
-      <Card bordered={true}>
-        <div className="flex justify-between w-full items-center space-x-4">
-          <Space split="•">
-            <Avatar src={discussion.user_image_url} />
-            <small>{discussion.user_name}</small>
-            <Tag color="green">DATASET CREATOR</Tag>
-          </Space>
-          <Space.Compact size="middle">
-            <Button>
-              <CaretUpOutlined />
-            </Button>
-            <Input
-              disabled
-              defaultValue={0}
-              style={{ width: "40px", textAlign: "center" }}
-            />
-            <Button>
-              <CaretDownOutlined />
-            </Button>
-          </Space.Compact>
-        </div>
-        <Title level={2}>{discussion.title}</Title>
-        <Paragraph ellipsis={{ rows: 4, symbol: "more" }}>
-          {discussion.body}
-        </Paragraph>
-      </Card>
+      {/* topic details show here */}
+      <EditTopicView discussion_data={discussion} />
 
       <Divider />
 
@@ -232,9 +213,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
                     <Tag color="green">DATASET CREATOR</Tag>
                   )}
                   {/* if user is admin */}
-                  {item.is_admin && (
-                    <Tag color="red">ADMIN</Tag>
-                  )}
+                  {item.is_admin && <Tag color="red">ADMIN</Tag>}
                 </>
               }
               description={

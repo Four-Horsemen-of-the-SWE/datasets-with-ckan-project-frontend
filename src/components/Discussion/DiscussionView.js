@@ -158,6 +158,11 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                     </Button>
                   </Space.Compact>,
                   auth()?.id === item.user_id && (
+                    <Button>
+                      <EditOutlined style={{ color: "red" }} />
+                    </Button>
+                  ),
+                  auth()?.id === item.user_id && (
                     <Popconfirm
                       title="Delete this topic ?"
                       description="Are you sure to delete this topic."
@@ -169,11 +174,6 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                         <DeleteOutlined style={{ color: "red" }} />
                       </Button>
                     </Popconfirm>
-                  ),
-                  auth()?.id === item.user_id && (
-                    <Button>
-                      <EditOutlined style={{ color: "red" }} />
-                    </Button>
                   ),
                 ]}
               >
