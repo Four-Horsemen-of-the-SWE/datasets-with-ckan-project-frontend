@@ -45,6 +45,24 @@ export default function EditTopicView({ discussion_data }) {
 
   const handleDeleteTopic = async () => {
     try {
+      try {
+        const response = await axios.delete(
+          `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/${discussion.id}/topics`,
+          {
+            headers: {
+              Authorization: JWTToken,
+            },
+          }
+        );
+        if (response.data.ok) {
+          message.success("Your topic has been deleted.");
+          setTimeout(() => {
+            window.location.href = window.location.pathname.split('/').slice(0, -1).join('/');
+          }, 400);
+        }
+      } catch (error) {
+        message.error(error.message);
+      }
     } catch (error) {
       message.error(error.message);
     }
@@ -92,6 +110,7 @@ export default function EditTopicView({ discussion_data }) {
               description="Are you sure to delete this topic."
               icon={<DeleteOutlined style={{ color: "red" }} />}
               placement="right"
+              onConfirm={handleDeleteTopic}
             >
               <Button type="primary" danger={true} loading={isUpdating}>
                 <DeleteOutlined style={{ color: "white" }} />
