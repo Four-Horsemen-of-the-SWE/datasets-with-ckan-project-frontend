@@ -18,6 +18,7 @@ const { TabPane } = Tabs;
 
 export default function ViewDatasets() {
   const { datasets_id } = useParams();
+  // states
   const [datasets, setDatasets] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isBookmark, setIsBookmark] = useState(false);
@@ -26,7 +27,6 @@ export default function ViewDatasets() {
   const { resources, setResources } = useResourcesStore();
 
   const location = useLocation();
-  // const currentTab = location.pathname.split('/')[3] === "discussions" ? "discussions" : "data";
   const currentTab = location.pathname.split("/")[3];
 
   const auth = useAuthUser();

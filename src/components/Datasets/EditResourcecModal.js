@@ -1,6 +1,6 @@
 import { useAuthHeader } from "react-auth-kit";
 import { EditOutlined } from "@ant-design/icons";
-import { Modal, message, Space, Form, Input, Button, Popconfirm, Spin } from "antd";
+import { Modal, message, Space, Form, Input, Button, Spin } from "antd";
 import { useResourcesStore } from "../../store";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -14,35 +14,6 @@ export default function EditResourceModal({ dataset_id, name, description, open,
 
   // store
   const { resources, setResources } = useResourcesStore();
-
-  const handleDelete = async() => {
-    try {
-      setIsCreating(true);
-      const response = await axios.delete(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/resources/${dataset_id}`,
-        {
-          headers: {
-            Authorization: JWTToken,
-          },
-        }
-      );
-
-      if(response.data.ok) {
-        message.success('Delete success.');
-        // set with new resouces
-        const new_data = resources.filter((item) => item.id !== response.data.result);
-        setResources(new_data);
-
-        setIsCreating(false);
-
-        // then close modal
-        close();
-      }
-    } catch(error) {
-      setIsCreating(false);
-      message.error(error.message);
-    }
-  }
 
   const handleUpdate = async () => {
     try {
@@ -107,16 +78,6 @@ export default function EditResourceModal({ dataset_id, name, description, open,
         onCancel={close}
         centered={true}
         footer={[
-          <Popconfirm
-            title="Delete the file."
-            description="Are you sure to delete this file?"
-            onConfirm={handleDelete}
-            placement="bottom"
-          >
-            <Button key="delete" danger={true}>
-              Delete
-            </Button>
-          </Popconfirm>,
           <Button onClick={close}>Cancel</Button>,
           <Button
             type="primary"

@@ -12,24 +12,26 @@ import {
   Table,
   Button,
   Tooltip,
-  Popover,
 } from "antd";
 import { filesize } from "filesize";
 import moment from "moment/moment";
 import axios from "axios";
 
+// store
+import { useResourcesStore } from "../../store";
+
 // import components
 import EditResourceModal from "./EditResourcecModal";
 import CreateResourceModal from "./CreateResourceModal";
+import DeleteResouceButton from "./DeleteResouceButton";
 
 const { Title, Text } = Typography;
 
-export default function ResourceView({
-  creator_user_id,
-  dataset_id,
-  resource,
-}) {
+export default function ResourceView({ creator_user_id, dataset_id }) {
   const auth = useAuthUser();
+
+  // store
+  const { resources, setResources } = useResourcesStore();
 
   // states
   const [isEditModalShow, setIsEditModalShow] = useState(false);
@@ -108,21 +110,25 @@ export default function ResourceView({
     ...(creator_user_id === auth()?.id
       ? [
           {
-            title: "Edit",
+            title: "Action",
             align: "center",
             render: (record) => (
-              <Button
-                type="ghost"
-                onClick={() =>
-                  handleResourceSelected({
-                    id: record.id,
-                    name: record.name,
-                    description: record.description,
-                  })
-                }
-              >
-                <EditOutlined />
-              </Button>
+              <>
+                <Button
+                  type="ghost"
+                  onClick={() =>
+                    handleResourceSelected({
+                      id: record.id,
+                      name: record.name,
+                      description: record.description,
+                    })
+                  }
+                >
+                  <EditOutlined />
+                </Button>
+                <DeleteResouceButton resource_id={record.id} />
+                ,
+              </>
             ),
           },
         ]
@@ -151,7 +157,7 @@ export default function ResourceView({
         <div className="flex items-center justify-between">
           <Space direction="vertical">
             <Title level={3}>Resource</Title>
-            <Text type="secondary">{resource?.length} Resources</Text>
+            <Text type="secondary">{resources?.length} Resources</Text>
           </Space>
           {auth()?.id === creator_user_id && (
             <Button
@@ -164,7 +170,7 @@ export default function ResourceView({
         </div>
 
         {/* if data is empty */}
-        {!resource?.length && (
+        {!resources?.length && (
           <Alert
             showIcon
             type="info"
@@ -178,7 +184,7 @@ export default function ResourceView({
         <Table
           pagination={false}
           columns={columns}
-          dataSource={resource}
+          dataSource={resources}
           size="large"
         />
       </div>
