@@ -18,8 +18,9 @@ import {
   Form,
   Tag,
   Popconfirm,
+  Tooltip,
 } from "antd";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAuthUser, useAuthHeader, useIsAuthenticated } from "react-auth-kit";
 import axios from "axios";
 
@@ -157,24 +158,6 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                       <CaretDownOutlined />
                     </Button>
                   </Space.Compact>,
-                  auth()?.id === item.user_id && (
-                    <Button>
-                      <EditOutlined style={{ color: "red" }} />
-                    </Button>
-                  ),
-                  auth()?.id === item.user_id && (
-                    <Popconfirm
-                      title="Delete this topic ?"
-                      description="Are you sure to delete this topic."
-                      icon={<DeleteOutlined style={{ color: "red" }} />}
-                      placement="right"
-                      onConfirm={() => handleDelteTopic(item.id)}
-                    >
-                      <Button>
-                        <DeleteOutlined style={{ color: "red" }} />
-                      </Button>
-                    </Popconfirm>
-                  ),
                 ]}
               >
                 <List.Item.Meta
@@ -183,7 +166,9 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                     <>
                       <a href={`discussions/${item.id}`}>{item.title}</a>{" "}
                       {item.user_id === auth()?.id && (
-                        <Tag color="red">Your Topic</Tag>
+                        <Tooltip title="You can edit and delete this topic on the View Topics page." placement="right">
+                          <Tag color="red">Your Topic</Tag>
+                        </Tooltip>
                       )}
                     </>
                   }

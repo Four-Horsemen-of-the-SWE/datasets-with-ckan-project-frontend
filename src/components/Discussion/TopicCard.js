@@ -3,9 +3,11 @@ import { useAuthHeader } from "react-auth-kit";
 import { CaretUpOutlined, CaretDownOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Space, Avatar, Input, Form, Button, Typography, Card, Tag, message, Popconfirm } from "antd";
 import axios from "axios";
+import VoteButton from "./VoteButton";
+
 const { Title, Paragraph } = Typography;
 
-export default function EditTopicView({ discussion_data }) {
+export default function TopicCard({ discussion_data }) {
   const [discussion, setDiscussion] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -81,19 +83,7 @@ export default function EditTopicView({ discussion_data }) {
           <Tag color="green">DATASET CREATOR</Tag>
         </Space>
         <Space>
-          <Space.Compact size="middle">
-            <Button>
-              <CaretUpOutlined />
-            </Button>
-            <Input
-              disabled
-              defaultValue={0}
-              style={{ width: "40px", textAlign: "center" }}
-            />
-            <Button>
-              <CaretDownOutlined />
-            </Button>
-          </Space.Compact>
+          <VoteButton />
 
           {/* action button, edit and delete */}
           <Space.Compact>
