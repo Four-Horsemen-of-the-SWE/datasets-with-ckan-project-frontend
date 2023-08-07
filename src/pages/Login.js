@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input, Button, Typography, message } from "antd";
 import { useSignIn, useIsAuthenticated } from "react-auth-kit";
@@ -11,16 +11,19 @@ export default function Login() {
   document.title = "Login";
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const [isProcess, setIsProcess] = useState(false);
 
   const signIn = useSignIn();
   const isLogin = useIsAuthenticated();
 
   const onFinishFailed = (errorInfo) => {
     messageApi.error(JSON.stringify(errorInfo));
+    setIsProcess(false);
   };
 
   const signInHandle = async (value) => {
     try {
+      setIsProcess(true);
       const response = await axios.post(`${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/login`, {
         username: value.username,
         password: value.password,
@@ -41,14 +44,17 @@ export default function Login() {
           messageApi.success("Login Success");
           setTimeout(() => {
             window.location.href = '/';
+            setIsProcess(false);
           }, 1200);
         } else {
           // if error
           messageApi.error("Login Error");
+          setIsProcess(false);
         }
       } else {
         // if error
         messageApi.error(response.data.message);
+        setIsProcess(false);
       }
     } catch (error) {
       // show error message
@@ -134,6 +140,7 @@ export default function Login() {
                   !!form.getFieldsError().filter(({ errors }) => errors.length).length
                 }
                 className="mt-4"
+                loading={isProcess}
               >
                 Login
               </Button>

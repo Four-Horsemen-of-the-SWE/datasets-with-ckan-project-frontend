@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   LockOutlined,
   UserOutlined,
@@ -19,9 +19,11 @@ export default function Register() {
   const isLogin = useIsAuthenticated();
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const [isProcess, setIsProcess] = useState(false);
 
   const onFinish = async (value) => {
     try {
+      setIsProcess(true);
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/`,
         {
@@ -33,21 +35,23 @@ export default function Register() {
         }
       );
 
-      console.log(response);
       if (response.status === 200) {
         messageApi.success("Register Success");
 
         setTimeout(() => {
           window.location.replace("/login");
+          setIsProcess(false);
         }, 1200);
       }
     } catch (error) {
       messageApi.error(error.message);
+      setIsProcess(false);
     }
   };
 
   const onFinishFailed = (errorInfo) => {
     messageApi.error("Please fill out all required fields.");
+    setIsProcess(false);
   };
 
   useEffect(() => {
@@ -161,7 +165,7 @@ export default function Register() {
 
         <Form.Item shouldUpdate>
           {() => (
-            <Button type="primary" htmlType="submit" size="large" block>
+            <Button type="primary" htmlType="submit" size="large" loading={isProcess} block={true}>
               Register
             </Button>
           )}
