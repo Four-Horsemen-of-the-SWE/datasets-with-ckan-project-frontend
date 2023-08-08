@@ -4,6 +4,8 @@ import { CalendarOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icon
 import { List, Space, Button, Typography, Avatar, Popconfirm, Tag, message, Form, Input  } from "antd";
 import axios from "axios";
 import moment from "moment";
+
+// components
 import VoteButton from "./VoteButton";
 
 const IconText = ({ icon, text }) => (
