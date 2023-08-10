@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import { CaretUpOutlined, CaretDownOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Space, Avatar, Input, Form, Button, Typography, Card, Tag, message, Popconfirm } from "antd";
 import axios from "axios";
@@ -14,6 +14,7 @@ export default function TopicCard({ discussion_data }) {
   const [form] = Form.useForm();
 
   // get jwt token here
+  const auth = useAuthUser();
   const authHeader = useAuthHeader();
   const JWTToken = authHeader().split(" ")[1];
 
@@ -91,27 +92,29 @@ export default function TopicCard({ discussion_data }) {
           />
 
           {/* action button, edit and delete */}
-          <Space.Compact>
-            {!isEditMode && (
-              <Button
-                type={isEditMode ? "dashed" : "default"}
-                onClick={() => setIsEditMode(true)}
+          {auth()?.id === discussion_data.user_id && (
+            <Space.Compact>
+              {!isEditMode && (
+                <Button
+                  type={isEditMode ? "dashed" : "default"}
+                  onClick={() => setIsEditMode(true)}
+                >
+                  <EditOutlined />
+                </Button>
+              )}
+              <Popconfirm
+                title="Delete this topic ?"
+                description="Are you sure to delete this topic."
+                icon={<DeleteOutlined style={{ color: "red" }} />}
+                placement="right"
+                onConfirm={handleDeleteTopic}
               >
-                <EditOutlined />
-              </Button>
-            )}
-            <Popconfirm
-              title="Delete this topic ?"
-              description="Are you sure to delete this topic."
-              icon={<DeleteOutlined style={{ color: "red" }} />}
-              placement="right"
-              onConfirm={handleDeleteTopic}
-            >
-              <Button type="primary" danger={true} loading={isUpdating}>
-                <DeleteOutlined style={{ color: "white" }} />
-              </Button>
-            </Popconfirm>
-          </Space.Compact>
+                <Button type="primary" danger={true} loading={isUpdating}>
+                  <DeleteOutlined style={{ color: "white" }} />
+                </Button>
+              </Popconfirm>
+            </Space.Compact>
+          )}
         </Space>
       </div>
 

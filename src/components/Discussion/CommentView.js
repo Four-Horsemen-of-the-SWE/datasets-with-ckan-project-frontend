@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { useAuthUser, useAuthHeader } from "react-auth-kit";
-import { CalendarOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { List, Space, Button, Typography, Avatar, Popconfirm, Tag, message, Form, Input  } from "antd";
+import { CalendarOutlined, DeleteOutlined, EditOutlined, FlagOutlined, ArrowUpOutlined, ArrowDownOutlined, StarOutlined } from "@ant-design/icons";
+import { List, Space, Button, Typography, Avatar, Popconfirm, Tag, message, Form, Input, Tooltip  } from "antd";
 import axios from "axios";
 import moment from "moment";
 
 // components
 import VoteButton from "./VoteButton";
 
-const IconText = ({ icon, text }) => (
+const IconText = ({ icon, text, color = "grey" }) => (
   <Space>
-    {React.createElement(icon)}
-    {text}
+    {React.createElement(icon, { style: {color: color }})}
+    <span>{text}</span>
   </Space>
 );
 
@@ -86,21 +86,29 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
       key={item.id}
       actions={[
         <IconText icon={CalendarOutlined} text={format_date(item.created)} />,
+        <IconText icon={ArrowUpOutlined} text="Upvote" color="blue" />,
+        <IconText icon={StarOutlined} text={item?.vote} color="blue" />,
+        <IconText icon={ArrowDownOutlined} text="Downvote" color="blue" />,
+        <IconText
+          icon={FlagOutlined}
+          text={<Tooltip title="Report this comment to admin.">Report</Tooltip>}
+          color="red"
+        />,
       ]}
       extra={
         <Space>
-          <VoteButton
+          {/* <VoteButton
             target_id={item.id}
             target_type="comment"
             vote={item.vote}
             vote_type={item.voted_type}
             size="small"
           />
-
+          */}
           {auth()?.id === item.user_id && (
-            <Space.Compact size="small">
+            <Space size="small">
               {!isEditMode && (
-                <Button onClick={() => setIsEditMode(true)}>
+                <Button type="ghost" size="small" onClick={() => setIsEditMode(true)}>
                   <EditOutlined />
                 </Button>
               )}
@@ -111,11 +119,11 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
                 placement="right"
                 onConfirm={() => handleDeleteComment(item.id)}
               >
-                <Button shape="square" type="primary" danger={true}>
+                <Button shape="square" type="primary" size="small" danger={true}>
                   <DeleteOutlined />
                 </Button>
               </Popconfirm>
-            </Space.Compact>
+            </Space>
           )}
         </Space>
       }
