@@ -93,7 +93,10 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
             target_id={item.id}
             target_type="comment"
             vote={item.vote}
+            vote_type={item.voted_type}
+            size="small"
           />
+
           {auth()?.id === item.user_id && (
             <Space.Compact size="small">
               {!isEditMode && (

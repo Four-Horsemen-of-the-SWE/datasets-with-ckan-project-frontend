@@ -83,7 +83,12 @@ export default function TopicCard({ discussion_data }) {
           <Tag color="green">DATASET CREATOR</Tag>
         </Space>
         <Space>
-          <VoteButton target_id={discussion.id} target_type="topic" vote={discussion.vote} />
+          <VoteButton
+            target_id={discussion.id}
+            target_type="topic"
+            vote={discussion.vote}
+            vote_type={discussion.voted_type}
+          />
 
           {/* action button, edit and delete */}
           <Space.Compact>

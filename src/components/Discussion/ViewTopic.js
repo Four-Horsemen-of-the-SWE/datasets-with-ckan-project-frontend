@@ -5,7 +5,7 @@ import {
 import { Avatar, Divider, Space, Typography, Button, Input, List, message, Form } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useAuthUser, useAuthHeader } from "react-auth-kit";
+import { useAuthUser, useAuthHeader, useIsAuthenticated } from "react-auth-kit";
 import TopicCard from "./TopicCard";
 import CommentView from "./CommentView";
 
@@ -14,6 +14,7 @@ const { Title } = Typography;
 export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
+   const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
 
   const [form] = Form.useForm();
@@ -21,10 +22,18 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   const [discussion, setDiscussion] = useState({});
   const [isCommentCreating, setIsCommentCreating] = useState(false);
 
+  const config = isAuthenticated() ? {
+    headers: {
+      Authorization: JWTToken
+    }
+  } : {};
+
   const fetchDiscussion = async () => {
     const response = await axios.get(
-      `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/topic/${topic_id}`
+      `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/topic/${topic_id}`,
+      config
     );
+    
     if (response.data.ok) {
       setDiscussion(response.data.result);
     }
@@ -111,45 +120,47 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       <Divider />
 
       {/* create comment section */}
-      <Form
-        form={form}
-        style={{ width: "100%", display: "flex", flexDirection: "column" }}
-        onFinish={handleCreateComment}
-        layout="vertical"
-      >
-        <div className="flex gap-2 items-start w-full">
-          <Avatar src={auth()?.image_url} />
-          <Form.Item
-            style={{ width: "100%" }}
-            name="body"
-            rules={[
-              {
-                required: true,
-                message: "Please enter a message for comment.",
-              },
-            ]}
-          >
-            <Input.TextArea
-              rows={6}
-              placeholder="Reply to the topic."
-              allowClear={true}
-              showCount={true}
-              maxLength={500}
-            />
+      {isAuthenticated() && (
+        <Form
+          form={form}
+          style={{ width: "100%", display: "flex", flexDirection: "column" }}
+          onFinish={handleCreateComment}
+          layout="vertical"
+        >
+          <div className="flex gap-2 items-start w-full">
+            <Avatar src={auth()?.image_url} />
+            <Form.Item
+              style={{ width: "100%" }}
+              name="body"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter a message for comment.",
+                },
+              ]}
+            >
+              <Input.TextArea
+                rows={6}
+                placeholder="Reply to the topic."
+                allowClear={true}
+                showCount={true}
+                maxLength={500}
+              />
+            </Form.Item>
+          </div>
+          <Form.Item style={{ alignSelf: "end" }}>
+            <Button
+              type="primary"
+              size="large"
+              className="self-end"
+              htmlType="submit"
+              loading={isCommentCreating}
+            >
+              Create Comment
+            </Button>
           </Form.Item>
-        </div>
-        <Form.Item style={{ alignSelf: "end" }}>
-          <Button
-            type="primary"
-            size="large"
-            className="self-end"
-            htmlType="submit"
-            loading={isCommentCreating}
-          >
-            Create Comment
-          </Button>
-        </Form.Item>
-      </Form>
+        </Form>
+      )}
     </>
   );
 }

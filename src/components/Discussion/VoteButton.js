@@ -1,12 +1,19 @@
 import { CaretUpOutlined, CaretDownOutlined } from "@ant-design/icons";
 import { Space, Button, Input, message } from "antd";
-import {useAuthHeader} from 'react-auth-kit';
+import { useAuthHeader, useIsAuthenticated } from "react-auth-kit";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export default function VoteButton({ target_id, target_type, vote = 0, size="middle" }) {
+export default function VoteButton({ target_id, target_type, vote = 0, vote_type, size="middle" }) {
   const authHeader = useAuthHeader();
+  const isAuthenticated = useIsAuthenticated();
   const [success, setSuccess] = useState(false);
+
+  const config = isAuthenticated() ?  {
+    headers: {
+      Authorization: authHeader().split(" ")[1],
+    }
+  } : {};
 
   const handleVote = async(vote_type) => {
     try {
@@ -17,11 +24,7 @@ export default function VoteButton({ target_id, target_type, vote = 0, size="mid
           target_type: target_type,
           vote_type: vote_type,
         },
-        {
-          headers: {
-            Authorization: authHeader().split(" ")[1],
-          },
-        }
+        config
       );
 
       if(response.data.ok) {
@@ -32,9 +35,12 @@ export default function VoteButton({ target_id, target_type, vote = 0, size="mid
     }
   }
 
+  const upvote = vote_type === "upvote";
+  const downvote = vote_type === "downvote";
+
   return (
     <Space.Compact size={size}>
-      <Button onClick={() => handleVote("upvote")}>
+      <Button type={upvote ? "primary" : "default"} onClick={() => handleVote("upvote")}>
         <CaretUpOutlined />
       </Button>
       <Input
@@ -42,7 +48,7 @@ export default function VoteButton({ target_id, target_type, vote = 0, size="mid
         style={{ width: "40px", textAlign: "center" }}
         value={vote}
       />
-      <Button onClick={() => handleVote("downvote")}>
+      <Button type={downvote ? "primary" : "default"}  onClick={() => handleVote("downvote")}>
         <CaretDownOutlined />
       </Button>
     </Space.Compact>
