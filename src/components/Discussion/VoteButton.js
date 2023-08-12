@@ -1,22 +1,30 @@
-import { CaretUpOutlined, CaretDownOutlined } from "@ant-design/icons";
-import { Space, Button, Input, message } from "antd";
+import { ArrowUpOutlined, ArrowDownOutlined, StarOutlined } from "@ant-design/icons";
+import { Button, Space, Tooltip, message } from "antd";
 import { useAuthHeader, useIsAuthenticated } from "react-auth-kit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function VoteButton({ target_id, target_type, vote = 0, vote_type, size="middle" }) {
+export default function VoteButton({ target_id, target_type, vote = 0, vote_type, size="middle", direction = "vertical" }) {
   const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
-  const [success, setSuccess] = useState(false);
+  const [voteScore, setVoteScore] = useState(vote);
+  const [voteState, setVoteState] = useState(vote_type);
 
-  const config = isAuthenticated() ?  {
-    headers: {
-      Authorization: authHeader().split(" ")[1],
-    }
-  } : {};
+  const config = isAuthenticated()
+    ? {
+        headers: {
+          Authorization: authHeader().split(" ")[1],
+        },
+      }
+    : {};
 
   const handleVote = async(vote_type) => {
     try {
+      // if vote_type === voteState is mean user want to clear voted
+      if(vote_type === voteState) {
+        vote_type = "neutral";
+      }
+
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/votes/`,
         {
@@ -27,30 +35,84 @@ export default function VoteButton({ target_id, target_type, vote = 0, vote_type
         config
       );
 
-      if(response.data.ok) {
-        message.success(response.data.message);
+      if (response.data.ok) {
+        // update vote score
+        const vote_score = getVoteState(voteState, vote_type)
+        setVoteScore(voteScore + vote_score);
+        // set vote state
+        setVoteState(vote_type);
       }
-    } catch(error) {
+    } catch (error) {
       message.error(error.message);
     }
   }
 
-  const upvote = vote_type === "upvote";
-  const downvote = vote_type === "downvote";
+  const getVoteState = (oldVote, newVote) => {
+    if(oldVote === "downvote") {
+      return newVote === "neutral" ? 1 : 2
+    } else if (oldVote === "upvote") {
+      return newVote === "neutral" ? -1 : -2
+    } else {
+      return newVote === "upvote" ? 1 : -1;
+    }
+  };
 
-  return (
-    <Space.Compact size={size}>
-      <Button type={upvote ? "primary" : "default"} onClick={() => handleVote("upvote")}>
-        <CaretUpOutlined />
-      </Button>
-      <Input
-        disabled={true}
-        style={{ width: "40px", textAlign: "center" }}
-        value={vote}
-      />
-      <Button type={downvote ? "primary" : "default"}  onClick={() => handleVote("downvote")}>
-        <CaretDownOutlined />
-      </Button>
-    </Space.Compact>
-  );
+  useEffect(() => {
+    setVoteScore(vote);
+    setVoteState(vote_type)
+  }, [vote, vote_type]);
+
+  if(isAuthenticated()) {
+    return (
+      <>
+        <Space align="center" direction={direction}>
+          <Button
+            type="ghost"
+            shape="circle"
+            icon={<ArrowUpOutlined />}
+            size={size}
+            style={{ color: voteState === "upvote" ? "red" : "" }}
+            onClick={() => handleVote("upvote")}
+          />
+
+          {voteScore}
+
+          <Button
+            type="ghost"
+            shape="circle"
+            icon={<ArrowDownOutlined />}
+            size={size}
+            style={{ color: voteState === "downvote" ? "red" : "" }}
+            onClick={() => handleVote("downvote")}
+          />
+        </Space>
+      </>
+    );
+  } else {
+    return (
+      <Tooltip title="Please login to vote.">
+        <Space align="center" direction={direction}>
+          <Button
+            type="ghost"
+            shape="circle"
+            icon={<ArrowUpOutlined />}
+            size={size}
+            style={{ color: "gray" }}
+            disabled={true}
+          />
+
+          {voteScore}
+
+          <Button
+            type="ghost"
+            shape="circle"
+            icon={<ArrowDownOutlined />}
+            size={size}
+            style={{ color: "gray" }}
+            disabled={true}
+          />
+        </Space>
+      </Tooltip>
+    );
+  }
 }

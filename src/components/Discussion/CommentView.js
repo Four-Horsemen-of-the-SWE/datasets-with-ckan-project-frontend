@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { useAuthUser, useAuthHeader } from "react-auth-kit";
-import { CalendarOutlined, DeleteOutlined, EditOutlined, FlagOutlined, ArrowUpOutlined, ArrowDownOutlined, StarOutlined } from "@ant-design/icons";
+import { useAuthUser, useAuthHeader, useIsAuthenticated } from "react-auth-kit";
+import { CalendarOutlined, DeleteOutlined, EditOutlined, FlagOutlined } from "@ant-design/icons";
 import { List, Space, Button, Typography, Avatar, Popconfirm, Tag, message, Form, Input, Tooltip  } from "antd";
 import axios from "axios";
 import moment from "moment";
 
 // components
 import VoteButton from "./VoteButton";
-import VoteButton1 from "./Button/VoteButton1";
 
 const IconText = ({ icon, text, color = "grey" }) => (
   <Space>
@@ -26,6 +25,7 @@ const format_date = (date) => {
 export default function CommentView({ item, dataset_creator_user_id, setDiscussion }) {
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
+  const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
   const [isEditMode, setIsEditMode] = useState(false);
   const [form] = Form.useForm();
@@ -94,7 +94,7 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
         />,
       ]}
       extra={
-        <Space>
+        <Space align="end" direction="vertical">
           {auth()?.id === item.user_id && (
             <Space size="small">
               {!isEditMode && (
@@ -125,13 +125,15 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
             </Space>
           )}
           {/* vote button */}
-          <VoteButton1
-            target_id={item.id}
-            target_type="comment"
-            vote={item.vote}
-            vote_type={item.voted_type}
-            size="small"
-          />
+          {isAuthenticated() && (
+            <VoteButton
+              target_id={item.id}
+              target_type="comment"
+              vote={item.vote}
+              vote_type={item.voted_type}
+              size="small"
+            />
+          )}
         </Space>
       }
     >

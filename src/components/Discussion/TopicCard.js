@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
-import { CaretUpOutlined, CaretDownOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Space, Avatar, Input, Form, Button, Typography, Card, Tag, message, Popconfirm } from "antd";
 import axios from "axios";
 import VoteButton from "./VoteButton";
@@ -84,19 +84,12 @@ export default function TopicCard({ discussion_data }) {
           <Tag color="green">DATASET CREATOR</Tag>
         </Space>
         <Space>
-          <VoteButton
-            target_id={discussion.id}
-            target_type="topic"
-            vote={discussion.vote}
-            vote_type={discussion.voted_type}
-          />
-
           {/* action button, edit and delete */}
           {auth()?.id === discussion_data.user_id && (
-            <Space.Compact>
+            <Space>
               {!isEditMode && (
                 <Button
-                  type={isEditMode ? "dashed" : "default"}
+                  type={isEditMode ? "dashed" : "ghost"}
                   onClick={() => setIsEditMode(true)}
                 >
                   <EditOutlined />
@@ -113,7 +106,7 @@ export default function TopicCard({ discussion_data }) {
                   <DeleteOutlined style={{ color: "white" }} />
                 </Button>
               </Popconfirm>
-            </Space.Compact>
+            </Space>
           )}
         </Space>
       </div>
@@ -167,12 +160,20 @@ export default function TopicCard({ discussion_data }) {
           </Form>
         </>
       ) : (
-        <>
-          <Title level={2}>{discussion.title}</Title>
-          <Paragraph ellipsis={{ rows: 4, symbol: "more" }}>
-            {discussion.body}
-          </Paragraph>
-        </>
+        <div className="flex flex-row items-center justify-between gap-4">
+          <Space direction="vertical">
+            <Title level={2}>{discussion.title}</Title>
+            <Paragraph ellipsis={{ rows: 4, symbol: "more" }}>
+              {discussion.body}
+            </Paragraph>
+          </Space>
+          <VoteButton
+            target_id={discussion_data.id}
+            target_type="topic"
+            vote={discussion_data.vote}
+            vote_type={discussion_data.voted_type}
+          />
+        </div>
       )}
     </Card>
   );

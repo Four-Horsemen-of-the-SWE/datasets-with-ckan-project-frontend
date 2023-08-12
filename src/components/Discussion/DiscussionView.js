@@ -27,6 +27,7 @@ import axios from "axios";
 // import componests
 import CreateTopicModal from "./CreateTopicModal";
 import ViewTopic from "./ViewTopic";
+import VoteButton from "./VoteButton";
 
 const { Title } = Typography;
 
@@ -56,11 +57,19 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
   const [isCreateTopicModalShow, setIsTopicModalShow] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   
+  const config = isAuthenticated()
+    ? {
+        headers: {
+          Authorization: authHeader().split(" ")[1],
+        },
+      }
+    : {};
 
   const fetchTopics = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/${dataset_id}/topics`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/${dataset_id}/topics`,
+        config
       );
 
       if (response.data.ok) {
@@ -108,6 +117,8 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
     );
   }
 
+  console.log(topics)
+
   return (
     <>
       {contextHolder}
@@ -145,19 +156,13 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
               <List.Item
                 key={index}
                 actions={[
-                  <Space.Compact size="" block>
-                    <Button>
-                      <CaretUpOutlined />
-                    </Button>
-                    <Input
-                      disabled
-                      defaultValue={0}
-                      style={{ width: "40px", textAlign: "center" }}
-                    />
-                    <Button>
-                      <CaretDownOutlined />
-                    </Button>
-                  </Space.Compact>,
+                  <VoteButton
+                    target_id={item.id}
+                    target_type="topic"
+                    vote_type={item.voted_type}
+                    direction="horizontal"
+                    vote={item.vote}
+                  />,
                 ]}
               >
                 <List.Item.Meta
