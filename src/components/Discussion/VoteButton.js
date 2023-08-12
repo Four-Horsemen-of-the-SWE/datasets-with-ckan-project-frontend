@@ -1,8 +1,8 @@
 import { CaretUpOutlined, CaretDownOutlined } from "@ant-design/icons";
 import { Space, Button, Input, message } from "antd";
 import { useAuthHeader, useIsAuthenticated } from "react-auth-kit";
-import axios from "axios";
 import { useState } from "react";
+import axios from "axios";
 
 export default function VoteButton({ target_id, target_type, vote = 0, vote_type, size="middle" }) {
   const authHeader = useAuthHeader();

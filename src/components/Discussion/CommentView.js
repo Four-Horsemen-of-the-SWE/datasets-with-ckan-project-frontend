@@ -7,6 +7,7 @@ import moment from "moment";
 
 // components
 import VoteButton from "./VoteButton";
+import VoteButton1 from "./Button/VoteButton1";
 
 const IconText = ({ icon, text, color = "grey" }) => (
   <Space>
@@ -86,9 +87,6 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
       key={item.id}
       actions={[
         <IconText icon={CalendarOutlined} text={format_date(item.created)} />,
-        <IconText icon={ArrowUpOutlined} text="Upvote" color="blue" />,
-        <IconText icon={StarOutlined} text={item?.vote} color="blue" />,
-        <IconText icon={ArrowDownOutlined} text="Downvote" color="blue" />,
         <IconText
           icon={FlagOutlined}
           text={<Tooltip title="Report this comment to admin.">Report</Tooltip>}
@@ -97,18 +95,14 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
       ]}
       extra={
         <Space>
-          {/* <VoteButton
-            target_id={item.id}
-            target_type="comment"
-            vote={item.vote}
-            vote_type={item.voted_type}
-            size="small"
-          />
-          */}
           {auth()?.id === item.user_id && (
             <Space size="small">
               {!isEditMode && (
-                <Button type="ghost" size="small" onClick={() => setIsEditMode(true)}>
+                <Button
+                  type="ghost"
+                  size="small"
+                  onClick={() => setIsEditMode(true)}
+                >
                   <EditOutlined />
                 </Button>
               )}
@@ -119,12 +113,25 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
                 placement="right"
                 onConfirm={() => handleDeleteComment(item.id)}
               >
-                <Button shape="square" type="primary" size="small" danger={true}>
+                <Button
+                  shape="square"
+                  type="primary"
+                  size="small"
+                  danger={true}
+                >
                   <DeleteOutlined />
                 </Button>
               </Popconfirm>
             </Space>
           )}
+          {/* vote button */}
+          <VoteButton1
+            target_id={item.id}
+            target_type="comment"
+            vote={item.vote}
+            vote_type={item.voted_type}
+            size="small"
+          />
         </Space>
       }
     >
