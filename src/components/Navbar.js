@@ -72,13 +72,6 @@ export default function Navbar() {
             >
               Datasets
             </Link>
-            <Link
-              to="/article"
-              className="ml-2 sm:ml-4"
-              style={{ color: "#000", textTransform: "uppercase" }}
-            >
-              Article
-            </Link>
 
             {/* Render the admin-specific links */}
             {isAdmin && (

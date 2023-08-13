@@ -39,7 +39,7 @@ export default function ArticleRead({ content, setIsEditMode, creator_user_id })
       {auth()?.id === creator_user_id && (
         <div className="flex items-center justify-end">
           <Button icon={<EditOutlined />} onClick={() => setIsEditMode(true)}>
-            Edit
+            Edit Article
           </Button>
         </div>
       )}
