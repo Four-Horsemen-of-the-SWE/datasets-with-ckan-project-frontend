@@ -217,13 +217,6 @@ export default function Profile() {
                     <Empty description="No Bookmarked Datasets" />
                   )}
                 </TabPane>
-
-                {/* articles */}
-                <TabPane
-                  tab="Articles"
-                  key="articles"
-                  disabled={true}
-                ></TabPane>
               </Tabs>
             </Col>
           </Row>
