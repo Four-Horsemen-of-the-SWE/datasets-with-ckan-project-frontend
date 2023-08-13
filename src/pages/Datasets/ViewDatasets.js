@@ -12,6 +12,7 @@ import InformationView from "../../components/Datasets/InformationView";
 import DiscussionView from "../../components/Discussion/DiscussionView";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 import { useResourcesStore } from "../../store";
+import ArticleView from "../../components/Article/ArticleView";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -123,8 +124,8 @@ export default function ViewDatasets() {
     if (key === "discussions")
       window.history.pushState(null, "", `${baseURL}/discussions`);
     else if (key === "data") window.history.pushState(null, "", `${baseURL}`);
-    else if (key === "settings")
-      window.history.pushState(null, "", `${baseURL}/settings`);
+    else if (key === "settings") window.history.pushState(null, "", `${baseURL}/settings`);
+    else if (key === "article") window.history.pushState(null, "", `${baseURL}/article`);
   };
 
   if (isLoading) {
@@ -239,6 +240,11 @@ export default function ViewDatasets() {
             {auth()?.id === datasets?.creator_user_id && (
               <TabPane tab="Settings" key="settings">
                 <DatasetsSettings datasets={datasets} />
+              </TabPane>
+            )}
+            {auth()?.id === datasets?.creator_user_id && (
+              <TabPane tab="Article" key="article">
+                <ArticleView />
               </TabPane>
             )}
           </Tabs>

@@ -1,0 +1,20 @@
+/* Example CSS */
+.editor-container {
+  width: 100%;
+  height: 600px;
+  border: 1px solid red;
+  background-color: #fff;
+}
+
+/* Example CSS */
+.rdw-editor-toolbar {
+  background-color: #f2f2f2;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Example CSS */
+.rdw-editor-main {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
