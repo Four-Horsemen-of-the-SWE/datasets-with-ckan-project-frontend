@@ -242,11 +242,12 @@ export default function ViewDatasets() {
                 <DatasetsSettings datasets={datasets} />
               </TabPane>
             )}
-            {auth()?.id === datasets?.creator_user_id && (
-              <TabPane tab="Article" key="article">
-                <ArticleView />
-              </TabPane>
-            )}
+            <TabPane tab="Article" key="article">
+              <ArticleView
+                dataset_id={datasets?.id}
+                creator_user_id={datasets.creator_user_id}
+              />
+            </TabPane>
           </Tabs>
         </section>
       </>

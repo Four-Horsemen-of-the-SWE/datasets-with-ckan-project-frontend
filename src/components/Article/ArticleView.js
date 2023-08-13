@@ -1,64 +1,82 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { Space, Button, Typography, Input, Empty } from "antd";
-import { EDITOR_JS_TOOLS } from "./tools";
-import EditorJs from "@natterstefan/react-editor-js";
+import { Button, Typography, Empty, Spin } from "antd";
 import ArticleEditor from "./ArticleEditor";
 import ArticleRead from "./ArticleRead";
+import { useAuthUser } from "react-auth-kit";
+import axios from "axios";
 
-export default function ArticleView() {
-  var editor = null;
-  const [isEditMode, setIsEditMode] = useState(true);
+export default function ArticleView({ dataset_id, creator_user_id }) {
+  const auth = useAuthUser();
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [article, setArticle] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onReady = () => {
-    // https://editorjs.io/configuration#editor-modifications-callback
-    console.log("Editor.js is ready to work!");
-  };
-
-  const onChange = () => {
-    // https://editorjs.io/configuration#editor-modifications-callback
-    console.log("Now I know that Editor's content changed!");
-  };
-
-  const onSave = async () => {
-    // https://editorjs.io/saving-data
+  const fetchArticle = async () => {
+    setIsLoading(true);
     try {
-      const outputData = await editor.save();
-      console.log("Article data: ", outputData);
-    } catch (e) {
-      console.log("Saving failed: ", e);
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/${dataset_id}`
+      );
+      if (response.data.ok) {
+        setIsLoading(false);
+
+        // if dataset is created.
+        if (response.data?.is_created) {
+          setArticle(response.data.result);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
     }
   };
 
-  const handleLoad = async () => {
-    await editor.render({});
-  };
+  useEffect(() => {
+    fetchArticle();
+  }, []);
 
-  // if article not created yet.
-  if(false) {
+  // loading
+  if (isLoading) {
     return (
-      <Empty description="No Article">
-        <Button type="primary" icon={<PlusOutlined />}>
-          Create Article
-        </Button>
-      </Empty>
+      <div className="w-full h-96 flex flex-col gap-4 items-center justify-center">
+        <Spin size="large" />
+        <Typography.Text type="secondary">Loading...</Typography.Text>
+      </div>
+    );
+  }
+  // empty
+  if (article === null && isEditMode === false) {
+    return (
+      <div className="w-full h-96 flex items-center justify-center">
+        <Empty description="No Article">
+          {creator_user_id === auth()?.id && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setIsEditMode(true)}
+            >
+              Create Article
+            </Button>
+          )}
+        </Empty>
+      </div>
     );
   }
 
-  return (
-    <>
-      {/* edit mode */}
-      <div className="flex items-center justify-end">
-        {isEditMode ? (
-          <Space>
-            <Button onClick={() => setIsEditMode(false)}>Cancel</Button>
-            <Button type="primary">Save</Button>
-          </Space>
-        ) : (
-          <Button onClick={() => setIsEditMode(true)}>Edit</Button>
-        )}
-      </div>
-      {isEditMode ? <ArticleEditor /> : <ArticleRead />}
-    </>
+  return isEditMode ? (
+    <ArticleEditor
+      content={article}
+      dataset_id={dataset_id}
+      setIsEditMode={setIsEditMode}
+    />
+  ) : (
+    <ArticleRead
+      content={article}
+      setIsEditMode={setIsEditMode}
+      creator_user_id={creator_user_id}
+    />
   );
 }
