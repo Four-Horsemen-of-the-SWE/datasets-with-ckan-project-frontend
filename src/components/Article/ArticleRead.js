@@ -54,6 +54,7 @@ export default function ArticleRead({ content, setIsEditMode, creator_user_id })
           editor = editorInstance;
         }}
         onReady={handleReady}
+        minHeight={0}
       >
         <div id="custom-editor-container" className="w-full" />
       </EditorJs>
