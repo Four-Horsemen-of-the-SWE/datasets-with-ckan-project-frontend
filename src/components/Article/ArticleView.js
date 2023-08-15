@@ -97,6 +97,12 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     }
   }
 
+  const updateData = (item, new_data) => {
+    setComments((prevState) =>
+      prevState.map((comment) => (comment.id === item.id ? new_data : comment))
+    );
+  }
+
   const deleteData = (comment_id) => {
     setComments((prevState) => (
       prevState.filter(comment => comment.id !== comment_id)
@@ -221,6 +227,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
               item={item}
               type="articles"
               deleteComment={deleteData}
+              updateComment={updateData}
             />
           )}
         />

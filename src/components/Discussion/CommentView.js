@@ -33,10 +33,12 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
   const handleUpdateComment = async (value) => {
     try {
       const response = await axios.put(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${item.id}`,
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/${type}/comments/${item.id}`,
         value,
         {
-          Authorization: JWTToken,
+          headers: {
+            Authorization: JWTToken,
+          },
         }
       );
 
