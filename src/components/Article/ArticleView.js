@@ -97,6 +97,12 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     }
   }
 
+  const deleteData = (comment_id) => {
+    setComments((prevState) => (
+      prevState.filter(comment => comment.id !== comment_id)
+    ))
+  }
+
   useEffect(() => {
     fetchArticle();
   }, []);
@@ -209,7 +215,13 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
           size="large"
           dataSource={comments}
           renderItem={(item) => (
-            <CommentView dataset_creator_user_id={"asd"} item={item} />
+            <CommentView
+              dataset_creator_user_id={item?.user_id}
+              setDiscussion={setComments}
+              item={item}
+              type="articles"
+              deleteComment={deleteData}
+            />
           )}
         />
       </>

@@ -77,6 +77,26 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
     }
   }
 
+  const deleteData = (comment_id) => {
+    setDiscussion((prevState) => ({
+      ...prevState,
+      comments: prevState.comments.filter(
+        (comment) => comment.id !== comment_id
+      ),
+    }));
+  }
+
+  const updateData = (item, new_data) => {
+    setDiscussion((prevState) => ({
+      ...prevState,
+      comments: prevState.comments.map((comment) =>
+        comment.id === item.id
+          ? { ...comment, ...new_data }
+          : comment
+      ),
+    }));
+  }
+
   useEffect(() => {
     fetchDiscussion();
   }, []);
@@ -113,6 +133,8 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
             item={item}
             dataset_creator_user_id={dataset_creator_user_id}
             setDiscussion={setDiscussion}
+            deleteComment={deleteData}
+            updateComment={updateData}
           />
         )}
       />

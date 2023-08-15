@@ -22,7 +22,7 @@ const format_date = (date) => {
   return result;
 };
 
-export default function CommentView({ item, dataset_creator_user_id, setDiscussion }) {
+export default function CommentView({ item, dataset_creator_user_id, updateComment, deleteComment, setDiscussion, type = "discussions" }) {
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
@@ -43,12 +43,7 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
       if (response.data.ok) {
         message.success("Comment were updated successful.");
         // replace old comment data with new updated comment
-        setDiscussion(prevState => ({
-          ...prevState,
-          comments: prevState.comments.map(comment => 
-            comment.id === item.id ? {...comment, ...response.data.result} : comment
-          )
-        }));
+        updateComment(item, response.data.result);
         setIsEditMode(false);
       }
     } catch (error) {
@@ -59,7 +54,7 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
   const handleDeleteComment = async (comment_id) => {
     try {
       const response = await axios.delete(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/discussions/comments/${comment_id}`,
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/${type}/comments/${comment_id}`,
         {
           headers: {
             Authorization: JWTToken,
@@ -70,12 +65,7 @@ export default function CommentView({ item, dataset_creator_user_id, setDiscussi
       if (response.data.ok) {
         message.success("Delete success.");
         // then delete from state
-        setDiscussion(prevState => ({
-          ...prevState,
-          comments: prevState.comments.filter(comment => 
-            comment.id !== comment_id
-          )
-        }))
+        deleteComment(comment_id)
       }
     } catch (error) {
       message.error(error.message);
