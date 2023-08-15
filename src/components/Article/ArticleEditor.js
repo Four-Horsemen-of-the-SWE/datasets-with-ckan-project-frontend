@@ -4,6 +4,7 @@ import { EDITOR_JS_TOOLS } from "./tools";
 import EditorJs from "@natterstefan/react-editor-js";
 import { useAuthHeader } from "react-auth-kit";
 import axios from "axios";
+import './editor-style.css';
 
 const defaultContent = {
   time: Date.now(),
@@ -11,7 +12,7 @@ const defaultContent = {
     {
       type: "paragraph",
       data: {
-        text: "Your default content goes here.",
+        text: "Your content goes here.",
       },
     },
   ],
@@ -51,7 +52,7 @@ export default function ArticleEditor({ content, dataset_id, setIsEditMode }) {
       await editor.render(content || defaultContent);
     }
   };
-
+  
   return (
     <>
       <div className="flex items-center justify-end">
