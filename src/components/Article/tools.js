@@ -1,6 +1,6 @@
+import Paragraph from "@editorjs/paragraph";
 import Embed from "@editorjs/embed";
 import Table from "@editorjs/table";
-import Paragraph from "@editorjs/paragraph";
 import List from "@editorjs/list";
 import Warning from "@editorjs/warning";
 import Code from "@editorjs/code";
@@ -14,11 +14,15 @@ import CheckList from "@editorjs/checklist";
 import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import SimpleImage from "@editorjs/simple-image";
+import FontSize from "editorjs-inline-font-size-tool";
 import uploader from "@ajite/editorjs-image-base64";
 
 export const EDITOR_JS_TOOLS = {
   // NOTE: Paragraph is default tool. Declare only when you want to change paragraph option.
-  // paragraph: Paragraph,
+  paragraph: {
+    class: Paragraph,
+    inlineToolbar: true,
+  },
   embed: Embed,
   table: Table,
   list: List,
@@ -37,4 +41,5 @@ export const EDITOR_JS_TOOLS = {
   delimiter: Delimiter,
   inlineCode: InlineCode,
   // simpleImage: SimpleImage,
+  fontSize: FontSize,
 };

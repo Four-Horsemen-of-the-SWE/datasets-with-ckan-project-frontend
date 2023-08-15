@@ -71,7 +71,6 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
       console.error(error);
     }
   }
-  console.log(comments)
 
   useEffect(() => {
     fetchArticle();
@@ -134,6 +133,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
           layout="vertical"
         >
           <Divider />
+          
           <Typography.Title level={3}>Conversation</Typography.Title>
 
           <div className="flex gap-2 items-start w-full">
@@ -172,6 +172,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
       )}
       '
       <Divider />
+
       <List
         className="mb-5"
         itemLayout="vertical"

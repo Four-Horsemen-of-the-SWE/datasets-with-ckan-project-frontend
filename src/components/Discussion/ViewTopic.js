@@ -14,7 +14,7 @@ const { Title } = Typography;
 export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
-   const isAuthenticated = useIsAuthenticated();
+  const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
 
   const [form] = Form.useForm();
