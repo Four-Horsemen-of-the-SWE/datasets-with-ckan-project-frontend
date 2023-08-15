@@ -24,6 +24,8 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
   const [isLoading, setIsLoading] = useState(false);
   const [article, setArticle] = useState(null);
   const [comments, setComments] = useState([]);
+  const [isCreatingComment, setIsCreatingComment] = useState(false);
+
   const JWTToken = authHeader().split(" ")[1];
   
   const config = isAuthenticated()
@@ -60,7 +62,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
   const fetchcomments = async() => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/${"fec248ae-9328-4880-9116-476853ab4836"}/comments`,
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/${article?.id}/comments`,
         config
       );
 
@@ -72,10 +74,36 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     }
   }
 
+  const handleCreateComment = async(values) => {
+    const payload = {
+      article_id: article?.id,
+      body: values.body,
+    };
+
+    try {
+      setIsCreatingComment(true);
+      const response = await axios.post(`${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/comments`, payload, config);
+
+      if(response.data.ok) {
+        form.resetFields();
+        setComments([...comments, response.data.result]);
+        setIsCreatingComment(false);
+      } else {
+        setIsCreatingComment(false);
+      }
+    }catch(error){
+      setIsCreatingComment(false);
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     fetchArticle();
-    fetchcomments();
   }, []);
+
+  useEffect(() => {
+    fetchcomments();
+  }, [article]);
 
   // loading
   if (isLoading) {
@@ -105,83 +133,86 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     );
   }
 
-  return isEditMode ? (
-    <ArticleEditor
-      content={article?.content}
-      dataset_id={dataset_id}
-      setIsEditMode={setIsEditMode}
-    />
-  ) : (
-    <>
-      {/* article details view */}
-      <ArticleRead
+  if(isEditMode) {
+    return(
+      <ArticleEditor
         content={article?.content}
+        dataset_id={dataset_id}
         setIsEditMode={setIsEditMode}
-        creator_user_id={creator_user_id}
       />
-      {/* comment section */}
-      {isAuthenticated() && (
-        <Form
-          form={form}
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            margin: "1.5em 0px",
-          }}
-          onFinish={null}
-          layout="vertical"
-        >
-          <Divider />
-          
-          <Typography.Title level={3}>Conversation</Typography.Title>
+    )
+  } else {
+    return (
+      <>
+        {/* article details view */}
+        <ArticleRead
+          content={article?.content}
+          setIsEditMode={setIsEditMode}
+          creator_user_id={creator_user_id}
+        />
+        {/* comment section */}
+        {isAuthenticated() && (
+          <Form
+            form={form}
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              margin: "1.5em 0px",
+            }}
+            onFinish={handleCreateComment}
+            layout="vertical"
+          >
+            <Divider />
 
-          <div className="flex gap-2 items-start w-full">
-            <Avatar src={auth()?.image_url} />
-            <Form.Item
-              style={{ width: "100%" }}
-              name="body"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter a message for comment.",
-                },
-              ]}
-            >
-              <Input.TextArea
-                rows={6}
-                placeholder="Reply to the topic."
-                allowClear={true}
-                showCount={true}
-                maxLength={500}
-              />
+            <Typography.Title level={3}>Conversation</Typography.Title>
+
+            <div className="flex gap-2 items-start w-full">
+              <Avatar src={auth()?.image_url} />
+              <Form.Item
+                style={{ width: "100%" }}
+                name="body"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter a message for comment.",
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  rows={6}
+                  placeholder="Reply to the topic."
+                  allowClear={true}
+                  showCount={true}
+                  maxLength={500}
+                />
+              </Form.Item>
+            </div>
+            <Form.Item style={{ alignSelf: "end" }}>
+              <Button
+                type="primary"
+                size="large"
+                className="self-end"
+                htmlType="submit"
+                loading={isCreatingComment}
+              >
+                Create Comment
+              </Button>
             </Form.Item>
-          </div>
-          <Form.Item style={{ alignSelf: "end" }}>
-            <Button
-              type="primary"
-              size="large"
-              className="self-end"
-              htmlType="submit"
-              loading={null}
-            >
-              Create Comment
-            </Button>
-          </Form.Item>
-        </Form>
-      )}
-      '
-      <Divider />
-
-      <List
-        className="mb-5"
-        itemLayout="vertical"
-        size="large"
-        dataSource={comments}
-        renderItem={(item) => (
-          <CommentView dataset_creator_user_id={"asd"} item={item} />
+          </Form>
         )}
-      />
-    </>
-  );
+        '
+        <Divider />
+        <List
+          className="mb-5"
+          itemLayout="vertical"
+          size="large"
+          dataSource={comments}
+          renderItem={(item) => (
+            <CommentView dataset_creator_user_id={"asd"} item={item} />
+          )}
+        />
+      </>
+    );
+  }
 }
