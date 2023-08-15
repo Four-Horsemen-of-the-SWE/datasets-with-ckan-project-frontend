@@ -145,6 +145,8 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     );
   }
 
+  console.log(comments);
+
   if(isEditMode) {
     return(
       <ArticleEditor
@@ -222,7 +224,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
           dataSource={comments}
           renderItem={(item) => (
             <CommentView
-              dataset_creator_user_id={item?.user_id}
+              dataset_creator_user_id={creator_user_id}
               setDiscussion={setComments}
               item={item}
               type="articles"
