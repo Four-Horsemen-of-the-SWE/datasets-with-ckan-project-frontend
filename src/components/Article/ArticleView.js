@@ -193,7 +193,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
               >
                 <Input.TextArea
                   rows={6}
-                  placeholder="Reply to the topic."
+                  placeholder="Comment on an article."
                   allowClear={true}
                   showCount={true}
                   maxLength={500}
