@@ -1,13 +1,16 @@
 import EditorJs from "@natterstefan/react-editor-js";
 import { EDITOR_JS_TOOLS } from "./tools";
-import { EditOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Space } from "antd";
 import { useAuthUser } from "react-auth-kit";
 import { useEffect } from "react";
+import ArticleDeleteModal from "./ArticleDeleteModal";
+import { useState } from "react";
 
-export default function ArticleRead({ content, setIsEditMode, creator_user_id }) {
+export default function ArticleReader({ article_id, content, setIsEditMode, creator_user_id }) {
   var editor = null;
   const auth = useAuthUser();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleReady = async () => {
     if (editor) {
@@ -36,11 +39,16 @@ export default function ArticleRead({ content, setIsEditMode, creator_user_id })
 
   return (
     <>
+      <ArticleDeleteModal article_id={article_id} open={showDeleteModal} close={() => setShowDeleteModal(false)} />
+
       {auth()?.id === creator_user_id && (
         <div className="flex items-center justify-end">
-          <Button icon={<EditOutlined />} onClick={() => setIsEditMode(true)}>
-            Edit Article
-          </Button>
+          <Space>
+            <Button icon={<EditOutlined />} onClick={() => setIsEditMode(true)}>
+              Edit Article
+            </Button>
+            <Button icon={<DeleteOutlined />} type="primary" danger={true} onClick={() => setShowDeleteModal(true)} />
+          </Space>
         </div>
       )}
 

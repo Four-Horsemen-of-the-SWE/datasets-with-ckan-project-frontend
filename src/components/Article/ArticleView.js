@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Typography, Empty, Spin, Form, Avatar, Input, Divider, List } from "antd";
-import ArticleEditor from "./ArticleEditor";
-import ArticleRead from "./ArticleRead";
 import { useAuthUser, useIsAuthenticated, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 import CommentView from "../Discussion/CommentView";
-
-const data = [
-  "Racing car sprays burning fuel into crowd.",
-  "Japanese princess to wed commoner.",
-  "Australian walks 100km after outback crash.",
-  "Man charged over missing wedding girl.",
-  "Los Angeles battles huge wildfires.",
-];
+import ArticleEditor from "./ArticleEditor";
+import ArticleReader from "./ArticleReader";
 
 export default function ArticleView({ dataset_id, creator_user_id }) {
   const [form] = Form.useForm();
@@ -159,7 +151,8 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     return (
       <>
         {/* article details view */}
-        <ArticleRead
+        <ArticleReader
+          article_id={article?.id}
           content={article?.content}
           setIsEditMode={setIsEditMode}
           creator_user_id={creator_user_id}
