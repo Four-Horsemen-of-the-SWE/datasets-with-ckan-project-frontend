@@ -1,36 +1,47 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { CloudDownloadOutlined, PlusOutlined } from "@ant-design/icons";
-import { Alert, Typography, Space, Table, Button, Tooltip, notification, Col, Divider, Row, Empty } from "antd";
-import { useAuthUser } from "react-auth-kit";
+import { Alert, Input, Typography, Space, Table, Button, Tooltip, notification, Col, Divider, Row, Empty, message, Modal } from "antd";
+import { useAuthUser, useAuthHeader } from "react-auth-kit";
 import moment from "moment/moment";
-import { redirect } from "react-router-dom";
+import { redirect, Link } from "react-router-dom";
 import { filesize } from "filesize";
 import axios from "axios";
 import {
   SearchOutlined,
   PushpinOutlined,
 } from "@ant-design/icons";
-import DatasetsCard from "../../components/Card/DatasetsCard";
+import { useResourcesStore } from "../../store";
+
 
 
 const { Title, Text } = Typography;
 
-export default function Dashboard({  
+export default function Dashboard({
   creator_user_id,
   dataset_id,
   resource,
+  datasets,
+  id,
+  name,
 }) {
   const auth = useAuthUser();
+  const authHeader = useAuthHeader();
   const [allDatasets, setAllDatasets] = useState([]);
   const [isHotestLoading, setIsHotestLoading] = useState(true);
   const [api, contextHolder] = notification.useNotification();
-  const [datasetsNumber, setDatasetsNumber] = useState(0);
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
+  const [thumbnail, setThumbnail] = useState(datasets?.thumbnail);
+  const [datasetsNumber, setDatasetsNumber] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmName, setConfirmName] = useState("");
+  const [messageApi] = message.useMessage();
+  const JWTToken = authHeader().split(" ")[1];
 
+  const { resources, setResources } = useResourcesStore();
 
   useEffect(() => {
     // if user is not admin.
-    if(!auth()?.is_admin) {
+    if (!auth()?.is_admin) {
       redirect('/');
     }
   }, []);
@@ -38,7 +49,7 @@ export default function Dashboard({
   const fetchHotestDatasets = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/dashboard`
       );
       if (response.status === 200) {
         setAllDatasets(response.data.result);
@@ -65,23 +76,60 @@ export default function Dashboard({
     }
   };
 
-  const fetchDatasetsNumber = async () => {
+  /* const fetchDatasetsNumber = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/number`
       );
-      if(response.data.ok) {
+      if (response.data.ok) {
         setDatasetsNumber(response.data.result);
       }
-    } catch(error) {
+    } catch (error) {
       console.error(error.message);
     }
-  }
-  
+  } */
+
   useEffect(() => {
     fetchHotestDatasets();
-    fetchDatasetsNumber();
+    //fetchDatasetsNumber();
   }, []);
+
+  const deleteDataset = async () => {
+    setIsDeleting(true);
+    if (datasets.name === confirmName) {
+      try {
+        const response = await axios.delete(
+          `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/delete/${datasets.id}`,
+          {
+            headers: {
+              Authorization: authHeader().split(" ")[1],
+            },
+          }
+        );
+
+        if (response.data.ok) {
+          messageApi.open({
+            type: "success",
+            content: "Delete success.",
+          });
+          setTimeout(() => {
+            window.location.href = "/datasets/dashboard";
+          }, 700);
+        }
+
+        // setIsDeleting(false);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      messageApi.open({
+        type: "warning",
+        content: "Dataset name not match.",
+      });
+      setIsDeleting(false);
+    }
+  };
+
 
   const columns = [
     {
@@ -90,7 +138,9 @@ export default function Dashboard({
       key: "name",
       sorter: (a, b) => a.name - b.name,
       sortDirections: ["descend"],
-      render: (text) => <b>{text}</b>,
+      render: (text, record) => (
+        <Link to={`/datasets/${record?.id}`} style={{ color: "black" }}>{text}</Link>
+      ),
     },
     {
       title: "Image",
@@ -116,14 +166,6 @@ export default function Dashboard({
       key: "last_modified",
       render: (text) => moment(text).format("LL"),
     },
-    /* {
-      title: "File Size",
-      dataIndex: "size",
-      key: "size",
-      sorter: (a, b) => a.size - b.size,
-      sortDirections: ["descend"],
-      render: (text) => filesize(text),
-    }, */
     {
       title: "Download",
       dataIndex: "url",
@@ -149,25 +191,48 @@ export default function Dashboard({
       width: "10px",
       align: "center",
       render: (url) => (
-        <Tooltip title="Click to Delete">
+        <Modal
+        title="Delete this datasets ?"
+        open={isDeleteModalShow}
+        onCancel={() => setIsDeleteModalShow(false)}
+        footer={[
+          <Button onClick={() => setIsDeleteModalShow(false)}>Cancel</Button>,
           <Button
-              type="primary"
-              size="large"
-              onClick={() => setIsDeleteModalShow(true)}
-              danger
-            >
-              Delete
-            </Button>
-        </Tooltip>
+            type="primary"
+            onClick={() => deleteDataset()}
+            loading={isDeleting}
+            danger={true}
+          >
+            Delete
+          </Button>,
+        ]}
+      >
+        <Text>
+          Confirm the name of datasets to continue. This will permanently delete
+          the {name}
+        </Text>
+        <Space direction="vertical" className="w-full mb-2">
+          <Title level={5}>Dataset name</Title>
+          <Input
+            size="large"
+            placeholder={name}
+            value={confirmName}
+            onChange={(e) => setConfirmName(e.target.value)}
+            block
+          />
+        </Space>
+      </Modal>
       ),
     },
   ];
 
-  return(
-    console.log(allDatasets),
+
+  return (
     <>
+      {contextHolder}
+      
       <div className="container mx-auto">
-        <Title  level={2}>Main Dashboard</Title>
+        <Title level={2}>Main Dashboard</Title>
 
         <div className="flex items-center justify-between">
           <Space direction="vertical">
@@ -175,30 +240,17 @@ export default function Dashboard({
           </Space>
         </div>
 
-        {/* if data is empty */}
-        {/* {!resource && (
-          <Alert
-            showIcon
-            type="info"
-            message="No resource"
-            description="The dataset might not be uploaded at this time. Please come back later."
-            className="my-3"
-          />
-
-        )} */}
-
-        {/* else */}
         <Table
           pagination={false}
           columns={columns}
           dataSource={allDatasets}
           expandable={{
             expandedRowRender: (record) => (
-              <Typography.Paragraph ellipsis={{ rows: "1" }}>
-                {record.description}
+              <Typography.Paragraph ellipsis={{ row: "1" }}>
+                {record.notes}
               </Typography.Paragraph>
             ),
-            rowExpandable: (record) => record.description !== "",
+            rowExpandable: (record) => record.notes !== "",
           }}
         />
       </div>
