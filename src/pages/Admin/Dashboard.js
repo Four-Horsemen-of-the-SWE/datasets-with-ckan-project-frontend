@@ -5,8 +5,8 @@ import { redirect, Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
 
 // import components
-import AllDatasetsTable from "../../components/Admin/AllDatasetsTable";
 import siderItems from "./siderItems";
+import AllDatasetsPage from "./AllDatasetsPage";
 
 export default function Dashboard() {
   const auth = useAuthUser();
@@ -44,7 +44,7 @@ export default function Dashboard() {
               height: "auto",
             }}
           >
-            <AllDatasetsTable />
+            <AllDatasetsPage />
           </Layout.Content>
         </Layout>
       </Layout>

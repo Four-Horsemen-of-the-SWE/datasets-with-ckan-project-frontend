@@ -177,17 +177,12 @@ export default function AllDatasetsTable({
     <>
       {contextHolder}
 
-      <div className="container mx-auto">
-        <Title level={2}>Main Dashboard</Title>
-
-        <div className="flex items-center justify-between">
-          <Space direction="vertical">
-            <Title level={3}>Datasets</Title>
-          </Space>
-        </div>
-
-        <Table pagination={true} columns={columns} dataSource={allDatasets} />
-      </div>
+      <Table
+        pagination={true}
+        columns={columns}
+        dataSource={allDatasets}
+        style={{ width: "100% !i" }}
+      />
     </>
   );
 }

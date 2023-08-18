@@ -137,8 +137,6 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     );
   }
 
-  console.log(comments);
-
   if(isEditMode) {
     return(
       <ArticleEditor
