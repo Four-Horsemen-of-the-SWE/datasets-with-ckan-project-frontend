@@ -48,8 +48,10 @@ export default function ViewDatasets() {
         }
       );
 
+      console.log(response.data)
+
       if (response.status === 200) {
-        if (!resources.data?.is_authorized) {
+        if (resources.data?.is_authorized === false) {
           setIsLoading(false);
           return setIsNotAuthorized(true);
         }
