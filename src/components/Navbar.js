@@ -3,13 +3,14 @@ import { useCreateModalStore } from "../store";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useIsAuthenticated, useAuthUser} from "react-auth-kit";
-import { UserOutlined, PlusOutlined, MessageOutlined } from "@ant-design/icons";
+import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Card, Typography, Space } from "antd";
 import { Link } from "react-router-dom";
 
 // import component
 import DrawerView from "./DrawerView";
 import CreateDatasetsModal from "./Datasets/CreateDatasetsModal";
+import NotificationPopover from "./Popover/NotificationPopover";
 
 export default function Navbar() {
   const location = useLocation();
@@ -42,6 +43,7 @@ export default function Navbar() {
         close={() => setIsDrawerOpen(false)}
       />
 
+      {/* navbar */}
       <Card bordered size="small" className="w-full shadow-md rounded-lg">
         <div className="container mx-auto flex flex-row justify-between items-center">
           <div className="flex items-center">
@@ -98,7 +100,7 @@ export default function Navbar() {
                     >
                       Create Datasets
                     </Button>
-                    <Button icon={<MessageOutlined />} disabled />
+                    <NotificationPopover />
                     <Button
                       icon={<UserOutlined />}
                       onClick={() => setIsDrawerOpen(!isDrawerOpen)}

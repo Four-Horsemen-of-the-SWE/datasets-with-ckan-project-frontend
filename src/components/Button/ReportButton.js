@@ -16,11 +16,12 @@ const ReportFormModal = ({entity_id, entity_type, entity_owner, show, close}) =>
       const payload = {
         entity_id: entity_id,
         entity_type: entity_type,
+        entity_url: window.location.pathname,
         topic: form.getFieldValue("topic"),
         description: form.getFieldValue("description"),
-        entity_owner: entity_owner
+        entity_owner: entity_owner,
       };
-      console.log(payload)
+      
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/reports/`,
         payload,
