@@ -142,7 +142,7 @@ export default function Profile() {
                 <>
                   <Divider>Options</Divider>
 
-                  <Space className="w-full">
+                  <div className="flex gap-3 items-center justify-between">
                     <Button
                       icon={<PlusOutlined />}
                       size="large"
@@ -160,7 +160,7 @@ export default function Profile() {
                     >
                       Edit Profile
                     </Button>
-                  </Space>
+                  </div>
                 </>
               )}
             </Col>
