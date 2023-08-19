@@ -77,6 +77,8 @@ export default function AllDatasetsTable({
     fetchHotestDatasets();
   }, []);
 
+  console.log(allDatasets)
+
   const deleteDataset = async () => {
     setIsDeleting(true);
     if (datasets.name === confirmName) {
