@@ -76,17 +76,18 @@ const ReportFormModal = ({entity_id, entity_type, show, close}) => {
   entity_type   = type. topic, comment, article, dataset, user
 */
 
-export default function ReportButton({ entity_id, entity_type, show_label = true }) {
+export default function ReportButton({ entity_id, entity_type, show_label = true, label_color = "red", button_size = "small", button_type="ghost" }) {
   const [showReportModal, setShowReportModal] = useState(false);
   return (
     <>
       <ReportFormModal entity_id={entity_id} entity_type={entity_type} show={showReportModal} close={() => setShowReportModal(false)} />
       <Button
-        size="small"
-        type="ghost"
+        size={button_size}
+        type={button_type}
         icon={<FlagOutlined />}
-        style={{ color: "red" }}
+        style={{ color: label_color }}
         onClick={() => setShowReportModal(true)}
+        danger={true}
       >
         {show_label && "Report"}
       </Button>

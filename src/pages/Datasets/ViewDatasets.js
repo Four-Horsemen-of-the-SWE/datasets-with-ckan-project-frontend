@@ -13,6 +13,7 @@ import DiscussionView from "../../components/Discussion/DiscussionView";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 import { useResourcesStore } from "../../store";
 import ArticleView from "../../components/Article/ArticleView";
+import ReportButton from "../../components/Button/ReportButton";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -158,16 +159,19 @@ export default function ViewDatasets() {
 
           {/* bookmark button */}
           {isAuthenticated() && (
-            <Button
-              type="primary"
-              ghost={!isBookmark}
-              size="large"
-              icon={<StarOutlined />}
-              loading={isBookmarking}
-              onClick={() => handleBookmark()}
-            >
-              {isBookmark ? "Bookmarked" : "Bookmark"}
-            </Button>
+            <Space>
+              <Button
+                type="primary"
+                ghost={!isBookmark}
+                size="large"
+                icon={<StarOutlined />}
+                loading={isBookmarking}
+                onClick={() => handleBookmark()}
+              >
+                {isBookmark ? "Bookmarked" : "Bookmark"}
+              </Button>
+              <ReportButton entity_id={datasets.id} entity_type="dataset" button_size="large" show_label={false} />
+            </Space>
           )}
         </div>
 

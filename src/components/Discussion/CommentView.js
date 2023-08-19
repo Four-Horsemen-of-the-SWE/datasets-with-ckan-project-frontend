@@ -80,7 +80,7 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
       key={item.id}
       actions={[
         <IconText icon={CalendarOutlined} text={format_date(item.created)} />,
-        <ReportButton
+        isAuthenticated() && <ReportButton
           entity_id={item.id}
           entity_type="comment"
         />
