@@ -48,8 +48,6 @@ export default function ViewDatasets() {
         }
       );
 
-      console.log(response.data)
-
       if (response.status === 200) {
         if (resources.data?.is_authorized === false) {
           setIsLoading(false);
@@ -194,7 +192,13 @@ export default function ViewDatasets() {
             >
               {isBookmark ? "Bookmarked" : "Bookmark"}
             </Button>
-            <ReportButton entity_id={datasets.id} entity_type="dataset" button_size="large" show_label={false} />
+            <ReportButton
+              entity_id={datasets.id}
+              entity_type="dataset"
+              entity_owner={datasets.creator_user_id}
+              button_size="large"
+              show_label={false}
+            />
           </Space>
         )}
       </div>

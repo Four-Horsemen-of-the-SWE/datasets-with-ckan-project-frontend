@@ -4,7 +4,7 @@ import { useAuthHeader } from "react-auth-kit";
 import { useState } from "react";
 import axios from "axios";
 
-const ReportFormModal = ({entity_id, entity_type, show, close}) => {
+const ReportFormModal = ({entity_id, entity_type, entity_owner, show, close}) => {
   const [form] = Form.useForm();
   const authHeader = useAuthHeader();
 
@@ -17,7 +17,8 @@ const ReportFormModal = ({entity_id, entity_type, show, close}) => {
         entity_id: entity_id,
         entity_type: entity_type,
         topic: form.getFieldValue("topic"),
-        description: form.getFieldValue("description")
+        description: form.getFieldValue("description"),
+        entity_owner: entity_owner
       };
       console.log(payload)
       const response = await axios.post(
@@ -76,11 +77,11 @@ const ReportFormModal = ({entity_id, entity_type, show, close}) => {
   entity_type   = type. topic, comment, article, dataset, user
 */
 
-export default function ReportButton({ entity_id, entity_type, show_label = true, label_color = "red", button_size = "small", button_type="ghost" }) {
+export default function ReportButton({ entity_id, entity_type, entity_owner, show_label = true, label_color = "red", button_size = "small", button_type="ghost" }) {
   const [showReportModal, setShowReportModal] = useState(false);
   return (
     <>
-      <ReportFormModal entity_id={entity_id} entity_type={entity_type} show={showReportModal} close={() => setShowReportModal(false)} />
+      <ReportFormModal entity_id={entity_id} entity_type={entity_type} entity_owner={entity_owner} show={showReportModal} close={() => setShowReportModal(false)} />
       <Button
         size={button_size}
         type={button_type}

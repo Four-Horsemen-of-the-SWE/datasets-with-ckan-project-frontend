@@ -76,7 +76,7 @@ export default function TopicCard({ discussion_data }) {
   useEffect(() => {
     setDiscussion(discussion_data)
   }, [discussion_data])
-
+  
   return (
     <Card bordered={true}>
       <div className="flex justify-between w-full items-center space-x-4">
@@ -180,6 +180,7 @@ export default function TopicCard({ discussion_data }) {
               <ReportButton
                 entity_id={discussion_data.id}
                 entity_type="topic"
+                entity_owner={discussion_data.user_id}
                 show_label={false}
               />
             )}

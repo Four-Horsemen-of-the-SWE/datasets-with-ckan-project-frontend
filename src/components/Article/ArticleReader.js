@@ -51,6 +51,7 @@ export default function ArticleReader({ article_id, content, setIsEditMode, crea
           <ReportButton
             entity_id={article_id}
             entity_type="article"
+            entity_owner={creator_user_id}
             label_color="white"
             button_size="large"
             button_type="primary"
