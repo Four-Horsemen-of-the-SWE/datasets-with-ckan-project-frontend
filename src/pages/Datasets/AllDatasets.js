@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import {
+  useNavigate,
+  useLocation,
+  Link,
+  useSearchParams,
+} from "react-router-dom";
 import {
   SearchOutlined,
   SortAscendingOutlined,
@@ -51,9 +56,9 @@ const sort_data = [
 
 export default function AllDatasets() {
   const [searchName, setSearchName] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedLicense, setSelectedLicense] = useState("");
   const [allDatasets, setAllDatasets] = useState([]);
-
   // tags
   const [allTags, setAllTags] = useState([]);
   // licenses
@@ -63,19 +68,10 @@ export default function AllDatasets() {
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  const fetchDatasets = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search`
-      );
-      if (response.status === 200) {
-        setAllDatasets(response.data.result);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [searchParams] = useSearchParams();
+  const query = searchParams.getAll("q") || "";
+  const tags = searchParams.getAll("tags") || "";
+  const licenses = searchParams.get("license") || "";
 
   const fetchTags = async () => {
     try {
@@ -111,32 +107,30 @@ export default function AllDatasets() {
     }
 
     setSearchName(name);
-    // update the query param in URL
-    const queryParams = new URLSearchParams(location.search);
-    queryParams.set("q", name);
-    navigate({ search: queryParams.toString() });
 
     // search from api
     try {
-      const tag_list = selectedFilter
-        .map(
-          (item) =>
-            `${Object.keys(item)}=${encodeURIComponent(Object.values(item))}`
-        )
-        .join("&");
-      const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&${tag_list}&sort=${sort}`
-      );
+      let api_url = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&sort=${sort}`;
+      if(selectedLicense !== undefined && selectedLicense !== "") {
+        api_url += `&license=${selectedLicense}`
+      }
+      if(selectedTags.length) {
+        const tag_list = selectedTags.map(item => `tags=${item}`).join("&");
+        api_url += `&${tag_list}`;
+      }
+      const response = await axios.get(api_url);
       if (response.data.ok) {
+        console.log(response.data.result);
         setAllDatasets(response.data.result);
       }
     } catch (error) {
+      console.log(error)
       message.error("Searcing Error...");
     }
   };
 
   useEffect(() => {
-    fetchDatasets();
+    handleSearch();
     fetchTags();
     fetchLicenses();
   }, []);
@@ -144,6 +138,11 @@ export default function AllDatasets() {
   useEffect(() => {
     handleSearch(searchName);
   }, [sort])
+
+  // if user entered site with url, ambatukam
+  useEffect(() => {
+    handleSearch()
+  }, [])
 
   return (
     <>
@@ -259,7 +258,7 @@ export default function AllDatasets() {
             <div className="container mx-auto mb-4 -mt-2 flex justify-between items-center">
               <div>Datasets {allDatasets?.length}</div>
               <div>
-                {selectedFilter.map((item) => (
+                {selectedTags.map((item) => (
                   <Tag
                     className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
