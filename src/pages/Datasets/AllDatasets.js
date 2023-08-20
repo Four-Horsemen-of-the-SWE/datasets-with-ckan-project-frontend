@@ -101,7 +101,7 @@ export default function AllDatasets() {
     }
   };
 
-  const handleSearch = async (name) => {
+  const handleSearch = async (name, tags, license) => {
     setIsLoading(true);
     // prevent uiser enter soecial character
     const special_character_regex = /:/g;
@@ -120,11 +120,11 @@ export default function AllDatasets() {
     try {
       let api_url = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&sort=${sort}`;
 
-      if(selectedLicense !== undefined && selectedLicense !== "") {
-        api_url += `&license=${selectedLicense}`
+      if (license !== undefined && license !== "") {
+        api_url += `&license=${license}`;
       }
-      if(selectedTags?.length) {
-        const tag_list = selectedTags?.map(item => `tags=${item}`).join("&");
+      if (tags) {
+        const tag_list = tags.map((item) => `tags=${item}`).join("&");
         api_url += `&${tag_list}`;
       }
 
@@ -143,20 +143,31 @@ export default function AllDatasets() {
   };
 
   const handleLicenseSelected = (license) => {
-    if(selectedLicense === license) {
-      setSelectedLicense("");
+    if(license === selectedLicense) {
+      setSelectedLicense("")
     } else {
       setSelectedLicense(license);
     }
   }
 
+  const handleSelectedLicenseRemove = () => {
+    setSelectedLicense("");
+    handleSearch(searchName, selectedTags, "");
+  }
+
   const handleTagsSelected = (tag) => {
-    // if tag was already in selected list, then remove it. ToT
     if(selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(item => item !== tag));
+      const new_data = selectedTags.filter((item) => item !== tag);
+      setSelectedTags(new_data);
     } else {
       setSelectedTags([...selectedTags, tag]);
     }
+  }
+
+  const handleSelectedTagsRemove = (tag) => {
+    const new_data = selectedTags.filter((item) => item !== tag);
+    setSelectedTags(new_data);
+    handleSearch(searchName, new_data, selectedLicense);
   }
 
   const hanldleClearFilter = () => {
@@ -172,13 +183,8 @@ export default function AllDatasets() {
   }, []);
 
   useEffect(() => {
-    handleSearch(searchName);
+    handleSearch(searchName, selectedTags, selectedLicense);
   }, [sort])
-
-  // if user entered site with url, ambatukam
-  useEffect(() => {
-    handleSearch()
-  }, [])
 
   return (
     <>
@@ -203,7 +209,9 @@ export default function AllDatasets() {
                 size="large"
                 placeholder="Search datasets"
                 style={{ width: "85%" }}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e) =>
+                  handleSearch(e.target.value, selectedTags, selectedLicense)
+                }
               />
               <Select
                 defaultValue="relevance"
@@ -283,7 +291,9 @@ export default function AllDatasets() {
               <Button
                 block={true}
                 type="primary"
-                onClick={() => handleSearch(searchName)}
+                onClick={() =>
+                  handleSearch(searchName, selectedTags, selectedLicense)
+                }
               >
                 Apply
               </Button>
@@ -299,11 +309,12 @@ export default function AllDatasets() {
               <div>Datasets {allDatasets?.length}</div>
               <div>
                 {/* selected tag */}
-                {selectedTags?.map((item) => (
+                {selectedTags?.map((item, key) => (
                   <Tag
+                    key={key}
                     className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
-                    onClose={() => handleTagsSelected(item)}
+                    onClose={() => handleSelectedTagsRemove(item)}
                   >
                     {item}
                   </Tag>
@@ -314,7 +325,7 @@ export default function AllDatasets() {
                   <Tag
                     className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
-                    onClose={() => handleLicenseSelected(selectedLicense)}
+                    onClose={handleSelectedLicenseRemove}
                   >
                     {selectedLicense}
                   </Tag>
