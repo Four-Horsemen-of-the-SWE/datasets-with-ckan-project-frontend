@@ -140,15 +140,14 @@ export default function AllDatasets() {
   };
 
   const handleClearFilter = () => {
-    // clear all selected items
-    setSelectedFilter([]);
-
     // then set delete params and set new path
-    // window.history.replaceState(null, "", `/datasets?q=${searchName}`);
     const queryParams = new URLSearchParams(location.search);
     queryParams.delete("tags");
     queryParams.delete("license");
     navigate({ search: queryParams.toString() });
+
+    // clear all selected items
+    setSelectedFilter([]);
   };
 
   const handleCloseTags = (filter_item, params) => {
@@ -177,6 +176,9 @@ export default function AllDatasets() {
 
     // Update the current params and navigate to the new URL
     navigate({ search: "?" + updatedParams.toString() });
+
+    // then search again
+    handleSearch(searchName);
   };
 
   const handleSearch = async (name) => {
@@ -215,11 +217,12 @@ export default function AllDatasets() {
   // call these function when tags is update or sort
   useEffect(() => {
     handleSearch(searchName);
-  }, [selectedFilter, sort]);
+  }, [sort]);
   
   return (
     <>
       {contextHolder}
+      {/* filtered */}
       <div className="container mx-auto">
         <Row justify="center" align="bottom" gutter={18}>
           <Col sm={24} md={9}>
@@ -256,6 +259,7 @@ export default function AllDatasets() {
 
       <Divider />
 
+      {/* datasets and selected tags and license */}
       <div className="container mx-auto">
         <Row gutter={[18, 18]}>
           {/* show filter options, such asssssss date, tag, license */}
@@ -270,19 +274,19 @@ export default function AllDatasets() {
                 <div className="overflow-y-auto overflow-x-hidden max-h-56">
                   {allTags.length ? (
                     allTags.map((item) => (
-                    <div
-                      style={{
-                        backgroundColor: "#F7F9FC",
-                        padding: "4px 10px",
-                        marginBottom: "5px",
-                        borderRadius: "7px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleFilterSelected("tags", item.name)}
-                    >
-                      {item.name}
-                    </div>
-                  ))
+                      <div
+                        style={{
+                          backgroundColor: "#F7F9FC",
+                          padding: "4px 10px",
+                          marginBottom: "5px",
+                          borderRadius: "7px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleFilterSelected("tags", item.name)}
+                      >
+                        {item.name}
+                      </div>
+                    ))
                   ) : (
                     <Empty description="No Tags" />
                   )}
@@ -296,31 +300,45 @@ export default function AllDatasets() {
                 </Title>
                 {/* <AutoComplete placeholder="Search license here." className="w-full mb-2" /> */}
                 <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {allLicenses?.map((item) => (
-                    <div
-                      style={{
-                        backgroundColor: "#F7F9FC",
-                        padding: "4px 10px",
-                        marginBottom: "5px",
-                        borderRadius: "7px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleFilterSelected("license", item.id)}
-                    >
-                      {item.title}
-                    </div>
-                  ))}
+                  {allLicenses.length ? (
+                    allLicenses?.map((item) => (
+                      <div
+                        style={{
+                          backgroundColor: "#F7F9FC",
+                          padding: "4px 10px",
+                          marginBottom: "5px",
+                          borderRadius: "7px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleFilterSelected("license", item.id)}
+                      >
+                        {item.title}
+                      </div>
+                    ))
+                  ) : (
+                    <Empty description="No License" />
+                  )}
                 </div>
               </div>
 
-              {/* Clear button */}
-              <Button
-                block={true}
-                danger={true}
-                onClick={() => handleClearFilter()}
-              >
-                Clear
-              </Button>
+              <Space direction="vertical" style={{ width: "100%" }}>
+                {/* apply button */}
+                <Button
+                  block={true}
+                  type="primary"
+                  onClick={() => handleSearch(searchName)}
+                >
+                  Apply
+                </Button>
+                {/* Clear button */}
+                <Button
+                  block={true}
+                  danger={true}
+                  onClick={() => handleClearFilter()}
+                >
+                  Clear
+                </Button>
+              </Space>
             </Card>
           </Col>
           {/* show all datasets in database (ckan) */}
@@ -330,6 +348,7 @@ export default function AllDatasets() {
               <div>
                 {selectedFilter.map((item) => (
                   <Tag
+                    className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
                     onClose={() =>
                       handleCloseTags(
