@@ -59,14 +59,15 @@ export default function AllDatasets() {
   // licenses
   const [allLicenses, setAllLicenses] = useState([]);
   // sort
-  const [sort, setSort] = useState("");
+  // const [sort, setSort] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const query = searchParams.getAll("q") || "";
-  const tags = searchParams.getAll("tags") || "";
-  const licenses = searchParams.get("license") || "";
+  const query = searchParams.get("q") || undefined;
+  const tags = searchParams.getAll("tags") || undefined;
+  const licenses = searchParams.get("license") || undefined;
+  const sort = searchParams.get("sort" || undefined);
 
   const fetchTags = async () => {
     try {
@@ -94,7 +95,7 @@ export default function AllDatasets() {
     }
   };
 
-  const handleSearch = async (name, tags, license) => {
+  const handleSearch = async (name, tags, license, sort) => {
     setIsLoading(true);
     // prevent uiser enter soecial character
     const special_character_regex = /:/g;
@@ -103,7 +104,7 @@ export default function AllDatasets() {
       return message("Can not find with special character.");
     }
 
-    if(name === undefined) {
+    if (name === undefined) {
       setSearchName("");
     } else {
       setSearchName(name);
@@ -111,7 +112,7 @@ export default function AllDatasets() {
 
     // search from api
     try {
-      let api_url = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&sort=${sort}`;
+      let api_url = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name || ""}&sort=${sort || "relevance desc"}`;
 
       if (license !== undefined && license !== "") {
         api_url += `&license=${license}`;
@@ -130,54 +131,65 @@ export default function AllDatasets() {
       }
     } catch (error) {
       setIsLoading(false);
-      console.error(error)
+      console.error(error);
       message.error("Searcing Error...");
     }
   };
 
   const handleLicenseSelected = (license) => {
-    if(license === selectedLicense) {
-      setSelectedLicense("")
+    if (license === selectedLicense) {
+      setSelectedLicense("");
     } else {
       setSelectedLicense(license);
     }
-  }
+  };
 
   const handleSelectedLicenseRemove = () => {
     setSelectedLicense("");
     handleSearch(searchName, selectedTags, "");
-  }
+  };
 
   const handleTagsSelected = (tag) => {
-    if(selectedTags.includes(tag)) {
+    if (selectedTags.includes(tag)) {
       const new_data = selectedTags.filter((item) => item !== tag);
       setSelectedTags(new_data);
     } else {
       setSelectedTags([...selectedTags, tag]);
     }
-  }
+  };
 
   const handleSelectedTagsRemove = (tag) => {
     const new_data = selectedTags.filter((item) => item !== tag);
     setSelectedTags(new_data);
     handleSearch(searchName, new_data, selectedLicense);
-  }
+  };
 
   const hanldleClearFilter = () => {
     setSelectedTags([]);
     setSelectedLicense("");
     handleSearch(searchName);
-  }
+  };
+
+  const handleSelectedSort = (sort_selected) => {
+    handleSearch(searchName, selectedTags, selectedLicense, sort_selected);
+  };
 
   useEffect(() => {
-    handleSearch();
+    if (!query && !tags && !licenses) {
+      handleSearch("");
+    } else {
+      handleSearch(query, tags, licenses, sort);
+    }
+
     fetchTags();
     fetchLicenses();
   }, []);
 
+  /*
   useEffect(() => {
     handleSearch(searchName, selectedTags, selectedLicense);
-  }, [sort])
+  }, [sort]);
+  */
 
   return (
     <>
@@ -211,7 +223,7 @@ export default function AllDatasets() {
                 size="large"
                 options={sort_data}
                 style={{ width: "15%" }}
-                onChange={(value) => setSort(value)}
+                onChange={handleSelectedSort}
               />
             </div>
           </Col>
