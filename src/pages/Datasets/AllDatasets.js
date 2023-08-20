@@ -2,14 +2,10 @@ import { useEffect, useState } from "react";
 import {
   useNavigate,
   useLocation,
-  Link,
   useSearchParams,
 } from "react-router-dom";
 import {
   SearchOutlined,
-  SortAscendingOutlined,
-  SortDescendingOutlined,
-  FireOutlined,
 } from "@ant-design/icons";
 import {
   Col,
@@ -20,12 +16,9 @@ import {
   Select,
   Divider,
   Empty,
-  DatePicker,
   Button,
   message,
-  Card,
   Tag,
-  AutoComplete,
   List,
   Spin,
 } from "antd";
@@ -355,7 +348,7 @@ export default function AllDatasets() {
                   span={24}
                   className="w-full h-96 flex items-center justify-center"
                 >
-                  <Empty />
+                  <Empty description="Not found" />
                 </Col>
               )}
             </Row>
