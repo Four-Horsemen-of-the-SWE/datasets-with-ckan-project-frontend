@@ -21,6 +21,7 @@ import {
   Card,
   Tag,
   AutoComplete,
+  List,
 } from "antd";
 import axios from "axios";
 
@@ -63,8 +64,6 @@ export default function AllDatasets() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [messageApi, contextHolder] = message.useMessage();
-
   const fetchDatasets = async () => {
     try {
       const response = await axios.get(
@@ -104,88 +103,11 @@ export default function AllDatasets() {
     }
   };
 
-  const handleFilterSelected = (key, item) => {
-    let params = new URLSearchParams(location.search);
-
-    // Check if the incoming key and value already exist in the selectedFilter
-    const filterIndex = selectedFilter.findIndex(
-      (selectedItem) => selectedItem[key] === item
-    );
-
-    if (filterIndex === -1) {
-      // If not in the list, add it to the selectedItems and update the URL
-      setSelectedFilter([...selectedFilter, { [key]: item }]);
-      params.append(key, item);
-    } else {
-      // If already in the list, remove it from the selectedItems and the URL
-      setSelectedFilter(
-        selectedFilter.filter((selectedItem) => selectedItem[key] !== item)
-      );
-
-      // Manually remove all occurrences of the specified key-value pair from the URL
-      const updatedParams = new URLSearchParams();
-      for (const [paramKey, paramValue] of params.entries()) {
-        if (paramKey === key && paramValue === item) {
-          // Skip the key-value pair to remove it
-          continue;
-        }
-        updatedParams.append(paramKey, paramValue);
-      }
-      // Update the params with the updated values
-      params = updatedParams;
-    }
-
-    // Update the current params and navigate to the new URL
-    navigate({ search: "?" + params.toString() });
-  };
-
-  const handleClearFilter = () => {
-    // then set delete params and set new path
-    const queryParams = new URLSearchParams(location.search);
-    queryParams.delete("tags");
-    queryParams.delete("license");
-    navigate({ search: queryParams.toString() });
-
-    // clear all selected items
-    setSelectedFilter([]);
-  };
-
-  const handleCloseTags = (filter_item, params) => {
-    // remove object from array
-    const result = selectedFilter.filter((item) => {
-      return (
-        Object.entries(item).toString() !==
-        Object.entries(filter_item).toString()
-      );
-    });
-
-    setSelectedFilter(result);
-
-    // Manually remove all occurrences of the specified key-value pair from the URL
-    const updatedParams = new URLSearchParams();
-    for (const [paramKey, paramValue] of params.entries()) {
-      if (
-        paramKey === Object.keys(filter_item)[0] &&
-        paramValue === Object.values(filter_item)[0]
-      ) {
-        // Skip the key-value pair to remove it
-        continue;
-      }
-      updatedParams.append(paramKey, paramValue);
-    }
-
-    // Update the current params and navigate to the new URL
-    navigate({ search: "?" + updatedParams.toString() });
-
-    // then search again
-    handleSearch(searchName);
-  };
-
   const handleSearch = async (name) => {
     // prevent uiser enter soecial character
     const special_character_regex = /:/g;
-    if(special_character_regex.test(name)) {
-      return messageApi.info("Can not find with special character.")
+    if (special_character_regex.test(name)) {
+      return message("Can not find with special character.");
     }
 
     setSearchName(name);
@@ -196,7 +118,12 @@ export default function AllDatasets() {
 
     // search from api
     try {
-      const tag_list = selectedFilter.map((item) =>`${Object.keys(item)}=${encodeURIComponent(Object.values(item))}`).join("&");
+      const tag_list = selectedFilter
+        .map(
+          (item) =>
+            `${Object.keys(item)}=${encodeURIComponent(Object.values(item))}`
+        )
+        .join("&");
       const response = await axios.get(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&${tag_list}&sort=${sort}`
       );
@@ -204,24 +131,22 @@ export default function AllDatasets() {
         setAllDatasets(response.data.result);
       }
     } catch (error) {
-      messageApi.error("Searcing Error...");
+      message.error("Searcing Error...");
     }
-  }
-  
+  };
+
   useEffect(() => {
     fetchDatasets();
     fetchTags();
     fetchLicenses();
   }, []);
 
-  // call these function when tags is update or sort
   useEffect(() => {
     handleSearch(searchName);
-  }, [sort]);
-  
+  }, [sort])
+
   return (
     <>
-      {contextHolder}
       {/* filtered */}
       <div className="container mx-auto">
         <Row justify="center" align="bottom" gutter={18}>
@@ -264,82 +189,70 @@ export default function AllDatasets() {
         <Row gutter={[18, 18]}>
           {/* show filter options, such asssssss date, tag, license */}
           <Col xs={24} lg={6}>
-            <Card>
-              {/* Tag Section */}
-              <div className="mb-10">
-                <Title level={5} style={{ marginTop: 0 }}>
-                  Tags
-                </Title>
-                {/* <AutoComplete placeholder="Search tags here." className="w-full mb-2" /> */}
-                <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {allTags.length ? (
-                    allTags.map((item) => (
-                      <div
-                        style={{
-                          backgroundColor: "#F7F9FC",
-                          padding: "4px 10px",
-                          marginBottom: "5px",
-                          borderRadius: "7px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleFilterSelected("tags", item.name)}
-                      >
-                        {item.name}
-                      </div>
-                    ))
-                  ) : (
-                    <Empty description="No Tags" />
+            {/* Tag Section */}
+            <div className="mb-10">
+              <Title level={5} style={{ marginTop: 0 }}>
+                Tags
+              </Title>
+              {/* <AutoComplete placeholder="Search tags here." className="w-full mb-2" /> */}
+              <div className="overflow-y-auto overflow-x-hidden max-h-56">
+                <List
+                  dataSource={allTags}
+                  renderItem={(item) => (
+                    <div
+                      style={{
+                        backgroundColor: "#F7F9FC",
+                        padding: "4px 10px",
+                        marginBottom: "5px",
+                        borderRadius: "7px",
+                        cursor: "pointer",
+                      }}
+                      onClick={null}
+                    >
+                      {item.display_name}
+                    </div>
                   )}
-                </div>
+                />
               </div>
+            </div>
 
-              {/* License Section */}
-              <div className="mb-10">
-                <Title level={5} style={{ marginTop: 0 }}>
-                  License
-                </Title>
-                {/* <AutoComplete placeholder="Search license here." className="w-full mb-2" /> */}
-                <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {allLicenses.length ? (
-                    allLicenses?.map((item) => (
-                      <div
-                        style={{
-                          backgroundColor: "#F7F9FC",
-                          padding: "4px 10px",
-                          marginBottom: "5px",
-                          borderRadius: "7px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleFilterSelected("license", item.id)}
-                      >
-                        {item.title}
-                      </div>
-                    ))
-                  ) : (
-                    <Empty description="No License" />
+            {/* License Section */}
+            <div className="mb-10">
+              <Title level={5} style={{ marginTop: 0 }}>
+                License
+              </Title>
+              {/* <AutoComplete placeholder="Search license here." className="w-full mb-2" /> */}
+              <div className="overflow-y-auto overflow-x-hidden max-h-56">
+                <List 
+                  dataSource={allLicenses}
+                  renderItem={(item) => (
+                    <div
+                      style={{
+                        backgroundColor: "#F7F9FC",
+                        padding: "4px 10px",
+                        marginBottom: "5px",
+                        borderRadius: "7px",
+                        cursor: "pointer",
+                      }}
+                      onClick={null}
+                    >
+                      {item.title}
+                    </div>
                   )}
-                </div>
+                />
               </div>
+            </div>
 
-              <Space direction="vertical" style={{ width: "100%" }}>
-                {/* apply button */}
-                <Button
-                  block={true}
-                  type="primary"
-                  onClick={() => handleSearch(searchName)}
-                >
-                  Apply
-                </Button>
-                {/* Clear button */}
-                <Button
-                  block={true}
-                  danger={true}
-                  onClick={() => handleClearFilter()}
-                >
-                  Clear
-                </Button>
-              </Space>
-            </Card>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              {/* apply button */}
+              <Button block={true} type="primary" onClick={null}>
+                Apply
+              </Button>
+              {/* Clear button */}
+              <Button block={true} danger={true} onClick={null}>
+                Clear
+              </Button>
+            </Space>
           </Col>
           {/* show all datasets in database (ckan) */}
           <Col xs={24} lg={18}>
@@ -350,12 +263,7 @@ export default function AllDatasets() {
                   <Tag
                     className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
-                    onClose={() =>
-                      handleCloseTags(
-                        item,
-                        new URLSearchParams(location.search)
-                      )
-                    }
+                    onClose={null}
                   >
                     {Object.values(item)}
                   </Tag>
