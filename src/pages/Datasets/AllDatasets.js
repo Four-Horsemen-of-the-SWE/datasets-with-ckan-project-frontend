@@ -111,16 +111,17 @@ export default function AllDatasets() {
     // search from api
     try {
       let api_url = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&sort=${sort}`;
+
       if(selectedLicense !== undefined && selectedLicense !== "") {
         api_url += `&license=${selectedLicense}`
       }
-      if(selectedTags.length) {
-        const tag_list = selectedTags.map(item => `tags=${item}`).join("&");
+      if(selectedTags?.length) {
+        const tag_list = selectedTags?.map(item => `tags=${item}`).join("&");
         api_url += `&${tag_list}`;
       }
+
       const response = await axios.get(api_url);
       if (response.data.ok) {
-        console.log(response.data.result);
         setAllDatasets(response.data.result);
       }
     } catch (error) {
@@ -128,6 +129,26 @@ export default function AllDatasets() {
       message.error("Searcing Error...");
     }
   };
+
+  const handleLicenseSelected = (license) => {
+    if(selectedLicense === license) {
+      return setSelectedLicense("");
+    }
+    setSelectedLicense(license);
+  }
+
+  const handleTagsSelected = (tag) => {
+    // if tag was already in selected list, then remove it. ToT
+    if(selectedTags.includes(tag)) {
+      return setSelectedTags(selectedTags.filter(item => item !== tag))
+    }
+    setSelectedTags([...selectedTags, tag]);
+  }
+
+  const hanldleClearFilter = () => {
+    setSelectedTags([]);
+    setSelectedLicense("");
+  }
 
   useEffect(() => {
     handleSearch();
@@ -198,18 +219,13 @@ export default function AllDatasets() {
                 <List
                   dataSource={allTags}
                   renderItem={(item) => (
-                    <div
-                      style={{
-                        backgroundColor: "#F7F9FC",
-                        padding: "4px 10px",
-                        marginBottom: "5px",
-                        borderRadius: "7px",
-                        cursor: "pointer",
-                      }}
-                      onClick={null}
+                    <Tag.CheckableTag
+                      checked={selectedTags.includes(item.display_name)}
+                      className="block py-1 px-2.5 mb-1.5 rounded-lg text-xs border-1 border-[#f5f3f3] shadow-xs cursor-pointer transition ease-in-out delay-50"
+                      onClick={() => handleTagsSelected(item.display_name)}
                     >
                       {item.display_name}
-                    </div>
+                    </Tag.CheckableTag>
                   )}
                 />
               </div>
@@ -222,33 +238,43 @@ export default function AllDatasets() {
               </Title>
               {/* <AutoComplete placeholder="Search license here." className="w-full mb-2" /> */}
               <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                <List 
-                  dataSource={allLicenses}
-                  renderItem={(item) => (
-                    <div
-                      style={{
-                        backgroundColor: "#F7F9FC",
-                        padding: "4px 10px",
-                        marginBottom: "5px",
-                        borderRadius: "7px",
-                        cursor: "pointer",
-                      }}
-                      onClick={null}
-                    >
-                      {item.title}
-                    </div>
-                  )}
-                />
+                {/* if license not selected, then return a list of licenses */}
+                {selectedLicense.length === 0 ? (
+                  <List
+                    dataSource={allLicenses}
+                    renderItem={(item) => (
+                      <div
+                        className="bg-[#F7F9FC] py-1 px-2.5 mb-1.5 rounded-lg cursor-pointer transition ease-in-out delay-50 hover:bg-[#D6DEE1]"
+                        onClick={() => handleLicenseSelected(item.title)}
+                      >
+                        {item.title}
+                      </div>
+                    )}
+                  />
+                ) : (
+                  <Tag.CheckableTag
+                    checked={true}
+                    className="w-full py-1 px-2 rounded-lg font-semibold text-xs"
+                    onClick={() => handleLicenseSelected(selectedLicense)}
+                  >
+                    {selectedLicense}
+                  </Tag.CheckableTag>
+                )}
               </div>
             </div>
 
             <Space direction="vertical" style={{ width: "100%" }}>
               {/* apply button */}
-              <Button block={true} type="primary" onClick={null}>
+              <Button
+                block={true}
+                type="primary"
+                onClick={null}
+                disabled={!selectedTags.length || !selectedLicense.length}
+              >
                 Apply
               </Button>
               {/* Clear button */}
-              <Button block={true} danger={true} onClick={null}>
+              <Button block={true} danger={true} onClick={hanldleClearFilter}>
                 Clear
               </Button>
             </Space>
@@ -258,7 +284,8 @@ export default function AllDatasets() {
             <div className="container mx-auto mb-4 -mt-2 flex justify-between items-center">
               <div>Datasets {allDatasets?.length}</div>
               <div>
-                {selectedTags.map((item) => (
+                {/* selected tag */}
+                {selectedTags?.map((item) => (
                   <Tag
                     className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
@@ -267,6 +294,17 @@ export default function AllDatasets() {
                     {Object.values(item)}
                   </Tag>
                 ))}
+
+                {/* selected license */}
+                {selectedLicense.length !== 0 && (
+                  <Tag
+                    className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
+                    closable={true}
+                    onClose={() => handleLicenseSelected(selectedLicense)}
+                  >
+                    {selectedLicense}
+                  </Tag>
+                )}
               </div>
             </div>
             <Row gutter={[18, 18]}>
