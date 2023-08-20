@@ -15,48 +15,8 @@ export default function DatasetsCard({
   metadata_modified,
   author,
 }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
   return (
     <>
-      {/* preview modal */}
-      <Modal
-        centered
-        title={`${title} Preview`}
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button
-            key="preview"
-            type="dashed"
-            size="large"
-            icon={<FullscreenOutlined />}
-          >
-            <Link to={`/datasets/${id}`}>View</Link>
-          </Button>,
-          <Button
-            key="ok"
-            onClick={handleCancel}
-            type="primary"
-            size="large"
-            icon={<CheckOutlined />}
-          >
-            OK
-          </Button>,
-        ]}
-      >
-        <p>{notes}</p>
-      </Modal>
-
       {/* datasets card */}
       <Card
         hoverable
@@ -76,7 +36,6 @@ export default function DatasetsCard({
             {author ? author : "Admin"}
           </Link>,
           moment(metadata_modified).format("MMM Do YY"),
-          <EyeOutlined key="bookmark" onClick={() => setIsModalOpen(true)} />,
         ]}
       >
         <Link to={`/datasets/${id}`}>

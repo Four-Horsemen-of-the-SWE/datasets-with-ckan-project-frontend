@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import {
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import {
   SearchOutlined,
-  SortAscendingOutlined,
-  SortDescendingOutlined,
-  FireOutlined,
 } from "@ant-design/icons";
 import {
   Col,
@@ -15,12 +16,11 @@ import {
   Select,
   Divider,
   Empty,
-  DatePicker,
   Button,
   message,
-  Card,
   Tag,
-  AutoComplete,
+  List,
+  Spin,
 } from "antd";
 import axios from "axios";
 
@@ -50,33 +50,24 @@ const sort_data = [
 
 export default function AllDatasets() {
   const [searchName, setSearchName] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedLicense, setSelectedLicense] = useState("");
   const [allDatasets, setAllDatasets] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   // tags
   const [allTags, setAllTags] = useState([]);
   // licenses
   const [allLicenses, setAllLicenses] = useState([]);
   // sort
-  const [sort, setSort] = useState("");
+  // const [sort, setSort] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const fetchDatasets = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search`
-      );
-      if (response.status === 200) {
-        setAllDatasets(response.data.result);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("q") || undefined;
+  const tags = searchParams.getAll("tags") || undefined;
+  const licenses = searchParams.get("license") || undefined;
+  const sort = searchParams.get("sort" || undefined);
 
   const fetchTags = async () => {
     try {
@@ -104,122 +95,105 @@ export default function AllDatasets() {
     }
   };
 
-  const handleFilterSelected = (key, item) => {
-    let params = new URLSearchParams(location.search);
-
-    // Check if the incoming key and value already exist in the selectedFilter
-    const filterIndex = selectedFilter.findIndex(
-      (selectedItem) => selectedItem[key] === item
-    );
-
-    if (filterIndex === -1) {
-      // If not in the list, add it to the selectedItems and update the URL
-      setSelectedFilter([...selectedFilter, { [key]: item }]);
-      params.append(key, item);
-    } else {
-      // If already in the list, remove it from the selectedItems and the URL
-      setSelectedFilter(
-        selectedFilter.filter((selectedItem) => selectedItem[key] !== item)
-      );
-
-      // Manually remove all occurrences of the specified key-value pair from the URL
-      const updatedParams = new URLSearchParams();
-      for (const [paramKey, paramValue] of params.entries()) {
-        if (paramKey === key && paramValue === item) {
-          // Skip the key-value pair to remove it
-          continue;
-        }
-        updatedParams.append(paramKey, paramValue);
-      }
-      // Update the params with the updated values
-      params = updatedParams;
-    }
-
-    // Update the current params and navigate to the new URL
-    navigate({ search: "?" + params.toString() });
-  };
-
-  const handleClearFilter = () => {
-    // clear all selected items
-    setSelectedFilter([]);
-
-    // then set delete params and set new path
-    // window.history.replaceState(null, "", `/datasets?q=${searchName}`);
-    const queryParams = new URLSearchParams(location.search);
-    queryParams.delete("tags");
-    queryParams.delete("license");
-    navigate({ search: queryParams.toString() });
-  };
-
-  const handleCloseTags = (filter_item, params) => {
-    // remove object from array
-    const result = selectedFilter.filter((item) => {
-      return (
-        Object.entries(item).toString() !==
-        Object.entries(filter_item).toString()
-      );
-    });
-
-    setSelectedFilter(result);
-
-    // Manually remove all occurrences of the specified key-value pair from the URL
-    const updatedParams = new URLSearchParams();
-    for (const [paramKey, paramValue] of params.entries()) {
-      if (
-        paramKey === Object.keys(filter_item)[0] &&
-        paramValue === Object.values(filter_item)[0]
-      ) {
-        // Skip the key-value pair to remove it
-        continue;
-      }
-      updatedParams.append(paramKey, paramValue);
-    }
-
-    // Update the current params and navigate to the new URL
-    navigate({ search: "?" + updatedParams.toString() });
-  };
-
-  const handleSearch = async (name) => {
+  const handleSearch = async (name, tags, license, sort) => {
+    setIsLoading(true);
     // prevent uiser enter soecial character
     const special_character_regex = /:/g;
-    if(special_character_regex.test(name)) {
-      return messageApi.info("Can not find with special character.")
+    if (special_character_regex.test(name)) {
+      setIsLoading(false);
+      return message("Can not find with special character.");
     }
 
-    setSearchName(name);
-    // update the query param in URL
-    const queryParams = new URLSearchParams(location.search);
-    queryParams.set("q", name);
-    navigate({ search: queryParams.toString() });
+    if (name === undefined) {
+      setSearchName("");
+    } else {
+      setSearchName(name);
+    }
 
     // search from api
     try {
-      const tag_list = selectedFilter.map((item) =>`${Object.keys(item)}=${encodeURIComponent(Object.values(item))}`).join("&");
-      const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name}&${tag_list}&sort=${sort}`
-      );
+      let api_url = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name || ""}&sort=${sort || "relevance desc"}`;
+
+      if (license !== undefined && license !== "") {
+        api_url += `&license=${license}`;
+      }
+      if (tags) {
+        const tag_list = tags.map((item) => `tags=${item}`).join("&");
+        api_url += `&${tag_list}`;
+      }
+
+      const response = await axios.get(api_url);
       if (response.data.ok) {
         setAllDatasets(response.data.result);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
       }
     } catch (error) {
-      messageApi.error("Searcing Error...");
+      setIsLoading(false);
+      console.error(error);
+      message.error("Searcing Error...");
     }
-  }
-  
+  };
+
+  const handleLicenseSelected = (license) => {
+    if (license === selectedLicense) {
+      setSelectedLicense("");
+    } else {
+      setSelectedLicense(license);
+    }
+  };
+
+  const handleSelectedLicenseRemove = () => {
+    setSelectedLicense("");
+    handleSearch(searchName, selectedTags, "");
+  };
+
+  const handleTagsSelected = (tag) => {
+    if (selectedTags.includes(tag)) {
+      const new_data = selectedTags.filter((item) => item !== tag);
+      setSelectedTags(new_data);
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const handleSelectedTagsRemove = (tag) => {
+    const new_data = selectedTags.filter((item) => item !== tag);
+    setSelectedTags(new_data);
+    handleSearch(searchName, new_data, selectedLicense);
+  };
+
+  const hanldleClearFilter = () => {
+    setSelectedTags([]);
+    setSelectedLicense("");
+    handleSearch(searchName);
+  };
+
+  const handleSelectedSort = (sort_selected) => {
+    handleSearch(searchName, selectedTags, selectedLicense, sort_selected);
+  };
+
   useEffect(() => {
-    fetchDatasets();
+    if (!query && !tags && !licenses) {
+      handleSearch("");
+    } else {
+      handleSearch(query, tags, licenses, sort);
+    }
+
     fetchTags();
     fetchLicenses();
   }, []);
 
-  // call these function when tags is update or sort
+  /*
   useEffect(() => {
-    handleSearch(searchName);
-  }, [selectedFilter, sort]);
-  
+    handleSearch(searchName, selectedTags, selectedLicense);
+  }, [sort]);
+  */
+
   return (
     <>
-      {contextHolder}
+      {/* filtered */}
       <div className="container mx-auto">
         <Row justify="center" align="bottom" gutter={18}>
           <Col sm={24} md={9}>
@@ -240,14 +214,16 @@ export default function AllDatasets() {
                 size="large"
                 placeholder="Search datasets"
                 style={{ width: "85%" }}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e) =>
+                  handleSearch(e.target.value, selectedTags, selectedLicense)
+                }
               />
               <Select
                 defaultValue="relevance"
                 size="large"
                 options={sort_data}
                 style={{ width: "15%" }}
-                onChange={(value) => setSort(value)}
+                onChange={handleSelectedSort}
               />
             </div>
           </Col>
@@ -256,95 +232,117 @@ export default function AllDatasets() {
 
       <Divider />
 
+      {/* datasets and selected tags and license */}
       <div className="container mx-auto">
         <Row gutter={[18, 18]}>
           {/* show filter options, such asssssss date, tag, license */}
           <Col xs={24} lg={6}>
-            <Card>
-              {/* Tag Section */}
-              <div className="mb-10">
-                <Title level={5} style={{ marginTop: 0 }}>
-                  Tags
-                </Title>
-                {/* <AutoComplete placeholder="Search tags here." className="w-full mb-2" /> */}
-                <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {allTags.length ? (
-                    allTags.map((item) => (
-                    <div
-                      style={{
-                        backgroundColor: "#F7F9FC",
-                        padding: "4px 10px",
-                        marginBottom: "5px",
-                        borderRadius: "7px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleFilterSelected("tags", item.name)}
+            {/* Tag Section */}
+            <div className="mb-10">
+              <Title level={5} style={{ marginTop: 0 }}>
+                Tags
+              </Title>
+              {/* <AutoComplete placeholder="Search tags here." className="w-full mb-2" /> */}
+              <div className="overflow-y-auto overflow-x-hidden max-h-56">
+                <List
+                  dataSource={allTags}
+                  renderItem={(item) => (
+                    <Tag.CheckableTag
+                      checked={selectedTags.includes(item.display_name)}
+                      className="block py-1.5 px-2.5 mb-1.5 rounded-lg text-sm border-1 border-[#f5f3f3] shadow-xs cursor-pointer transition ease-in-out delay-50"
+                      onClick={() => handleTagsSelected(item.display_name)}
                     >
-                      {item.name}
-                    </div>
-                  ))
-                  ) : (
-                    <Empty description="No Tags" />
+                      {item.display_name}
+                    </Tag.CheckableTag>
                   )}
-                </div>
+                />
               </div>
+            </div>
 
-              {/* License Section */}
-              <div className="mb-10">
-                <Title level={5} style={{ marginTop: 0 }}>
-                  License
-                </Title>
-                {/* <AutoComplete placeholder="Search license here." className="w-full mb-2" /> */}
-                <div className="overflow-y-auto overflow-x-hidden max-h-56">
-                  {allLicenses?.map((item) => (
-                    <div
-                      style={{
-                        backgroundColor: "#F7F9FC",
-                        padding: "4px 10px",
-                        marginBottom: "5px",
-                        borderRadius: "7px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleFilterSelected("license", item.id)}
-                    >
-                      {item.title}
-                    </div>
-                  ))}
-                </div>
+            {/* License Section */}
+            <div className="mb-10">
+              <Title level={5} style={{ marginTop: 0 }}>
+                License
+              </Title>
+              {/* <AutoComplete placeholder="Search license here." className="w-full mb-2" /> */}
+              <div className="overflow-y-auto overflow-x-hidden max-h-56">
+                {/* if license not selected, then return a list of licenses */}
+                {selectedLicense.length === 0 ? (
+                  <List
+                    dataSource={allLicenses}
+                    renderItem={(item) => (
+                      <div
+                        className="bg-[#F7F9FC] py-1 px-2.5 mb-1.5 rounded-lg cursor-pointer transition ease-in-out delay-50 hover:bg-[#D6DEE1]"
+                        onClick={() => handleLicenseSelected(item.title)}
+                      >
+                        {item.title}
+                      </div>
+                    )}
+                  />
+                ) : (
+                  <Tag.CheckableTag
+                    checked={true}
+                    className="w-full py-1 px-2 rounded-lg font-semibold text-xs"
+                    onClick={() => handleLicenseSelected(selectedLicense)}
+                  >
+                    {selectedLicense}
+                  </Tag.CheckableTag>
+                )}
               </div>
+            </div>
 
-              {/* Clear button */}
+            <Space direction="vertical" style={{ width: "100%" }}>
+              {/* apply button */}
               <Button
                 block={true}
-                danger={true}
-                onClick={() => handleClearFilter()}
+                type="primary"
+                onClick={() =>
+                  handleSearch(searchName, selectedTags, selectedLicense)
+                }
               >
+                Apply
+              </Button>
+              {/* Clear button */}
+              <Button block={true} danger={true} onClick={hanldleClearFilter}>
                 Clear
               </Button>
-            </Card>
+            </Space>
           </Col>
           {/* show all datasets in database (ckan) */}
           <Col xs={24} lg={18}>
             <div className="container mx-auto mb-4 -mt-2 flex justify-between items-center">
               <div>Datasets {allDatasets?.length}</div>
               <div>
-                {selectedFilter.map((item) => (
+                {/* selected tag */}
+                {selectedTags?.map((item, key) => (
                   <Tag
+                    key={key}
+                    className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
-                    onClose={() =>
-                      handleCloseTags(
-                        item,
-                        new URLSearchParams(location.search)
-                      )
-                    }
+                    onClose={() => handleSelectedTagsRemove(item)}
                   >
-                    {Object.values(item)}
+                    {item}
                   </Tag>
                 ))}
+
+                {/* selected license */}
+                {selectedLicense.length !== 0 && (
+                  <Tag
+                    className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
+                    closable={true}
+                    onClose={handleSelectedLicenseRemove}
+                  >
+                    {selectedLicense}
+                  </Tag>
+                )}
               </div>
             </div>
             <Row gutter={[18, 18]}>
-              {allDatasets.length ? (
+              {isLoading ? (
+                <div className="w-full h-screen flex items-center justify-center">
+                  <Spin size="large" />
+                </div>
+              ) : allDatasets.length ? (
                 allDatasets.map((item, key) => (
                   <Col xs={12} md={12} lg={6} key={key}>
                     <DatasetsCard
@@ -362,7 +360,7 @@ export default function AllDatasets() {
                   span={24}
                   className="w-full h-96 flex items-center justify-center"
                 >
-                  <Empty />
+                  <Empty description="Not found" />
                 </Col>
               )}
             </Row>
