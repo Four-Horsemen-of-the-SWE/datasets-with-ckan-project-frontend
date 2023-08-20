@@ -27,6 +27,7 @@ import {
   Tag,
   AutoComplete,
   List,
+  Spin,
 } from "antd";
 import axios from "axios";
 
@@ -59,6 +60,7 @@ export default function AllDatasets() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedLicense, setSelectedLicense] = useState("");
   const [allDatasets, setAllDatasets] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   // tags
   const [allTags, setAllTags] = useState([]);
   // licenses
@@ -100,13 +102,19 @@ export default function AllDatasets() {
   };
 
   const handleSearch = async (name) => {
+    setIsLoading(true);
     // prevent uiser enter soecial character
     const special_character_regex = /:/g;
     if (special_character_regex.test(name)) {
+      setIsLoading(false);
       return message("Can not find with special character.");
     }
 
-    setSearchName(name);
+    if(name === undefined) {
+      setSearchName("");
+    } else {
+      setSearchName(name);
+    }
 
     // search from api
     try {
@@ -123,31 +131,38 @@ export default function AllDatasets() {
       const response = await axios.get(api_url);
       if (response.data.ok) {
         setAllDatasets(response.data.result);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
       }
     } catch (error) {
-      console.log(error)
+      setIsLoading(false);
+      console.error(error)
       message.error("Searcing Error...");
     }
   };
 
   const handleLicenseSelected = (license) => {
     if(selectedLicense === license) {
-      return setSelectedLicense("");
+      setSelectedLicense("");
+    } else {
+      setSelectedLicense(license);
     }
-    setSelectedLicense(license);
   }
 
   const handleTagsSelected = (tag) => {
     // if tag was already in selected list, then remove it. ToT
     if(selectedTags.includes(tag)) {
-      return setSelectedTags(selectedTags.filter(item => item !== tag))
+      setSelectedTags(selectedTags.filter(item => item !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
     }
-    setSelectedTags([...selectedTags, tag]);
   }
 
   const hanldleClearFilter = () => {
     setSelectedTags([]);
     setSelectedLicense("");
+    handleSearch(searchName);
   }
 
   useEffect(() => {
@@ -268,8 +283,7 @@ export default function AllDatasets() {
               <Button
                 block={true}
                 type="primary"
-                onClick={null}
-                disabled={!selectedTags.length || !selectedLicense.length}
+                onClick={() => handleSearch(searchName)}
               >
                 Apply
               </Button>
@@ -308,7 +322,11 @@ export default function AllDatasets() {
               </div>
             </div>
             <Row gutter={[18, 18]}>
-              {allDatasets.length ? (
+              {isLoading ? (
+                <div className="w-full h-screen flex items-center justify-center">
+                  <Spin size="large" />
+                </div>
+              ) : allDatasets.length ? (
                 allDatasets.map((item, key) => (
                   <Col xs={12} md={12} lg={6} key={key}>
                     <DatasetsCard
