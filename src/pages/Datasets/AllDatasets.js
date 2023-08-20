@@ -221,7 +221,7 @@ export default function AllDatasets() {
                   renderItem={(item) => (
                     <Tag.CheckableTag
                       checked={selectedTags.includes(item.display_name)}
-                      className="block py-1 px-2.5 mb-1.5 rounded-lg text-xs border-1 border-[#f5f3f3] shadow-xs cursor-pointer transition ease-in-out delay-50"
+                      className="block py-1.5 px-2.5 mb-1.5 rounded-lg text-sm border-1 border-[#f5f3f3] shadow-xs cursor-pointer transition ease-in-out delay-50"
                       onClick={() => handleTagsSelected(item.display_name)}
                     >
                       {item.display_name}
@@ -289,9 +289,9 @@ export default function AllDatasets() {
                   <Tag
                     className="px-2 py-1 bg-[#E8EAED] font-semibold text-sm rounded-lg"
                     closable={true}
-                    onClose={null}
+                    onClose={() => handleTagsSelected(item)}
                   >
-                    {Object.values(item)}
+                    {item}
                   </Tag>
                 ))}
 
