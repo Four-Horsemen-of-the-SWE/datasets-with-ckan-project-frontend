@@ -98,8 +98,13 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
         return message.info("Please enter dataset name.");
       }
 
+      let create_api = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/`
+      if(!localfileList?.length) {
+        create_api += "?default_visibility=private";
+      }
+
       const response = await axios.post(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/`,
+        create_api,
         {
           name: validName(values.name),
           title: values.name,
@@ -162,15 +167,19 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
         onCancel={close}
         footer={[
           <Tooltip
-            title={`Toggle to change to ${isPrivate ? "Public" : "Private"}`}
+            title={!fileList?.length ? "If dataset file is not uploaded will not be able to change visibility" : `Toggle to change to ${isPrivate ? "Public" : "Private"}`}
             placement="left"
           >
             <Button
               size="large"
+              className={
+                !fileList?.length ? "mr-2 animate-none" : "animate-none"
+              }
               icon={isPrivate ? <EyeInvisibleOutlined /> : <EyeOutlined />}
               onClick={() => setIsPrivate(!isPrivate)}
+              disabled={!fileList?.length}
             >
-              {isPrivate ? "Private" : "Public"}
+              {isPrivate || !fileList?.length ? "Private" : "Public"}
             </Button>
           </Tooltip>,
           <Button
