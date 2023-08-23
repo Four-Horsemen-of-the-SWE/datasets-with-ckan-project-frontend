@@ -22,7 +22,7 @@ export default function Home() {
   const fetchHotestDatasets = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets?limit=4`
       );
       if (response.status === 200) {
         setAllDatasets(response.data.result);

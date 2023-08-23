@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { StarOutlined, ToolOutlined, DatabaseOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb, Space } from "antd";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb, Space, Result } from "antd";
 import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
@@ -13,6 +13,7 @@ import DiscussionView from "../../components/Discussion/DiscussionView";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 import { useResourcesStore } from "../../store";
 import ArticleView from "../../components/Article/ArticleView";
+import ReportButton from "../../components/Button/ReportButton";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -24,6 +25,7 @@ export default function ViewDatasets() {
   const [isLoading, setIsLoading] = useState(true);
   const [isBookmark, setIsBookmark] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
+  const [isNotAuthorized, setIsNotAuthorized] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const { resources, setResources } = useResourcesStore();
 
@@ -47,8 +49,12 @@ export default function ViewDatasets() {
       );
 
       if (response.status === 200) {
+        if (resources.data?.is_authorized === false) {
+          setIsLoading(false);
+          return setIsNotAuthorized(true);
+        }
         setDatasets(response.data.result);
-        setIsBookmark(response.data.result.is_bookmark);
+        setIsBookmark(response.data.result?.is_bookmark);
 
         if (!!response.data.result) {
           document.title = response.data.result.title;
@@ -134,30 +140,48 @@ export default function ViewDatasets() {
         <Spin size="large" />
       </div>
     );
-  } else {
+  } 
+  
+  if (isNotAuthorized) {
     return (
-      <>
-        {contextHolder}
-        <div className="container mx-auto mt-4 w-100 flex justify-between items-center gap-2 pe-9">
-          {/* breadcrumb */}
-          <Breadcrumb
-            items={[
-              {
-                title: (
-                  <>
-                    <DatabaseOutlined />
-                    <Link to="/datasets">Datasets</Link>
-                  </>
-                ),
-              },
-              {
-                title: datasets.name,
-              },
-            ]}
-          />
+      <div className="w-full h-screen flex items-center justify-center">
+        <Result
+          status="warning"
+          title="You Don't have Authorization to View this Dataset"
+          extra={
+            <Link to="/datasets">
+              <Button type="primary">Back to all datasets page.</Button>
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
 
-          {/* bookmark button */}
-          {isAuthenticated() && (
+  return (
+    <>
+      {contextHolder}
+      <div className="container mx-auto mt-4 w-100 flex justify-between items-center gap-2 pe-9">
+        {/* breadcrumb */}
+        <Breadcrumb
+          items={[
+            {
+              title: (
+                <>
+                  <DatabaseOutlined />
+                  <Link to="/datasets">Datasets</Link>
+                </>
+              ),
+            },
+            {
+              title: datasets.name,
+            },
+          ]}
+        />
+
+        {/* bookmark button */}
+        {isAuthenticated() && (
+          <Space>
             <Button
               type="primary"
               ghost={!isBookmark}
@@ -168,89 +192,96 @@ export default function ViewDatasets() {
             >
               {isBookmark ? "Bookmarked" : "Bookmark"}
             </Button>
+            <ReportButton
+              entity_id={datasets.id}
+              entity_type="dataset"
+              entity_owner={datasets.creator_user_id}
+              button_size="large"
+              show_label={false}
+            />
+          </Space>
+        )}
+      </div>
+
+      <div className="container mx-auto">
+        <Row
+          justify="space-between"
+          align="center"
+          gutter={[18, 18]}
+          className="my-5 w-full"
+        >
+          <Col md={18} className="ml-8 mr-8">
+            <Title level={2}>{datasets.title}</Title>
+            <Paragraph
+              ellipsis={{
+                rows: 6,
+                expandable: true,
+                symbol: "more",
+              }}
+            >
+              {datasets.notes ? datasets.notes : "No Description"}
+            </Paragraph>
+          </Col>
+          <Col md={4} className="w-full text-center md:text-right ml-6 mr-6">
+            <Image
+              src={datasets.thumbnail}
+              alt="datasets thumbnail"
+              className="rounded-md mx-auto block"
+              height={200}
+            />
+          </Col>
+        </Row>
+      </div>
+
+      <Divider />
+
+      <section className="container mx-auto pl-4 pr-4 ">
+        <Tabs
+          defaultActiveKey={currentTab}
+          onChange={handleTabChange}
+          size="large"
+        >
+          <TabPane tab="Data" key="data">
+            <Row gutter={18}>
+              <Col sm={24} md={18} className="ml-8 mr-8">
+                <ResourceView
+                  creator_user_id={datasets.creator_user_id}
+                  dataset_id={datasets.id}
+                  resource={resources}
+                />
+              </Col>
+              <Col sm={24} md={4} className="ml-5 mr-5">
+                <InformationView
+                  dataset_id={datasets.id}
+                  author={datasets.author}
+                  license_title={datasets.license_title}
+                  version={datasets.version}
+                  metadata_created={datasets.metadata_created}
+                  metadata_modified={datasets.metadata_modified}
+                  tags={datasets.tags}
+                />
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tab="Discussion" key="discussions">
+            <DiscussionView
+              dataset_id={datasets?.id}
+              dataset_creator_user_id={datasets?.creator_user_id}
+            />
+          </TabPane>
+          {auth()?.id === datasets?.creator_user_id && (
+            <TabPane tab="Settings" key="settings">
+              <DatasetsSettings datasets={datasets} />
+            </TabPane>
           )}
-        </div>
-
-        <div className="container mx-auto">
-          <Row
-            justify="space-between"
-            align="center"
-            gutter={[18, 18]}
-            className="my-5 w-full"
-          >
-            <Col md={18} className="ml-8 mr-8">
-              <Title level={2}>{datasets.title}</Title>
-              <Paragraph
-                ellipsis={{
-                  rows: 6,
-                  expandable: true,
-                  symbol: "more",
-                }}
-              >
-                {datasets.notes ? datasets.notes : "No Description"}
-              </Paragraph>
-            </Col>
-            <Col md={4} className="w-full text-center md:text-right ml-6 mr-6">
-              <Image
-                src={datasets.thumbnail}
-                alt="datasets thumbnail"
-                className="rounded-md mx-auto block"
-                height={200}
-              />
-            </Col>
-          </Row>
-        </div>
-
-        <Divider />
-
-        <section className="container mx-auto pl-4 pr-4 ">
-          <Tabs
-            defaultActiveKey={currentTab}
-            onChange={handleTabChange}
-            size="large"
-          >
-            <TabPane tab="Data" key="data">
-              <Row gutter={18}>
-                <Col sm={24} md={18} className="ml-8 mr-8">
-                  <ResourceView
-                    creator_user_id={datasets.creator_user_id}
-                    dataset_id={datasets.id}
-                    resource={resources}
-                  />
-                </Col>
-                <Col sm={24} md={4} className="ml-5 mr-5">
-                  <InformationView
-                    dataset_id={datasets.id}
-                    author={datasets.author}
-                    license_title={datasets.license_title}
-                    version={datasets.version}
-                    metadata_created={datasets.metadata_created}
-                    metadata_modified={datasets.metadata_modified}
-                    tags={datasets.tags}
-                  />
-                </Col>
-              </Row>
-            </TabPane>
-            <TabPane tab="Discussion" key="discussions">
-              <DiscussionView
-                dataset_id={datasets?.id}
-                dataset_creator_user_id={datasets?.creator_user_id}
-              />
-            </TabPane>
-            {auth()?.id === datasets?.creator_user_id && (
-              <TabPane tab="Settings" key="settings">
-                <DatasetsSettings datasets={datasets} />
-              </TabPane>
-            )}
-            <TabPane tab="Article" key="article">
-              <ArticleView
-                dataset_id={datasets?.id}
-                creator_user_id={datasets.creator_user_id}
-              />
-            </TabPane>
-          </Tabs>
-        </section>
-      </>
-    );
-  }
+          <TabPane tab="Article" key="article">
+            <ArticleView
+              dataset_id={datasets?.id}
+              creator_user_id={datasets.creator_user_id}
+            />
+          </TabPane>
+        </Tabs>
+      </section>
+    </>
+  );
 }

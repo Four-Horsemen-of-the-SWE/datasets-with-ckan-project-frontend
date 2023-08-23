@@ -3,6 +3,7 @@ import {
   DatabaseOutlined,
   BookOutlined,
   EditOutlined,
+  FileSearchOutlined
 } from "@ant-design/icons";
 import { useSignOut, useAuthUser } from "react-auth-kit";
 import { Button, Drawer, List, Space, Popconfirm, Typography, Avatar } from "antd"
@@ -56,6 +57,14 @@ export default function DrawerView({ isDrawerOpen, close }) {
           Your Bookmarked
         </Link>
       ),
+    },
+    {
+      icon: <FileSearchOutlined />,
+      label: (
+        <Link href={`/profile/${!!auth()?.name ? auth()?.name : ''}/reports`} style={{ color: "#000" }}>
+          Your Reports
+        </Link>
+      )
     },
     {
       icon: <EditOutlined />,

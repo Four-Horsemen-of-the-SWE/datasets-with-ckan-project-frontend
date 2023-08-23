@@ -7,6 +7,7 @@ import moment from "moment";
 
 // components
 import VoteButton from "./VoteButton";
+import ReportButton from "../Button/ReportButton";
 
 const IconText = ({ icon, text, color = "grey" }) => (
   <Space>
@@ -79,11 +80,13 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
       key={item.id}
       actions={[
         <IconText icon={CalendarOutlined} text={format_date(item.created)} />,
-        <IconText
-          icon={FlagOutlined}
-          text={<Tooltip title="Report this comment to admin.">Report</Tooltip>}
-          color="red"
-        />,
+        isAuthenticated() && (
+          <ReportButton
+            entity_id={item.id}
+            entity_type="comment"
+            entity_owner={item.user_id}
+          />
+        )
       ]}
       extra={
         <Space align="end" direction="vertical">

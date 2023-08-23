@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import { useAuthHeader, useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Space, Avatar, Input, Form, Button, Typography, Card, Tag, message, Popconfirm } from "antd";
 import axios from "axios";
 import VoteButton from "./VoteButton";
+import ReportButton from "../Button/ReportButton";
 
 const { Title, Paragraph } = Typography;
 
@@ -16,6 +17,7 @@ export default function TopicCard({ discussion_data }) {
   // get jwt token here
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
+  const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
 
   const handleUpdateTopic = async(values) => {
@@ -74,7 +76,7 @@ export default function TopicCard({ discussion_data }) {
   useEffect(() => {
     setDiscussion(discussion_data)
   }, [discussion_data])
-
+  
   return (
     <Card bordered={true}>
       <div className="flex justify-between w-full items-center space-x-4">
@@ -167,12 +169,22 @@ export default function TopicCard({ discussion_data }) {
               {discussion.body}
             </Paragraph>
           </Space>
-          <VoteButton
-            target_id={discussion_data.id}
-            target_type="topic"
-            vote={discussion_data.vote}
-            vote_type={discussion_data.voted_type}
-          />
+          <Space direction="vertical" align="center">
+            <VoteButton
+              target_id={discussion_data.id}
+              target_type="topic"
+              vote={discussion_data.vote}
+              vote_type={discussion_data.voted_type}
+            />
+            {isAuthenticated() && (
+              <ReportButton
+                entity_id={discussion_data.id}
+                entity_type="topic"
+                entity_owner={discussion_data.user_id}
+                show_label={false}
+              />
+            )}
+          </Space>
         </div>
       )}
     </Card>

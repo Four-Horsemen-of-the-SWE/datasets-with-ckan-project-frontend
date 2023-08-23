@@ -2,14 +2,15 @@ import EditorJs from "@natterstefan/react-editor-js";
 import { EDITOR_JS_TOOLS } from "./tools";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Button, Space } from "antd";
-import { useAuthUser } from "react-auth-kit";
-import { useEffect } from "react";
+import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
+import { useState, useEffect } from "react";
 import ArticleDeleteModal from "./ArticleDeleteModal";
-import { useState } from "react";
+import ReportButton from "../Button/ReportButton";
 
 export default function ArticleReader({ article_id, content, setIsEditMode, creator_user_id }) {
   var editor = null;
   const auth = useAuthUser();
+  const isAuthenticated = useIsAuthenticated();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleReady = async () => {
@@ -39,7 +40,24 @@ export default function ArticleReader({ article_id, content, setIsEditMode, crea
 
   return (
     <>
-      <ArticleDeleteModal article_id={article_id} open={showDeleteModal} close={() => setShowDeleteModal(false)} />
+      <ArticleDeleteModal
+        article_id={article_id}
+        open={showDeleteModal}
+        close={() => setShowDeleteModal(false)}
+      />
+
+      <div className="flex items-center justify-end my-3">
+        {isAuthenticated() && (
+          <ReportButton
+            entity_id={article_id}
+            entity_type="article"
+            entity_owner={creator_user_id}
+            label_color="white"
+            button_size="large"
+            button_type="primary"
+          />
+        )}
+      </div>
 
       {auth()?.id === creator_user_id && (
         <div className="flex items-center justify-end">
@@ -47,7 +65,12 @@ export default function ArticleReader({ article_id, content, setIsEditMode, crea
             <Button icon={<EditOutlined />} onClick={() => setIsEditMode(true)}>
               Edit Article
             </Button>
-            <Button icon={<DeleteOutlined />} type="primary" danger={true} onClick={() => setShowDeleteModal(true)} />
+            <Button
+              icon={<DeleteOutlined />}
+              type="primary"
+              danger={true}
+              onClick={() => setShowDeleteModal(true)}
+            />
           </Space>
         </div>
       )}
