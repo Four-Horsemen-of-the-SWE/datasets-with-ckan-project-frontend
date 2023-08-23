@@ -49,7 +49,7 @@ export default function ViewDatasets() {
       );
 
       if (response.status === 200) {
-        if (resources.data?.is_authorized === false) {
+        if (response.data?.is_authorized === false) {
           setIsLoading(false);
           return setIsNotAuthorized(true);
         }
