@@ -121,7 +121,6 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
               content: "Create with resoucess success."
             })
             
-
             setTimeout(() => {
               setIsCreating(false);
               window.location.href = `/datasets/${response.data.result.id}`;
@@ -170,7 +169,6 @@ export default function CreateDatasetsModal({ isModalOpen, close }) {
               size="large"
               icon={isPrivate ? <EyeInvisibleOutlined /> : <EyeOutlined />}
               onClick={() => setIsPrivate(!isPrivate)}
-              disabled
             >
               {isPrivate ? "Private" : "Public"}
             </Button>
