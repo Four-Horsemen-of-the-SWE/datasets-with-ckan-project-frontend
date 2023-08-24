@@ -7,8 +7,9 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
   SyncOutlined,
+  EyeInvisibleOutlined
 } from "@ant-design/icons";
-import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs, Tag } from "antd";
+import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs, Tag, Badge } from "antd";
 import { useEffect, useState } from "react";
 import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";
 import { useLocation } from "react-router-dom";
@@ -114,6 +115,7 @@ export default function Profile() {
     fetchDataFromAPI();
   }, []);
 
+  console.log(datasets)
 
   if (isLoading) {
     return (
@@ -185,7 +187,12 @@ export default function Profile() {
                         <List.Item>
                           <List.Item.Meta
                             title={
-                              <a href={`/datasets/${item.id}`}>{item.name}</a>
+                              <Space>
+                                <a href={`/datasets/${item.id}`}>{item.name}</a>
+                                {item.private && (
+                                  <Tag color="#FD0000">Private</Tag>
+                                )}
+                              </Space>
                             }
                             description={
                               item.notes ? (

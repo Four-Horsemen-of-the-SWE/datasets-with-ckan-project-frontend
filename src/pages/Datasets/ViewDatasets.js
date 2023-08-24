@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { StarOutlined, ToolOutlined, DatabaseOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb, Space, Result } from "antd";
+import { StarOutlined, WarningFilled, DatabaseOutlined } from "@ant-design/icons";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb, Space, Result, Alert } from "antd";
 import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
@@ -161,6 +161,21 @@ export default function ViewDatasets() {
   return (
     <>
       {contextHolder}
+      {datasets.private && (
+        <Alert
+          showIcon={false}
+          message={
+            <div className="container mx-auto text-center">
+              <Space>
+                <WarningFilled className="text-[#FAAD14]" />
+                Other people will not be able to view this data set. Because
+                this dataset is a private dataset.
+              </Space>
+            </div>
+          }
+          banner={true}
+        />
+      )}
       <div className="container mx-auto mt-4 w-100 flex justify-between items-center gap-2 pe-9">
         {/* breadcrumb */}
         <Breadcrumb
