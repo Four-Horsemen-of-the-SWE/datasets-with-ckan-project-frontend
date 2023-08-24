@@ -1,6 +1,6 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Card, Col, Row, Statistic, Typography } from "antd";
-import AllDatasetsTable from "../../components/Admin/AllDatasetsTable";
+import AllDatasetsTable from "../../../components/Admin/AllDatasetTable/AllDatasetsTable";
 
 export default function AllDatasetsPage() {
   return (
@@ -9,14 +9,12 @@ export default function AllDatasetsPage() {
         <Col span={12}>
           <Card bordered={false}>
             <Statistic
-              title="Active"
+              title="All Datasets"
               value={11.28}
-              precision={2}
+              precision={0}
               valueStyle={{
                 color: "#3f8600",
               }}
-              prefix={<ArrowUpOutlined />}
-              suffix="%"
             />
           </Card>
         </Col>

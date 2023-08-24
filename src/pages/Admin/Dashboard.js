@@ -6,11 +6,11 @@ import { Layout, Menu } from "antd";
 
 // import components
 import siderItems from "./siderItems";
-import AllDatasetsPage from "./AllDatasetsPage";
+import AllDatasetsPage from "./Page/AllDatasetsPage";
 
 export default function Dashboard() {
   const auth = useAuthUser();
-  const [selectedMenu, setSelectedMenu] = useState('all-datasets');
+  const [selectedMenu, setSelectedMenu] = useState("all_datasets");
 
   const handleMenuClick = (menu_key) => {
     setSelectedMenu(menu_key);
@@ -40,8 +40,7 @@ export default function Dashboard() {
         <Layout.Sider width={300}>
           <Menu
             mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["datasets"]}
+            defaultSelectedKeys={["all_datasets"]}
             style={{ height: "100%", borderRight: 0 }}
             items={siderItems}
             onClick={({ key }) => handleMenuClick(key)}

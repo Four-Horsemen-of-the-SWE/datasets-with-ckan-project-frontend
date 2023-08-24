@@ -79,7 +79,7 @@ export default function Navbar() {
             {isAdmin && (
               <>
                 <Link
-                  to="/Dashboard"
+                  to="/dashboard"
                   className="ml-2 sm:ml-4"
                   style={{ color: "#000", textTransform: "uppercase" }}
                 >
