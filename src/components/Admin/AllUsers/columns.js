@@ -37,6 +37,7 @@ const columns = [
     dataIndex: "number_created_packages",
     key: "number_created_packages",
     align: "center",
+    sorter: (a, b) => a.number_created_packages - b.number_created_packages,
     render: (number) => number,
   },
   {
