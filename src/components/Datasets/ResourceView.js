@@ -177,6 +177,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
             message="No resource"
             description="The dataset might not be uploaded at this time. Please come back later."
             className="my-3"
+            closable={true}
           />
         )}
 
