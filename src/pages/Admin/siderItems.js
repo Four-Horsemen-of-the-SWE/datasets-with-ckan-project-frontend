@@ -16,36 +16,22 @@ function getItem(label, key, icon, children, type, onClick) {
 }
 
 const siderItems = [
-  getItem(
-    "Datasets",
-    "datasets",
-    null,
-    [
-      getItem("All Datasets", "all-datasets", <DatabaseOutlined />),
-      getItem("Option3", "option3"),
-    ],
-    "group",
-  ),
-  getItem(
-    "Users",
-    "users",
-    null,
-    [
-      getItem("All Users", "all-users", <UserOutlined />),
-      getItem("Option4", "option4"),
-    ],
-    "group"
-  ),
+  getItem("All Datasets", "all_datasets", <DatabaseOutlined />),
+  getItem("All Users", "all_users", <UserOutlined />),
+  getItem("All Articles", "all_articles", <FileTextOutlined />)
+];
+
+export default siderItems;
+
+/*
   getItem(
     "Articles",
     "articles",
     null,
     [
-      getItem("All Articles", "all-articles", <FileTextOutlined />),
+      getItem("All Articles", "all_articles", <FileTextOutlined />),
       getItem("Option5", "option5"),
     ],
     "group"
   ),
-];
-
-export default siderItems;
+*/
