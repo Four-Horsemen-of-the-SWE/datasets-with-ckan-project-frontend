@@ -23,7 +23,7 @@ export default function SearchUserInput() {
       options={users}
       size="large"
       className="w-full mb-5"
-      placeholder="search user from name"
+      placeholder="search user from username or fullname"
       allowClear={true}
       onSearch={handleSearch}
       onClear={() => setUsers([])}

@@ -5,6 +5,11 @@ import AllDatasetsTable from "../../../components/Admin/AllDataset/AllDatasetsTa
 export default function AllDatasetsPage() {
   return (
     <>
+      <Typography.Title>Datasets</Typography.Title>
+      <Typography.Paragraph>
+        An easy to use UI to help administrators manage and see datasets information.
+      </Typography.Paragraph>
+
       <Row gutter={16} className="mb-5">
         <Col span={12}>
           <Card bordered={false}>
