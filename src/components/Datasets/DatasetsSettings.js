@@ -18,6 +18,7 @@ import {
 import ImgCrop from "antd-img-crop";
 import { useAuthHeader } from "react-auth-kit";
 import axios, { all } from "axios";
+import ChangeVisibilityModal from "./ChangeVisibilityModal";
 
 const { Title, Text } = Typography;
 
@@ -36,6 +37,7 @@ export default function DatasetsSettings({ datasets }) {
   const [isSaving, setIsSaving] = useState(false);
   const [thumbnail, setThumbnail] = useState(datasets?.thumbnail);
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
+  const [isChangeVisibilityModalShow, setIsChangeVisibilityModalShow] = useState(false);
   const [confirmName, setConfirmName] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -125,6 +127,7 @@ export default function DatasetsSettings({ datasets }) {
     const tag_list = values?.tags.map((item) => ({
       name: item.toLowerCase().replaceAll(" ", "-"),
     }));
+    values.id = datasets.id;
     values.tags = tag_list;
     values.name = validName(values.title);
 
@@ -229,6 +232,13 @@ export default function DatasetsSettings({ datasets }) {
         </Space>
       </Modal>
 
+      <ChangeVisibilityModal
+        dataset_id={datasets.id}
+        is_private={datasets.private}
+        open={isChangeVisibilityModalShow}
+        close={() => setIsChangeVisibilityModalShow(false)}
+      />
+
       <div className="container mx-auto">
         <Title level={3}>Settings</Title>
 
@@ -267,17 +277,7 @@ export default function DatasetsSettings({ datasets }) {
 
           <Form.Item label="Others">
             <Row gutter={8}>
-              <Col span={6}>
-                <Form.Item label="Visibility" name="private">
-                  <Select
-                    defaultValue={false}
-                    size="large"
-                    options={visibility_data}
-                    disabled
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
+              <Col span={8}>
                 <Form.Item label="Tags" name="tags">
                   <Select
                     mode="tags"
@@ -290,7 +290,7 @@ export default function DatasetsSettings({ datasets }) {
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={8}>
                 <Form.Item label="License" name="license_id">
                   <Select
                     placeholder="Licenses"
@@ -302,7 +302,7 @@ export default function DatasetsSettings({ datasets }) {
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={8}>
                 <Form.Item label="Version" name="version">
                   <Input size="large" placeholder="1.0.0" />
                 </Form.Item>
@@ -354,8 +354,32 @@ export default function DatasetsSettings({ datasets }) {
 
         <Divider />
 
-        <div className="w-full mb-6">
+        {/* DANGER ZONE */}
+        <div className="w-full mb-12 flex flex-col gap-y-2.5">
           <Title level={4}>Danger Zone</Title>
+
+          {/* change visibility */}
+          <div className="flex justify-between items-center">
+            <div>
+              <Title level={5} style={{ marginTop: "1.2em" }}>
+                Change Visibility
+              </Title>
+              <Text>
+                This dataset is currently{" "}
+                {datasets.private ? "Private" : "Public"}.
+              </Text>
+            </div>
+            <Button
+              type="primary"
+              size="large"
+              danger={true}
+              onClick={() => setIsChangeVisibilityModalShow(true)}
+            >
+              Change to {datasets.private ? "Public" : "Private"}
+            </Button>
+          </div>
+
+          {/* delte dataset */}
           <div className="flex justify-between items-center">
             <div>
               <Title level={5} style={{ marginTop: "1.2em" }}>
@@ -369,8 +393,8 @@ export default function DatasetsSettings({ datasets }) {
             <Button
               type="primary"
               size="large"
+              danger={true}
               onClick={() => setIsDeleteModalShow(true)}
-              danger
             >
               Delete this dataset
             </Button>

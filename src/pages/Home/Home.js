@@ -22,7 +22,7 @@ export default function Home() {
   const fetchHotestDatasets = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets?limit=4`
       );
       if (response.status === 200) {
         setAllDatasets(response.data.result);
@@ -127,7 +127,7 @@ export default function Home() {
           ) : (
             <Row gutter={[18, 18]}>
               {allDatasets.map((item, key) => (
-                <Col xs={24} sm={12} md={8} lg={6} key={key}>
+                <Col span={24 / Math.min(allDatasets.length, 4)} key={key}>
                   <DatasetsCard
                     id={item.id}
                     thumbnail={item?.thumbnail}

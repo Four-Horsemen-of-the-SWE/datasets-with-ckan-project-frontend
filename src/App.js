@@ -31,6 +31,7 @@ function App() {
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/profile/:username/datasets" element={<Profile />} />
         <Route path="/profile/:username/bookmarks" element={<Profile />} />
+        <Route path="/profile/:username/reports" element={<Profile />} />
         <Route path={"/dashboard"} element={
           <RequireAuth loginPath={"/login"}>
             <Dashboard />
