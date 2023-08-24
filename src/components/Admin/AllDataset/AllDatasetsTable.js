@@ -5,14 +5,9 @@ import axios from "axios";
 
 // import components
 import columns from "./columns";
-import DeleteDatasetModal from "./DeleteDatasetModal";
 
 export default function AllDatasetsTable() {
-  const auth = useAuthUser();
-  const authHeader = useAuthHeader();
   const [allDatasets, setAllDatasets] = useState([]);
-  const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
-  const JWTToken = authHeader().split(" ")[1];
 
   const fetchAllDatasets = async () => {
     try {

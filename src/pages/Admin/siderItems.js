@@ -2,6 +2,7 @@ import {
   DatabaseOutlined,
   UserOutlined,
   FileTextOutlined,
+  FileSearchOutlined,
 } from "@ant-design/icons";
 
 function getItem(label, key, icon, children, type, onClick) {
@@ -18,7 +19,8 @@ function getItem(label, key, icon, children, type, onClick) {
 const siderItems = [
   getItem("All Datasets", "all_datasets", <DatabaseOutlined />),
   getItem("All Users", "all_users", <UserOutlined />),
-  getItem("All Articles", "all_articles", <FileTextOutlined />)
+  getItem("All Articles", "all_articles", <FileTextOutlined />),
+  getItem("Reports", "reports", <FileSearchOutlined />)
 ];
 
 export default siderItems;

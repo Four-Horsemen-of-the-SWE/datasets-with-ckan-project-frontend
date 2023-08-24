@@ -7,6 +7,7 @@ import { Layout, Menu } from "antd";
 // import components
 import siderItems from "./siderItems";
 import AllDatasetsPage from "./Page/AllDatasetsPage";
+import AllUsersPage from "./Page/AllUsersPage";
 
 export default function Dashboard() {
   const auth = useAuthUser();
@@ -21,7 +22,7 @@ export default function Dashboard() {
       case "all_datasets":
         return <AllDatasetsPage />
       case "all_users":
-        return <h1>User</h1>
+        return <AllUsersPage />
       default:
         return null;
     }

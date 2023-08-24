@@ -1,6 +1,6 @@
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Card, Col, Row, Statistic, Typography } from "antd";
-import AllDatasetsTable from "../../../components/Admin/AllDatasetTable/AllDatasetsTable";
+import AllDatasetsTable from "../../../components/Admin/AllDataset/AllDatasetsTable";
 
 export default function AllDatasetsPage() {
   return (
