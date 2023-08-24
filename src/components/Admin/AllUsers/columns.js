@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button, Image, Space, Tag } from "antd";
-import {
-  formatted_date_time,
-  formatted_date_relative_hour,
-} from "../../../lib/formatted_date";
+import { formatted_date_relative_hour } from "../../../lib/formatted_date";
+import BanUserModal from "./BanUserModal";
 
 const columns = [
   {
@@ -57,6 +55,13 @@ const columns = [
       </Tag>
     ),
   },
+  {
+    title: "Ban",
+    align: "center",
+    render: (item, record) => (
+      <BanUserModal user_id={record.id} />
+    )
+  }
 ];
 
 export default columns;
