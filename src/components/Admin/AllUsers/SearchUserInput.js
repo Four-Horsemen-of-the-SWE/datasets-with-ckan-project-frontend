@@ -19,18 +19,15 @@ export default function SearchUserInput() {
   }
 
   return (
-    <>
-      <Typography.Text strong={true}>Search user</Typography.Text>
-      <AutoComplete
-        options={users}
-        size="large"
-        className="w-full mb-5"
-        placeholder="search user from name"
-        allowClear={true}
-        onSearch={handleSearch}
-        onClear={() => setUsers([])}
-        onSelect={(value) => window.location.href = `/profile/${value}`}
-      />
-    </>
+    <AutoComplete
+      options={users}
+      size="large"
+      className="w-full mb-5"
+      placeholder="search user from name"
+      allowClear={true}
+      onSearch={handleSearch}
+      onClear={() => setUsers([])}
+      onSelect={(value) => (window.location.href = `/profile/${value}`)}
+    />
   );
 }

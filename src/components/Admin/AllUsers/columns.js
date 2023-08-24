@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button, Image, Space, Tag } from "antd";
 import { formatted_date_relative_hour } from "../../../lib/formatted_date";
 import BanUserModal from "./BanUserModal";
+import UserMenuButton from "./UserMenuButton";
 
 const columns = [
   {
@@ -56,12 +57,18 @@ const columns = [
     ),
   },
   {
-    title: "Ban",
+    title: "",
     align: "center",
     render: (item, record) => (
-      <BanUserModal user_id={record.id} />
+      <UserMenuButton 
+        user_id={record.user_id}  
+        user_name={record.user_name}
+        is_admin={record.sysadmin}
+      />
     )
   }
 ];
 
 export default columns;
+
+// {/*<BanUserModal user_id={record.id} />*/}

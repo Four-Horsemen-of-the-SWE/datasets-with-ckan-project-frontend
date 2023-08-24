@@ -1,24 +1,22 @@
-import { UserDeleteOutlined } from "@ant-design/icons";
-import { Button, Modal, Form, Input, Radio, Space } from 'antd';
+import { Modal, Form, Input, Radio, Space } from 'antd';
 import { useAuthUser } from "react-auth-kit";
 import React, { useState } from 'react';
 
-export default function BanUserModal({ user_id }) {
+export default function BanUserModal({ user_id, open, close }) {
   const auth = useAuthUser();
   const [form] = Form.useForm();
-  const [isModalShow, setIsModalShow] = useState(false);
 
   if(auth()?.id !== user_id) {
     return (
       <>
         <Modal
           title="Ban this user"
-          open={isModalShow}
+          open={open}
           okText="Ban this user"
           okButtonProps={{
             danger: true,
           }}
-          onCancel={() => setIsModalShow(false)}
+          onCancel={close}
         >
           <Form form={form} className="mt-5" layout="vertical">
             <Form.Item
@@ -59,12 +57,7 @@ export default function BanUserModal({ user_id }) {
           </Form>
         </Modal>
 
-        <Button
-          type="ghost"
-          style={{ color: "red" }}
-          icon={<UserDeleteOutlined />}
-          onClick={() => setIsModalShow(true)}
-        />
+        
       </>
     );
   }
