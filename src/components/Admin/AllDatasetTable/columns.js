@@ -5,6 +5,7 @@ import {
 import { Link } from "react-router-dom";
 import { Button, Space, Tag } from "antd";
 import DeleteDatasetModal from "./DeleteDatasetModal";
+import ReportDatasetModal from "./ReportDatasetModal";
 
 const columns = [
   {
@@ -61,6 +62,16 @@ const columns = [
       <DeleteDatasetModal dataset_id={record.id} dataset_name={record.name} />
     ),
   },
+  {
+    title: "Report",
+    dataIndex: "url",
+    key: "url",
+    width: "10px",
+    align: "center",
+    render: (url, record) => (
+      <ReportDatasetModal />
+    )
+  }
 ];
 
 export default columns;

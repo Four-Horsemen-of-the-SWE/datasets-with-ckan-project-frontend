@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
-import { useAuthUser, useAuthHeader } from "react-auth-kit";
+import { useAuthHeader } from "react-auth-kit";
 import { Input, Modal, Typography, message, Form, Button } from "antd";
 
 export default function DeleteDatasetModal({ dataset_id, dataset_name }) {
