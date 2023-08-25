@@ -37,7 +37,7 @@ export default function UserMenuButton({ user_name, user_id, is_admin }) {
           style={{ color: "red", margin: 0, padding: 0 }}
           onClick={() => setIsBanModalShow(true)}
         >
-          Band this user
+          Ban this user
         </Button>
       ),
     },

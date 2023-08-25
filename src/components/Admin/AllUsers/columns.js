@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { Button, Image, Space, Tag } from "antd";
+import { Button, Image, Space, Tag, Avatar, Badge } from "antd";
 import { formatted_date_relative_hour } from "../../../lib/formatted_date";
-import BanUserModal from "./BanUserModal";
 import UserMenuButton from "./UserMenuButton";
 
 const columns = [
@@ -11,17 +10,19 @@ const columns = [
     key: "name",
     render: (text, record) => (
       <Space>
-        <Image
+        <Avatar
           src={
             record.image_display_url
               ? record.image_display_url
               : process.env.PUBLIC_URL + "/images/no_avatar.png"
           }
-          width={50}
-          height={50}
-          className="rounded-md"
+          shape="square"
+          size="large"
         />
-        <Link to={`/profile/${text}`}>{text}</Link>
+        <Space>
+          <Link to={`/profile/${text}`}>{text}</Link>
+          <Tag color="green">You</Tag>
+        </Space>
       </Space>
     ),
   },
@@ -60,13 +61,13 @@ const columns = [
     title: "",
     align: "center",
     render: (item, record) => (
-      <UserMenuButton 
-        user_id={record.user_id}  
+      <UserMenuButton
+        user_id={record.user_id}
         user_name={record.user_name}
         is_admin={record.sysadmin}
       />
-    )
-  }
+    ),
+  },
 ];
 
 export default columns;
