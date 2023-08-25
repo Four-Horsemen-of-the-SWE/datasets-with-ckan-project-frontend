@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography } from 'antd';
-import AllSystemAdmin from '../../../components/Admin/SystemAdmin/AllSystemAdmin';
+import AllSystemAdminTable from "../../../components/Admin/SystemAdmin/AllSystemAdminTable";
 import PromoteUser from '../../../components/Admin/SystemAdmin/PromoteUser';
 
 export default function SystemAdminPage() {
@@ -13,7 +13,7 @@ export default function SystemAdminPage() {
       </Typography.Paragraph>
 
       <Typography.Title level={3}>Current Sysadmins</Typography.Title>
-      <AllSystemAdmin />
+      <AllSystemAdminTable />
 
       <Typography.Title level={3}>Promote user to Sysadmin</Typography.Title>
       <PromoteUser />

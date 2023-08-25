@@ -4,7 +4,7 @@ import {useAuthHeader} from 'react-auth-kit'
 import axios from 'axios';
 import columns from './columns'
 
-export default function AllSystemAdmin() {
+export default function AllSystemAdminTable() {
   const authHeader = useAuthHeader()
   const [users, setUsers] = useState([]);
 
@@ -20,6 +20,9 @@ export default function AllSystemAdmin() {
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/admins`,
         config
       );
+      if(response.data.ok) {
+        setUsers(response.data.result);
+      }
     } catch(error) {
       console.log(error);
     }
