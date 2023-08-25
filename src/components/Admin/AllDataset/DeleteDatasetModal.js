@@ -18,7 +18,7 @@ export default function DeleteDatasetModal({ dataset_id, dataset_name }) {
           `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}`,
           {
             headers: {
-              Authorization: authHeader().split(" ")[1],
+              Authorization: authHeader()?.split(" ")[1],
             },
           }
         );
@@ -26,7 +26,7 @@ export default function DeleteDatasetModal({ dataset_id, dataset_name }) {
         if (response.data.ok) {
           message.success("Delete success.");
           setTimeout(() => {
-            form.resetFields();
+            form?.resetFields();
             setIsDeleting(false);
             window.location.href = "/dashboard";
           }, 700);

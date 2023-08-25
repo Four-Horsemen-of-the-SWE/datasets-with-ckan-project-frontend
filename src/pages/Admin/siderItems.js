@@ -3,6 +3,7 @@ import {
   UserOutlined,
   FileTextOutlined,
   FileSearchOutlined,
+  ToolOutlined
 } from "@ant-design/icons";
 
 function getItem(label, key, icon, children, type, onClick) {
@@ -20,7 +21,8 @@ const siderItems = [
   getItem("All Datasets", "all_datasets", <DatabaseOutlined />),
   getItem("All Users", "all_users", <UserOutlined />),
   getItem("All Articles", "all_articles", <FileTextOutlined />),
-  getItem("Reports", "reports", <FileSearchOutlined />)
+  getItem("Reports", "reports", <FileSearchOutlined />),
+  getItem("System admin", "system-admin", <ToolOutlined />)
 ];
 
 export default siderItems;

@@ -32,11 +32,7 @@ function App() {
         <Route path="/profile/:username/datasets" element={<Profile />} />
         <Route path="/profile/:username/bookmarks" element={<Profile />} />
         <Route path="/profile/:username/reports" element={<Profile />} />
-        <Route path={"/dashboard"} element={
-          <RequireAuth loginPath={"/login"}>
-            <Dashboard />
-          </RequireAuth>
-        } />
+        <Route path={"/dashboard"} element={<Dashboard />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </>
@@ -44,3 +40,11 @@ function App() {
 }
 
 export default App;
+
+/*
+<Route path={"/dashboard"} element={
+  <RequireAuth loginPath={"/login"}>
+    <Dashboard />
+  </RequireAuth>
+} />
+*/
