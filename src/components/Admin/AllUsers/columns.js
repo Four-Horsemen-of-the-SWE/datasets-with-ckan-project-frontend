@@ -62,8 +62,8 @@ const columns = [
     align: "center",
     render: (item, record) => (
       <UserMenuButton
-        user_id={record.user_id}
-        user_name={record.user_name}
+        user_id={record.id}
+        user_name={record.name}
         is_admin={record.sysadmin}
       />
     ),

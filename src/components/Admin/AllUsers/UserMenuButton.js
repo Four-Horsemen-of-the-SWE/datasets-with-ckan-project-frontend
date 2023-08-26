@@ -20,10 +20,14 @@ export default function UserMenuButton({ user_name, user_id, is_admin }) {
         </Link>
       ),
     },
-    {
+    !is_admin && {
       key: "2",
       label: (
-        <Button type="ghost" style={{ margin: 0, padding: 0 }} onClick={() => setIsRoleModalShow(true)}>
+        <Button
+          type="ghost"
+          style={{ margin: 0, padding: 0 }}
+          onClick={() => setIsRoleModalShow(true)}
+        >
           Assign new role
         </Button>
       ),
