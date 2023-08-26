@@ -17,13 +17,17 @@ const columns = [
           }
           shape="square"
         />
-        <Link to={`/profile/${text}`} target="_blank">{text}</Link>
+        <Link to={`/profile/${text}`} target="_blank">
+          {text}
+        </Link>
       </Space>
     ),
   },
   {
     align: "center",
-    render: (value) => <Button icon={<DeleteOutlined />} danger={true} />,
+    render: (value, record, index) => (
+      <Button icon={<DeleteOutlined />} danger={true} disabled={!index} />
+    ),
   },
 ];
 

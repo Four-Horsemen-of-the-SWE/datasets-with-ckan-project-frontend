@@ -16,6 +16,7 @@ export default function SystemAdminPage() {
       <AllSystemAdminTable />
 
       <Typography.Title level={3}>Promote user to Sysadmin</Typography.Title>
+      <Typography.Paragraph>Click on user to promote to admin.</Typography.Paragraph>
       <PromoteUser />
     </>
   );

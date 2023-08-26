@@ -8,7 +8,7 @@ export default function SearchUserInput() {
   const handleSearch = async(text) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/auto_complete?q=${text}`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/auto_complete?q=${text}&include_admin=${true}`
       );
       if(response.data.ok) {
         setUsers(response.data.result?.map(item => ({value: item.name, label: item.fullname})));
