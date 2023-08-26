@@ -32,7 +32,7 @@ function App() {
         <Route path="/profile/:username/datasets" element={<Profile />} />
         <Route path="/profile/:username/bookmarks" element={<Profile />} />
         <Route path="/profile/:username/reports" element={<Profile />} />
-        <Route path={"/dashboard"} element={<Dashboard />} />
+        <Route path={"/dashboard/*"} element={<Dashboard />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
     </>

@@ -22,7 +22,7 @@ const siderItems = [
   getItem("All Users", "all_users", <UserOutlined />),
   getItem("All Articles", "all_articles", <FileTextOutlined />),
   getItem("Reports", "reports", <FileSearchOutlined />),
-  getItem("System admin", "system-admin", <ToolOutlined />)
+  getItem("System admin", "system_admin", <ToolOutlined />)
 ];
 
 export default siderItems;

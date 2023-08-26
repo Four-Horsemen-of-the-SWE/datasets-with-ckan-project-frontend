@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DatabaseOutlined, UserOutlined, FileTextOutlined } from "@ant-design/icons";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { redirect, Link } from "react-router-dom";
+import { redirect, Link, useNavigate, useParams } from "react-router-dom";
 import { Layout, Menu } from "antd";
 
 // import components
@@ -9,14 +9,19 @@ import siderItems from "./siderItems";
 import AllDatasetsPage from "./Page/AllDatasetsPage";
 import AllUsersPage from "./Page/AllUsersPage";
 import SystemAdminPage from "./Page/SystemAdminPage";
+import Notfound from "../../components/Notfound";
 
 export default function Dashboard() {
   const auth = useAuthUser();
   const isAuthenticated = useIsAuthenticated();
   const [selectedMenu, setSelectedMenu] = useState("all_datasets");
 
+  const navigate = useNavigate();
+  const { "*": specificPath } = useParams();
+
   const handleMenuClick = (menu_key) => {
     setSelectedMenu(menu_key);
+    navigate(`/dashboard/${menu_key}`);
   }
 
   const renderContent = () => {
@@ -25,10 +30,10 @@ export default function Dashboard() {
         return <AllDatasetsPage />
       case "all_users":
         return <AllUsersPage />
-      case "system-admin":
+      case "system_admin":
         return <SystemAdminPage />
       default:
-        return null;
+        return <Notfound />;
     }
   }
 
@@ -39,6 +44,12 @@ export default function Dashboard() {
     }
     if (!auth()?.is_admin) {
       return (window.location.href = "/");
+    }
+  }, []);
+
+  useEffect(() => {
+    if(specificPath) {
+      setSelectedMenu(specificPath);
     }
   }, []);
 
