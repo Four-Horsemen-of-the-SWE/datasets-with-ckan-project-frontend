@@ -3,13 +3,10 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import React, { useState } from 'react'
 import {useAuthHeader} from 'react-auth-kit'
 import axios from 'axios';
-import PromoteUserModal from './PromoteUserModal';
 
 export default function PromoteUser() {
   const authHeader = useAuthHeader()
   const [users, setUsers] = useState([]);
-  const [isModalShow, setModalShow] = useState("");
-  const [selectedUser, setSelectedUser] = useState("");
 
   const config = {
     headers: {
@@ -60,7 +57,6 @@ export default function PromoteUser() {
   }
 
   const handleClick = (user_id) => {
-    setSelectedUser(user_id);
     Modal.confirm({
       title: "Do you want to promote this member to admin",
       icon: <ExclamationCircleFilled />,
@@ -88,11 +84,3 @@ export default function PromoteUser() {
     </>
   );
 }
-
-/*
-<PromoteUserModal
-        user={selectedUser}
-        open={isModalShow}
-        close={() => setSelectedUser(false)}
-      />
-*/
