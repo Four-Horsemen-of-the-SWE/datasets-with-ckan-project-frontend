@@ -10,6 +10,7 @@ export default function ArticleDeleteModal({ article_id, open, close}) {
     try {
       setDeleting(true);
       if(confirm.length === 0) {
+        setDeleting(false);
         return message.warning("Please fill the text field.")
       }
 
