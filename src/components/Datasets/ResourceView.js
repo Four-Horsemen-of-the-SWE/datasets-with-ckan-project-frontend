@@ -128,6 +128,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
               name: record.name,
               mimetype: record.mimetype,
               format: record.format,
+              url: record.url
             })
           }
         >
@@ -168,6 +169,8 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
       <VisualizationModal
         resource_id={selectedResource.id}
         mimetype={selectedResource.mimetype}
+        format={selectedResource.format}
+        url={selectedResource.url}
         open={isVisualizationModalShow}
         close={() => setIsVisualizationModalShow(false)}
       />

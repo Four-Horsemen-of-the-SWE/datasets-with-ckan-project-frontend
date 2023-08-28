@@ -1,20 +1,13 @@
 import { CloudDownloadOutlined } from "@ant-design/icons";
 import { Modal, Image, Button } from 'antd'
 import React from 'react'
+import { getVisualize } from "../../lib/getVisualization";
 
-export default function VisualizationModal({ resource_id, mimetype, open, close }) {
-  const getContent = () => {
-    switch (mimetype) {
-      case "img":
-        return <Image src={null} />;
-      default:
-        return null;
-    }
-  };
-
+export default function VisualizationModal({ resource_id, mimetype, format, url, open, close }) {
+  const content = getVisualize(mimetype, url);
   return (
     <Modal
-      title="Visualization"
+      title="Visualization window"
       open={open}
       onCancel={close}
       footer={[
@@ -23,7 +16,7 @@ export default function VisualizationModal({ resource_id, mimetype, open, close 
         <Button type="primary">Ok</Button>,
       ]}
     >
-      {mimetype}
+      {content()}
     </Modal>
   );
 }
