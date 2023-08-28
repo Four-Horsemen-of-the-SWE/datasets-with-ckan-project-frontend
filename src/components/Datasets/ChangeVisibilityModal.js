@@ -46,6 +46,7 @@ export default function ChangeVisibilityModal({dataset_id, is_private, open, clo
     <Modal
       open={open}
       close={close}
+      onCancel={close}
       centered={true}
       title={`Make this dataset to ${is_private ? "Public" : "Private"}`}
       footer={[
