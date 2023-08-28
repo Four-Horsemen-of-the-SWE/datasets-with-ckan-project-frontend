@@ -39,6 +39,7 @@ export default function ArticleDeleteModal({ article_id, open, close}) {
     <Modal
       title="Are you sure to delete this article ?"
       open={open}
+      onCancel={close}
       close={close}
       centered={true}
       footer={[
