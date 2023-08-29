@@ -1,10 +1,11 @@
 import { ArrowUpOutlined, ArrowDownOutlined, StarOutlined } from "@ant-design/icons";
 import { Button, Space, Tooltip, message } from "antd";
-import { useAuthHeader, useIsAuthenticated } from "react-auth-kit";
+import { useAuthHeader, useIsAuthenticated, useAuthUser } from "react-auth-kit";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function VoteButton({ target_id, target_type, vote = 0, vote_type, size="middle", direction = "vertical" }) {
+  const auth = useAuthUser();
   const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
   const [voteScore, setVoteScore] = useState(vote);
@@ -61,6 +62,10 @@ export default function VoteButton({ target_id, target_type, vote = 0, vote_type
     setVoteScore(vote);
     setVoteState(vote_type)
   }, [vote, vote_type]);
+
+  if(auth()?.is_admin) {
+    return 
+  }
 
   if(isAuthenticated()) {
     return (
