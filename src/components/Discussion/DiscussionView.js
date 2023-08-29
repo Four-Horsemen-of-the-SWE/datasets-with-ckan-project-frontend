@@ -135,7 +135,7 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
             Discussions
           </Title>
 
-          {isAuthenticated() && (
+          {isAuthenticated() && !auth()?.is_admin && (
             <Button
               type="primary"
               size="large"

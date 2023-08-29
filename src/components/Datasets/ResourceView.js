@@ -26,6 +26,7 @@ import EditResourceModal from "./EditResourcecModal";
 import CreateResourceModal from "./CreateResourceModal";
 import DeleteResouceButton from "./DeleteResouceButton";
 import VisualizationModal from "./VisualizationModal";
+import allowedMimetype from "./allowedMimetype";
 
 const { Title, Text } = Typography;
 
@@ -115,25 +116,35 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
       ),
     },
     {
-      title: "Preview",
+      title: "Visualization",
       align: "center",
-      render: (item, record) => (
-        <Button
-          type="ghost"
-          icon={<EyeOutlined />}
-          className="bg-[#E5E7EB]"
-          onClick={() =>
-            handleResouceVisualizationSelected({
-              name: record.name,
-              mimetype: record.mimetype,
-              format: record.format,
-              url: record.url
-            })
-          }
-        >
-          Visualization
-        </Button>
-      ),
+      render: (item, record) => {
+        if(allowedMimetype?.includes(record.mimetype)) {
+          return (
+            <Button
+              icon={<EyeOutlined />}
+              onClick={() =>
+                handleResouceVisualizationSelected({
+                  name: record.name,
+                  mimetype: record.mimetype,
+                  format: record.format,
+                  url: record.url,
+                })
+              }
+            >
+              Visualization
+            </Button>
+          );
+        } else {
+          return (
+            <Tooltip title="Resource type is not supported">
+              <Button icon={<EyeOutlined />} disabled={true}>
+                Visualization
+              </Button>
+            </Tooltip>
+          );
+        }
+      },
     },
     ...(creator_user_id === auth()?.id
       ? [

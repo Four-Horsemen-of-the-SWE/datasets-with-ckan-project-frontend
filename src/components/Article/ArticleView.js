@@ -156,7 +156,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
           creator_user_id={creator_user_id}
         />
         {/* comment section */}
-        {isAuthenticated() && (
+        {isAuthenticated() && !auth()?.is_admin && (
           <Form
             form={form}
             style={{
@@ -169,8 +169,6 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
             layout="vertical"
           >
             <Divider />
-
-            <Typography.Title level={3}>Conversation</Typography.Title>
 
             <div className="flex gap-2 items-start w-full">
               <Avatar src={auth()?.image_url} />
@@ -208,6 +206,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
         )}
         '
         <Divider />
+        <Typography.Title level={3}>Conversation</Typography.Title>
         <List
           className="mb-5"
           itemLayout="vertical"

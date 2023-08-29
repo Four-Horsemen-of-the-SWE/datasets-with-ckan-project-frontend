@@ -142,7 +142,7 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       <Divider />
 
       {/* create comment section */}
-      {isAuthenticated() && (
+      {isAuthenticated() && !auth()?.is_admin && (
         <Form
           form={form}
           style={{ width: "100%", display: "flex", flexDirection: "column" }}

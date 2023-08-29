@@ -9,7 +9,7 @@ import {
   SyncOutlined,
   EyeInvisibleOutlined
 } from "@ant-design/icons";
-import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs, Tag, Badge } from "antd";
+import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs, Tag, Badge, Alert } from "antd";
 import { useEffect, useState } from "react";
 import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";
 import { useLocation } from "react-router-dom";
@@ -115,15 +115,17 @@ export default function Profile() {
                   <Divider>Options</Divider>
 
                   <div className="flex gap-3 items-center justify-between">
-                    <Button
-                      icon={<PlusOutlined />}
-                      size="large"
-                      type="primary"
-                      className="w-full"
-                      onClick={() => setIsCreateModalShow(!isCreateModalShow)}
-                    >
-                      Create Datasets
-                    </Button>
+                    {!auth()?.is_admin && (
+                      <Button
+                        icon={<PlusOutlined />}
+                        size="large"
+                        type="primary"
+                        className="w-full"
+                        onClick={() => setIsCreateModalShow(!isCreateModalShow)}
+                      >
+                        Create Datasets
+                      </Button>
+                    )}
                     <Button
                       icon={<EditOutlined />}
                       size="large"
@@ -139,59 +141,30 @@ export default function Profile() {
 
             {/* data */}
             <Col xs={24} xl={18}>
-              <Tabs
-                defaultActiveKey={currentTab}
-                size="large"
-                onChange={handleTabChange}
-              >
-                {/* datasets */}
-                <TabPane tab="Datasets" key="datasets">
-                  {/* render user's datasets here */}
-                  <List
-                    size="small"
-                    bordered
-                    dataSource={userDetails?.datasets}
-                    className="mt-3"
-                    renderItem={(item, index) => (
-                      <List.Item>
-                        <List.Item.Meta
-                          title={
-                            <Space>
-                              <a href={`/datasets/${item.id}`}>{item.name}</a>
-                              {item.private && (
-                                <Tag color="#FD0000">Private</Tag>
-                              )}
-                            </Space>
-                          }
-                          description={
-                            item.notes ? (
-                              <Paragraph ellipsis={{ rows: 1 }}>
-                                {item.notes}
-                              </Paragraph>
-                            ) : (
-                              "No Description"
-                            )
-                          }
-                        />
-                      </List.Item>
-                    )}
-                  />
-                </TabPane>
-
-                {/* bookmarks */}
-                <TabPane tab="Bookmarks" key="bookmarks">
-                  {/* render user's bookmarks here */}
-                  {bookmarks.length ? (
+              {!auth()?.is_admin ? (
+                <Tabs
+                  defaultActiveKey={currentTab}
+                  size="large"
+                  onChange={handleTabChange}
+                >
+                  {/* datasets */}
+                  <TabPane tab="Datasets" key="datasets">
+                    {/* render user's datasets here */}
                     <List
                       size="small"
                       bordered
-                      dataSource={bookmarks}
+                      dataSource={userDetails?.datasets}
                       className="mt-3"
                       renderItem={(item, index) => (
                         <List.Item>
                           <List.Item.Meta
                             title={
-                              <a href={`/datasets/${item.name}`}>{item.name}</a>
+                              <Space>
+                                <a href={`/datasets/${item.id}`}>{item.name}</a>
+                                {item.private && (
+                                  <Tag color="#FD0000">Private</Tag>
+                                )}
+                              </Space>
                             }
                             description={
                               item.notes ? (
@@ -206,11 +179,51 @@ export default function Profile() {
                         </List.Item>
                       )}
                     />
-                  ) : (
-                    <Empty description="No Bookmarked Datasets" />
-                  )}
-                </TabPane>
-              </Tabs>
+                  </TabPane>
+
+                  {/* bookmarks */}
+                  <TabPane tab="Bookmarks" key="bookmarks">
+                    {/* render user's bookmarks here */}
+                    {bookmarks.length ? (
+                      <List
+                        size="small"
+                        bordered
+                        dataSource={bookmarks}
+                        className="mt-3"
+                        renderItem={(item, index) => (
+                          <List.Item>
+                            <List.Item.Meta
+                              title={
+                                <a href={`/datasets/${item.name}`}>
+                                  {item.name}
+                                </a>
+                              }
+                              description={
+                                item.notes ? (
+                                  <Paragraph ellipsis={{ rows: 1 }}>
+                                    {item.notes}
+                                  </Paragraph>
+                                ) : (
+                                  "No Description"
+                                )
+                              }
+                            />
+                          </List.Item>
+                        )}
+                      />
+                    ) : (
+                      <Empty description="No Bookmarked Datasets" />
+                    )}
+                  </TabPane>
+                </Tabs>
+              ) : (
+                <Alert
+                  message="You login as Administrator"
+                  description="Under admin role you are not able to create datasets, bookmark datasets, comment and report."
+                  type="info"
+                  showIcon={true}
+                />
+              )}
             </Col>
           </Row>
         </section>

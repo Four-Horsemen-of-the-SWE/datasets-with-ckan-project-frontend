@@ -1,6 +1,6 @@
 import { FlagOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Modal, Radio, Space, message } from "antd";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import { useState } from "react";
 import axios from "axios";
 
@@ -79,20 +79,25 @@ const ReportFormModal = ({entity_id, entity_type, entity_owner, show, close}) =>
 */
 
 export default function ReportButton({ entity_id, entity_type, entity_owner, show_label = true, label_color = "red", button_size = "small", button_type="ghost" }) {
+  const auth = useAuthUser();
   const [showReportModal, setShowReportModal] = useState(false);
-  return (
-    <>
-      <ReportFormModal entity_id={entity_id} entity_type={entity_type} entity_owner={entity_owner} show={showReportModal} close={() => setShowReportModal(false)} />
-      <Button
-        size={button_size}
-        type={button_type}
-        icon={<FlagOutlined />}
-        style={{ color: label_color }}
-        onClick={() => setShowReportModal(true)}
-        danger={true}
-      >
-        {show_label && "Report"}
-      </Button>
-    </>
-  );
+
+  if(!auth()?.is_admin) {
+    return (
+        <>
+          <ReportFormModal entity_id={entity_id} entity_type={entity_type} entity_owner={entity_owner} show={showReportModal} close={() => setShowReportModal(false)} />
+          <Button
+            size={button_size}
+            type={button_type}
+            icon={<FlagOutlined />}
+            style={{ color: label_color }}
+            onClick={() => setShowReportModal(true)}
+            danger={true}
+          >
+            {show_label && "Report"}
+          </Button>
+        </>
+      );
+  }
+  
 }

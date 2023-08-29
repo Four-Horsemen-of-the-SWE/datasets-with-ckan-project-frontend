@@ -59,14 +59,6 @@ export default function DrawerView({ isDrawerOpen, close }) {
       ),
     },
     {
-      icon: <FileSearchOutlined />,
-      label: (
-        <Link href={`/profile/${!!auth()?.name ? auth()?.name : ''}/reports`} style={{ color: "#000" }}>
-          Your Reports
-        </Link>
-      )
-    },
-    {
       icon: <EditOutlined />,
       label: "Edit Profile",
     },
