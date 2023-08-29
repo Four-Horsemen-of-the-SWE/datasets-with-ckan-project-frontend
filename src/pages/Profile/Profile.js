@@ -115,15 +115,17 @@ export default function Profile() {
                   <Divider>Options</Divider>
 
                   <div className="flex gap-3 items-center justify-between">
-                    <Button
-                      icon={<PlusOutlined />}
-                      size="large"
-                      type="primary"
-                      className="w-full"
-                      onClick={() => setIsCreateModalShow(!isCreateModalShow)}
-                    >
-                      Create Datasets
-                    </Button>
+                    {!auth()?.is_admin && (
+                      <Button
+                        icon={<PlusOutlined />}
+                        size="large"
+                        type="primary"
+                        className="w-full"
+                        onClick={() => setIsCreateModalShow(!isCreateModalShow)}
+                      >
+                        Create Datasets
+                      </Button>
+                    )}
                     <Button
                       icon={<EditOutlined />}
                       size="large"
