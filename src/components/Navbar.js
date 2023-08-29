@@ -4,7 +4,8 @@ import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useIsAuthenticated, useAuthUser} from "react-auth-kit";
 import { UserOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Typography, Space } from "antd";
+import { Button, Card, Space, Alert, Typography } from "antd";
+import Marquee from "react-fast-marquee";
 import { Link } from "react-router-dom";
 
 // import component
@@ -125,6 +126,25 @@ export default function Navbar() {
           </div>
         </div>
       </Card>
+
+      {/* show admin alert if user was login as admin */}
+      {isAdmin && (
+        <Alert
+          showIcon={false}
+          banner={true}
+          message={
+            <div className="container mx-auto">
+              <Marquee pauseOnHover gradient={false}>
+                <Typography.Text>
+                  You are currently logged in as an administrator. Please be
+                  careful when handling data. To publish a dataset Please log in
+                  using your member account.
+                </Typography.Text>
+              </Marquee>
+            </div>
+          }
+        />
+      )}
     </>
   );
 }
