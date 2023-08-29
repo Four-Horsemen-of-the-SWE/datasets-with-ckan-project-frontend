@@ -15,6 +15,9 @@ import {
   Button,
   InputNumber,
   Result,
+  Grid,
+  Row,
+  Col,
 } from "antd";
 import {
   FileImageOutlined
@@ -186,24 +189,37 @@ export function VisualizeGraph({ dataset }) {
   const [chartType, setChartType] = useState("bar");
   const [dataRange, setDataRange] = useState({ min: 0, max: 20 });
   const [selectedXAxis, setSelectedXAxis] = useState(new Set());
-  const { isMaximize, setIsMaximize } = useModalSizeStore();
+  const { isMaximize } = useModalSizeStore();
+
+  const colorScheme = [
+    "#5588BB",
+    "#66BBBB",
+    "#AA6644",
+    "#99BB55",
+    "#EE9944",
+    "#444466",
+    "#BB5555",
+    "#F0EE00",
+  ];
 
   const chartData = {
     labels: xAxis,
-    datasets: data?.map((item, key) => ({
-      label: selectedSeries[key],
-      data: item,
-      borderWidth: 1.5,
-      borderColor: "#000",
-      backgroundColor: "#FF0000",
-      fill: false,
-    })),
+    datasets: data?.map((item, key) => {
+      return {
+        label: selectedSeries[key],
+        data: item,
+        borderWidth: 1.2,
+        borderColor: colorScheme[key],
+        backgroundColor: colorScheme[key]
+      };
+    }),
   };
 
   const options = {
     animation: false,
     responsive: true,
     maintainAspectRatio: false,
+    aspectRatio: 1,
     scales: {
       x: {
         ticks: {
@@ -214,6 +230,11 @@ export function VisualizeGraph({ dataset }) {
       },
       y: {
         beginAtZero: true,
+        ticks: {
+          stepSize: 50,
+          autoSkip: true,
+          maxTicksLimit: 5,
+        },
       },
     },
     plugins: {
@@ -294,81 +315,91 @@ export function VisualizeGraph({ dataset }) {
 
   return (
     <div
-      className="flex flex-row gap-2 items-center justify-between"
-      style={{ height: isMaximize ? "auto" : "auto" }}
+      className="flex flex-row gap-2 w-full items-center justify-between"
+      style={{ height: isMaximize ? "100%" : "auto" }}
     >
-      <div className="w-full overflow-x-scroll h-full">{content()}</div>
-      <div className="flex flex-col w-fit">
-        <div className="w-full mb-3">
-          <Typography.Text>Graph Type</Typography.Text>
-          <Select
-            size="large"
-            className="block mt-2 w-full"
-            placeholder="Line, Bar and Scatter"
-            options={[
-              { label: "Bar", value: "bar" },
-              { label: "Line", value: "line" },
-              { label: "Scatter", value: "scatter" },
-            ]}
-            defaultValue={"bar"}
-            onChange={(e) => setChartType(e)}
-          />
-        </div>
-        <div className="w-full mb-3">
-          <Typography.Text>Group Column (X Axis)</Typography.Text>
-          <Select
-            size="large"
-            className="block mt-2 w-full"
-            placeholder="..."
-            options={field}
-            onChange={handleXSelected}
-          />
-        </div>
-        <div className="w-full mb-3">
-          <Typography.Text>Series</Typography.Text>
-          <Select
-            size="large"
-            mode="multiple"
-            className="block mt-2 w-full"
-            placeholder="..."
-            options={field}
-            onChange={handleSerieSelected}
-          />
-        </div>
-        <div className="w-full mb-3">
-          <Typography.Text className="block">Data Range</Typography.Text>
-          <div className="flex items-center justify-between gap-2">
-            <InputNumber
-              size="large"
-              min={0}
-              max={dataRange.max}
-              defaultValue={dataRange.min}
-              className="w-full"
-              placeholder="min"
-              onChange={(e) => setDataRange({ min: e, max: dataRange.max })}
-            />
-            <InputNumber
-              size="large"
-              min={dataRange.min}
-              max={dataset.length}
-              defaultValue={dataRange.max}
-              className="w-full"
-              placeholder="max"
-              onChange={(e) => setDataRange({ min: dataRange.min, max: e })}
-            />
+      <Row gutter={[18, 18]} style={{ width: "100%"}}>
+        <Col sm={16}>
+          <div
+            className="w-full h-full"
+          >
+            {content()}
           </div>
-        </div>
-        <Button
-          type="ghost"
-          size="large"
-          icon={<FileImageOutlined />}
-          onClick={handleSave}
-          block={true}
-          className="bg-black text-white"
-        >
-          Download as image
-        </Button>
-      </div>
+        </Col>
+        <Col sm={8}>
+          <div className="flex flex-col w-full">
+            <div className="w-full mb-3">
+              <Typography.Text>Graph Type</Typography.Text>
+              <Select
+                size="large"
+                className="block mt-2 w-full"
+                placeholder="Line, Bar and Scatter"
+                options={[
+                  { label: "Bar", value: "bar" },
+                  { label: "Line", value: "line" },
+                  { label: "Scatter", value: "scatter" },
+                ]}
+                defaultValue={"bar"}
+                onChange={(e) => setChartType(e)}
+              />
+            </div>
+            <div className="w-full mb-3">
+              <Typography.Text>Group Column (X Axis)</Typography.Text>
+              <Select
+                size="large"
+                className="block mt-2 w-full"
+                placeholder="..."
+                options={field}
+                onChange={handleXSelected}
+              />
+            </div>
+            <div className="w-full mb-3">
+              <Typography.Text>Series</Typography.Text>
+              <Select
+                size="large"
+                mode="multiple"
+                className="block mt-2 w-full"
+                placeholder="..."
+                options={field}
+                onChange={handleSerieSelected}
+              />
+            </div>
+            <div className="w-full mb-3">
+              <Typography.Text className="block">Data Range</Typography.Text>
+              <div className="flex items-center justify-between gap-2">
+                <InputNumber
+                  size="large"
+                  min={0}
+                  max={dataRange.max}
+                  defaultValue={dataRange.min}
+                  className="w-full"
+                  placeholder="min"
+                  onChange={(e) => setDataRange({ min: e, max: dataRange.max })}
+                />
+                <InputNumber
+                  size="large"
+                  min={dataRange.min}
+                  max={dataset.length}
+                  defaultValue={dataRange.max}
+                  className="w-full"
+                  placeholder="max"
+                  onChange={(e) => setDataRange({ min: dataRange.min, max: e })}
+                />
+              </div>
+            </div>
+            <Button
+              type="ghost"
+              size="large"
+              icon={<FileImageOutlined />}
+              onClick={handleSave}
+              block={true}
+              className="bg-black text-white"
+            >
+              Download as image
+            </Button>
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 }

@@ -12,7 +12,7 @@ const resourcesStore = (set) => ({
 });
 
 const modalSizeStore = (set) => ({
-  isMaximize: true,
+  isMaximize: false,
   setIsMaximize: (value) => set(() => ({ isMaximize: value }))
 });
 

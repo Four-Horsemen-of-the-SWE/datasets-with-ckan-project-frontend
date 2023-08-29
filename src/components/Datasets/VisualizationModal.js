@@ -39,6 +39,7 @@ export default function VisualizationModal({ dataset_id, mimetype, format, url, 
       onCancel={close}
       maskClosable={false}
       centered={true}
+      afterClose={() => setIsMaximize(false)}
       footer={[
         <Button size="large" onClick={close}>
           Cancel
