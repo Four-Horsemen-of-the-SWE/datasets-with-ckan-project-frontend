@@ -14,8 +14,11 @@ import {
   Space,
   Button,
   InputNumber,
+  Result,
 } from "antd";
-import { FileImageOutlined } from "@ant-design/icons";
+import {
+  FileImageOutlined
+} from "@ant-design/icons";
 import Papa from "papaparse";
 import mime from "mime";
 import {
@@ -35,6 +38,7 @@ import { Bar, Line, Scatter } from "react-chartjs-2";
 import zoomPlugin from "chartjs-plugin-zoom";
 import "hammerjs";
 import randomColor from "randomcolor";
+import { useModalSizeStore } from "../store";
 
 ChartJS.register(
   CategoryScale,
@@ -90,7 +94,8 @@ export function VisualizeImage({url}) {
 export function VisualizeCSV({ csvFilePath }) {
   const [csvData, setCsvData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { isMaximize, setIsMaximize } = useModalSizeStore();
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -128,29 +133,36 @@ export function VisualizeCSV({ csvFilePath }) {
       <Tabs.TabPane tab="Table" key="table">
         <div
           style={{
-            minHeight: "60vh",
+            minHeight: isMaximize ? "60vh" : "40vh",
             width: "auto",
             overflow: "auto",
-            marginTop: "2em",
+            marginTop: "0.5em",
           }}
         >
           {csvData?.length !== 0 && (
-            <AutoSizer>
-              {({ width, height }) => (
-                <Table
-                  width={width}
-                  height={height}
-                  headerHeight={20}
-                  rowHeight={30}
-                  rowCount={csvData.length}
-                  rowGetter={({ index }) => csvData[index]}
-                >
-                  {Object.keys(csvData[0]).map((key, index) => (
-                    <Column key={index} label={key} dataKey={key} width={150} />
-                  ))}
-                </Table>
-              )}
-            </AutoSizer>
+            <>
+              <AutoSizer>
+                {({ width, height }) => (
+                  <Table
+                    width={width}
+                    height={height}
+                    headerHeight={20}
+                    rowHeight={30}
+                    rowCount={csvData.length}
+                    rowGetter={({ index }) => csvData[index]}
+                  >
+                    {Object.keys(csvData[0]).map((key, index) => (
+                      <Column
+                        key={index}
+                        label={key}
+                        dataKey={key}
+                        width={150}
+                      />
+                    ))}
+                  </Table>
+                )}
+              </AutoSizer>
+            </>
           )}
         </div>
       </Tabs.TabPane>
@@ -172,6 +184,7 @@ export function VisualizeGraph({ dataset }) {
   const [chartType, setChartType] = useState("bar");
   const [dataRange, setDataRange] = useState({ min: 0, max: 20 });
   const [selectedXAxis, setSelectedXAxis] = useState(new Set());
+  const { isMaximize, setIsMaximize } = useModalSizeStore();
 
   const chartData = {
     labels: xAxis,
@@ -278,9 +291,12 @@ export function VisualizeGraph({ dataset }) {
   }, [dataRange]);
 
   return (
-    <div className="flex flex-row gap-2 items-center justify-center">
-      <div className="w-full h-full">{content()}</div>
-      <div className="flex flex-col w-72">
+    <div
+      className="flex flex-row gap-2 items-center justify-between"
+      style={{ height: isMaximize ? "auto" : "auto" }}
+    >
+      <div className="w-full overflow-x-scroll h-full">{content()}</div>
+      <div className="flex flex-col w-fit">
         <div className="w-full mb-3">
           <Typography.Text>Graph Type</Typography.Text>
           <Select

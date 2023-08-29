@@ -1,11 +1,17 @@
-import { CloudDownloadOutlined } from "@ant-design/icons";
+import {
+  CloudDownloadOutlined,
+  ExpandOutlined,
+  CompressOutlined,
+} from "@ant-design/icons";
 import { Modal, Image, Button } from 'antd'
 import React, { useState, useEffect } from 'react'
 import axios from "axios";
 import { getVisualize } from "../../lib/getVisualization";
+import { useModalSizeStore } from "../../store";
 
 export default function VisualizationModal({ dataset_id, mimetype, format, url, open, close }) {
   const content = getVisualize(mimetype, url);
+  const { isMaximize, setIsMaximize } = useModalSizeStore();
 
   const handleDownload = async (url) => {
     try {
@@ -21,7 +27,8 @@ export default function VisualizationModal({ dataset_id, mimetype, format, url, 
   return (
     <Modal
       title="Visualization window"
-      width={"75%"}
+      width={isMaximize ? "100%" : "50%"}
+      height={isMaximize ? "100%" : "auto"}
       open={open}
       onCancel={close}
       maskClosable={false}
@@ -29,6 +36,14 @@ export default function VisualizationModal({ dataset_id, mimetype, format, url, 
       footer={[
         <Button size="large" onClick={close}>
           Cancel
+        </Button>,
+        <Button
+          size="large"
+          className="mb-4"
+          icon={isMaximize ? <CompressOutlined /> : <ExpandOutlined />}
+          onClick={() => setIsMaximize(!isMaximize)}
+        >
+          {isMaximize ? "Minimize view" : "Maximize view"}
         </Button>,
         <Button
           size="large"
