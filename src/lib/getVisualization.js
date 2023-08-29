@@ -68,7 +68,8 @@ export function getVisualize(mimetype, url) {
     return (
       <VisualizeCSV
         csvFilePath={
-          "http://127.0.0.1:5000/dataset/fab1f121-733c-4001-bfc7-5d62c3b2d0ef/resource/5b6fbb81-defe-4c7b-8b09-cf3183398b09/download/1e1e_netflix-userbase.csv"
+          // "http://127.0.0.1:5000/dataset/fab1f121-733c-4001-bfc7-5d62c3b2d0ef/resource/5b6fbb81-defe-4c7b-8b09-cf3183398b09/download/1e1e_netflix-userbase.csv"
+          url
         }
       />
     );
@@ -168,7 +169,7 @@ export function VisualizeGraph({ dataset }) {
   const [xAxis, setXAxis] = useState([]);
   const [selectedSeries, setSelectedSerie] = useState([]);
   const [data, setData] = useState([]);
-  const [chartType, setChartType] = useState("");
+  const [chartType, setChartType] = useState("bar");
   const [dataRange, setDataRange] = useState({ min: 0, max: 20 });
   const [selectedXAxis, setSelectedXAxis] = useState(new Set());
 
@@ -291,6 +292,7 @@ export function VisualizeGraph({ dataset }) {
               { label: "Line", value: "line" },
               { label: "Scatter", value: "scatter" },
             ]}
+            defaultValue={"bar"}
             onChange={(e) => setChartType(e)}
           />
         </div>

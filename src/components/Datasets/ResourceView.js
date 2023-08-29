@@ -124,7 +124,6 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
           className="bg-[#E5E7EB]"
           onClick={() =>
             handleResouceVisualizationSelected({
-              id: record.id,
               name: record.name,
               mimetype: record.mimetype,
               format: record.format,
@@ -167,7 +166,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
     <>
       {/* resource Visualization modal */}
       <VisualizationModal
-        resource_id={selectedResource.id}
+        dataset_id={dataset_id}
         mimetype={selectedResource.mimetype}
         format={selectedResource.format}
         url={selectedResource.url}
