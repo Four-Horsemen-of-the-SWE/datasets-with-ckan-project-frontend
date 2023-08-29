@@ -10,13 +10,14 @@ export default function VisualizationModal({ resource_id, mimetype, format, url,
   return (
     <Modal
       title="Visualization window"
+      width={1000}
       open={open}
       onCancel={close}
       maskClosable={false}
+      centered={true}
       footer={[
-        <Button onClick={close}>Cancel</Button>,
-        <Button icon={<CloudDownloadOutlined />}>Download</Button>,
-        <Button type="primary">Ok</Button>,
+        <Button size="large" onClick={close}>Cancel</Button>,
+        <Button size="large" type="primary" icon={<CloudDownloadOutlined />}>Download</Button>
       ]}
     >
       {content}

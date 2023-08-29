@@ -175,7 +175,7 @@ export default function Profile() {
                 onChange={handleTabChange}
               >
                 {/* datasets */}
-                <TabPane ane tab="Datasets" key="datasets">
+                <TabPane tab="Datasets" key="datasets">
                   {/* render user's datasets here */}
                   {datasets.length ? (
                     <List
