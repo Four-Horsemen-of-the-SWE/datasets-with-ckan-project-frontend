@@ -94,12 +94,14 @@ export default function Navbar() {
               {isLogin ? (
                 <>
                   <Space>
-                    <Button
-                      icon={<PlusOutlined />}
-                      onClick={() => setIsCreateModalShow(true)}
-                    >
-                      Create Datasets
-                    </Button>
+                    {!isAdmin && (
+                      <Button
+                        icon={<PlusOutlined />}
+                        onClick={() => setIsCreateModalShow(true)}
+                      >
+                        Create Datasets
+                      </Button>
+                    )}
                     <NotificationPopover />
                     <Button
                       icon={<UserOutlined />}
