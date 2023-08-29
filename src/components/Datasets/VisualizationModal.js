@@ -27,7 +27,13 @@ export default function VisualizationModal({ dataset_id, mimetype, format, url, 
   return (
     <Modal
       title="Visualization window"
-      width={isMaximize ? "100%" : "50%"}
+      width={
+        isMaximize
+          ? "100%"
+          : mimetype?.split("/")[0] === "image"
+          ? "auto"
+          : "50%"
+      }
       height={isMaximize ? "100%" : "auto"}
       open={open}
       onCancel={close}

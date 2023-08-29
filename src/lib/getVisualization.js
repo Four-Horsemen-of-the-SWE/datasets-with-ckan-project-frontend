@@ -84,17 +84,19 @@ export function getVisualize(mimetype, url) {
 
 export function VisualizeImage({url}) {
   return (
-    <Image
-      src={url}
-      fallback={process.env.PUBLIC_URL + "/images/placeholder/image.jpg"}
-    />
+    <div className="w-full flex items-center justify-center">
+      <Image
+        src={url}
+        fallback={process.env.PUBLIC_URL + "/images/placeholder/image.jpg"}
+      />
+    </div>
   );
 }
 
 export function VisualizeCSV({ csvFilePath }) {
   const [csvData, setCsvData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { isMaximize, setIsMaximize } = useModalSizeStore();
+  const { isMaximize } = useModalSizeStore();
   
   useEffect(() => {
     const fetchData = async () => {
@@ -134,7 +136,7 @@ export function VisualizeCSV({ csvFilePath }) {
         <div
           style={{
             minHeight: isMaximize ? "60vh" : "40vh",
-            width: "auto",
+            width: "100%",
             overflow: "auto",
             marginTop: "0.5em",
           }}
