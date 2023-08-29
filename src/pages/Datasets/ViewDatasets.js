@@ -195,7 +195,7 @@ export default function ViewDatasets() {
         />
 
         {/* bookmark button */}
-        {isAuthenticated() && (
+        {isAuthenticated() && !auth()?.is_admin && (
           <Space>
             <Button
               type="primary"
