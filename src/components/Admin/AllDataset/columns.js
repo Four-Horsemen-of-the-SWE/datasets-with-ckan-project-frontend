@@ -3,7 +3,7 @@ import {
   formatted_date_time,
 } from "../../../lib/formatted_date";
 import { Link } from "react-router-dom";
-import { Button, Space, Tag } from "antd";
+import { Button, Space, Tag, Typography } from "antd";
 import DeleteDatasetModal from "./DeleteDatasetModal";
 import ReportDatasetModal from "./ReportDatasetModal";
 
@@ -38,6 +38,18 @@ const columns = [
     ),
   },
   {
+    title: "Visibility",
+    dataIndex: "private",
+    key: "private",
+    align: "center",
+    render: (visibility) =>
+      visibility ? (
+        <Tag color="error">Private</Tag>
+      ) : (
+        <Tag color="processing">Public</Tag>
+      ),
+  },
+  {
     title: "Tag",
     dataIndex: "tags",
     key: "tags",
@@ -68,10 +80,8 @@ const columns = [
     key: "url",
     width: "10px",
     align: "center",
-    render: (url, record) => (
-      <ReportDatasetModal />
-    )
-  }
+    render: (url, record) => <ReportDatasetModal />,
+  },
 ];
 
 export default columns;

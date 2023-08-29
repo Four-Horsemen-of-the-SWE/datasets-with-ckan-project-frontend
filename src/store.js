@@ -11,5 +11,11 @@ const resourcesStore = (set) => ({
   setResources: (value) => set(() => ({ resources: value })),
 });
 
+const modalSizeStore = (set) => ({
+  isMaximize: false,
+  setIsMaximize: (value) => set(() => ({ isMaximize: value }))
+});
+
 export const useCreateModalStore = create(createModalStore);
 export const useResourcesStore = create(resourcesStore);
+export const useModalSizeStore = create(modalSizeStore);

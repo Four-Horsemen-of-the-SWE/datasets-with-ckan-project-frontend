@@ -7,12 +7,20 @@ import axios from "axios";
 import columns from "./columns";
 
 export default function AllDatasetsTable() {
+  const authHeader = useAuthHeader();
   const [allDatasets, setAllDatasets] = useState([]);
+
+  const config = {
+    headers: {
+      Authorization: authHeader()?.split(" ")[1]
+    }
+  }
 
   const fetchAllDatasets = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/?include_private=${true}`,
+        config
       );
       if (response.status === 200) {
         setAllDatasets(response.data.result);

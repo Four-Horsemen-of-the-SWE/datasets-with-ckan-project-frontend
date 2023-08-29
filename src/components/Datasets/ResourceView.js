@@ -4,6 +4,7 @@ import {
   CloudDownloadOutlined,
   PlusOutlined,
   EditOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import {
   Alert,
@@ -24,6 +25,7 @@ import { useResourcesStore } from "../../store";
 import EditResourceModal from "./EditResourcecModal";
 import CreateResourceModal from "./CreateResourceModal";
 import DeleteResouceButton from "./DeleteResouceButton";
+import VisualizationModal from "./VisualizationModal";
 
 const { Title, Text } = Typography;
 
@@ -36,6 +38,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
   // states
   const [isEditModalShow, setIsEditModalShow] = useState(false);
   const [isCreateModalShow, setIsCreateModalShow] = useState(false);
+  const [isVisualizationModalShow, setIsVisualizationModalShow] = useState(false);
   const [selectedResource, setSelectedResource] = useState({});
 
   const handleDownload = async (url) => {
@@ -53,6 +56,11 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
     setSelectedResource(resource);
     setIsEditModalShow(true);
   };
+
+  const handleResouceVisualizationSelected = (resource) => {
+    setSelectedResource(resource);
+    setIsVisualizationModalShow(true);
+  }
 
   const columns = [
     {
@@ -96,15 +104,35 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
       width: "10px",
       align: "center",
       render: (url) => (
-        <Tooltip title="Click to Download">
-          <Button
-            icon={<CloudDownloadOutlined />}
-            onClick={() => handleDownload(url)}
-            shape="circle"
-            size="small"
-            type="primary"
-          />
-        </Tooltip>
+        <Button
+          type="primary"
+          icon={<CloudDownloadOutlined />}
+          onClick={() => handleDownload(url)}
+          size="middle"
+        >
+          Download
+        </Button>
+      ),
+    },
+    {
+      title: "Preview",
+      align: "center",
+      render: (item, record) => (
+        <Button
+          type="ghost"
+          icon={<EyeOutlined />}
+          className="bg-[#E5E7EB]"
+          onClick={() =>
+            handleResouceVisualizationSelected({
+              name: record.name,
+              mimetype: record.mimetype,
+              format: record.format,
+              url: record.url
+            })
+          }
+        >
+          Visualization
+        </Button>
       ),
     },
     ...(creator_user_id === auth()?.id
@@ -126,8 +154,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
                 >
                   <EditOutlined />
                 </Button>
-                <DeleteResouceButton resource_id={record.id} />
-                ,
+                <DeleteResouceButton resource_id={record.id} />,
               </>
             ),
           },
@@ -137,6 +164,16 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
 
   return (
     <>
+      {/* resource Visualization modal */}
+      <VisualizationModal
+        dataset_id={dataset_id}
+        mimetype={selectedResource.mimetype}
+        format={selectedResource.format}
+        url={selectedResource.url}
+        open={isVisualizationModalShow}
+        close={() => setIsVisualizationModalShow(false)}
+      />
+
       {/* for edit resouce file */}
       <EditResourceModal
         dataset_id={selectedResource.id}
