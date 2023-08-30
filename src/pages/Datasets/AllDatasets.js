@@ -46,6 +46,10 @@ const sort_data = [
     value: "metadata_modified desc",
     label: "Latest",
   },
+  {
+    value: "most_downloaded",
+    label: "Most Downloaded"
+  }
 ];
 
 export default function AllDatasets() {
@@ -344,7 +348,7 @@ export default function AllDatasets() {
                 </div>
               ) : allDatasets.length ? (
                 allDatasets.map((item, key) => (
-                  <Col xs={12} md={12} lg={6} key={key}>
+                  <Col xs={12} md={8} xl={6} key={key}>
                     <DatasetsCard
                       id={item.id}
                       thumbnail={item?.thumbnail}
