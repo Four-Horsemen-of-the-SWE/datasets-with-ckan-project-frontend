@@ -1,12 +1,48 @@
 import ImgCrop from "antd-img-crop";
-import { Avatar, Col, Row, Image, Button, Space, Upload, Typography, Form, Input, Card } from "antd";
+import { Avatar, Col, Row, Image, Button, Space, Upload, Typography, Form, Input, Card, message } from "antd";
 import React, { useState } from "react";
 import ChangePasswordModal from "./ChangePasswordModal";
 import ChangeUsernameModal from "./ChangeUsernameModal";
+import { useAuthHeader } from "react-auth-kit";
+import axios from "axios";
 
 export default function EditProfileDetails({ userDetails, cancel }) {
+  const authHeader = useAuthHeader();
+  const [form] = Form.useForm();
   const [isChangePasswordModalShow, setIsChangePasswordModalShow] = useState(false);
   const [isChangeUsernameModalShow, setIsChangeUsernameModalShow] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const config = {
+    headers: {
+      Authorization: authHeader()?.split(" ")[1]
+    }
+  }
+
+  const handleUpdateProfile = async(values) => {
+    try {
+      setIsUpdating(true);
+      const response = await axios.post(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/users/update`,
+        values,
+        config
+      );
+
+      if(response.data.ok) {
+        message.success('update sucess')
+        setTimeout(() => {
+          setIsUpdating(false);
+          window.location.reload();
+        }, 450);
+      } else {
+        message.error('update failed');
+        setIsUpdating(false);
+      }
+    } catch(error) {
+      setIsUpdating(false);
+      console.error(error);
+    }
+  }
 
   return (
     <>
@@ -39,18 +75,31 @@ export default function EditProfileDetails({ userDetails, cancel }) {
 
             {/* form */}
             <Col sm={18}>
-              <Form layout="vertical">
-                <Form.Item label="fullname">
+              <Form
+                layout="vertical"
+                form={form}
+                onFinish={handleUpdateProfile}
+                initialValues={{
+                  fullname: userDetails.fullname,
+                  email: userDetails.email,
+                  about: userDetails.about,
+                }}
+              >
+                <Form.Item label="Full name" name="fullname">
                   <Input size="large" placeholder="your full name" />
                 </Form.Item>
-                <Form.Item label="Email">
+                <Form.Item
+                  label="Email"
+                  name="email"
+                  rules={[{ required: true, message: "Please input your email" }]}
+                >
                   <Input
                     size="large"
                     type="email"
                     placeholder="youremail@gmail.com"
                   />
                 </Form.Item>
-                <Form.Item label="About">
+                <Form.Item label="About" name="about">
                   <Input.TextArea
                     rows={6}
                     placeholder="a little information about your self"
@@ -58,8 +107,16 @@ export default function EditProfileDetails({ userDetails, cancel }) {
                 </Form.Item>
                 <Form.Item>
                   <Space className="float-right">
-                    <Button onClick={cancel}>Cancel</Button>
-                    <Button type="primary">Save</Button>
+                    <Button disabled={isUpdating} onClick={cancel}>
+                      Cancel
+                    </Button>
+                    <Button
+                      loading={isUpdating}
+                      type="primary"
+                      htmlType="submit"
+                    >
+                      Save
+                    </Button>
                   </Space>
                 </Form.Item>
               </Form>
