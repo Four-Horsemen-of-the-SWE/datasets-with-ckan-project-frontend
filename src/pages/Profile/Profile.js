@@ -10,6 +10,7 @@ import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import ViewDetails from "../../components/Profile/ViewDetails";
 
 const { TabPane } = Tabs;
 const { Title, Text, Paragraph } = Typography;
@@ -95,43 +96,7 @@ export default function Profile() {
           <Row gutter={[32, 15]} justify="space-between" className="my-10">
             {/* user details */}
             <Col xs={24} xl={6} className="text-center">
-              <Avatar
-                src={userDetails.image_display_url}
-                size={256}
-                className="ring-4"
-              />
-              <Title level={2}>{userDetails.fullname}</Title>
-              <Title level={4} type="secondary">
-                {userDetails.about ? userDetails.about : "No Bio"}
-              </Title>
-
-              {auth()?.id === userDetails.id && (
-                <>
-                  <Divider>Options</Divider>
-
-                  <div className="flex gap-3 items-center justify-between">
-                    {!auth()?.is_admin && (
-                      <Button
-                        icon={<PlusOutlined />}
-                        size="large"
-                        type="primary"
-                        className="w-full"
-                        onClick={() => setIsCreateModalShow(!isCreateModalShow)}
-                      >
-                        Create Datasets
-                      </Button>
-                    )}
-                    <Button
-                      icon={<EditOutlined />}
-                      size="large"
-                      type="dashed"
-                      className="w-full"
-                    >
-                      Edit Profile
-                    </Button>
-                  </div>
-                </>
-              )}
+              <ViewDetails userDetails={userDetails} />
             </Col>
 
             {/* data */}
