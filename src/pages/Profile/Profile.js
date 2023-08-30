@@ -1,13 +1,8 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useCreateModalStore } from "../../store";
 import {
   PlusOutlined,
   EditOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  SyncOutlined,
-  EyeInvisibleOutlined
 } from "@ant-design/icons";
 import { Avatar, Button, Col, Divider, Empty, Row, Space, Spin, Typography, List, Tabs, Tag, Badge, Alert } from "antd";
 import { useEffect, useState } from "react";
@@ -219,9 +214,20 @@ export default function Profile() {
               ) : (
                 <Alert
                   message="You login as Administrator"
-                  description="Under admin role you are not able to create datasets, bookmark datasets, comment and report."
+                  description={
+                    <Space>
+                      <Text>
+                        Under admin role you are not able to create datasets,
+                        bookmark datasets, comment and report.
+                      </Text>
+                      <Link to="/dashboard">
+                        Go to dashboard
+                      </Link>
+                    </Space>
+                  }
                   type="info"
                   showIcon={true}
+                  className="mb-3"
                 />
               )}
             </Col>
