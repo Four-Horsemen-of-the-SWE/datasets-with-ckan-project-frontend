@@ -10,12 +10,14 @@ import { useIsAuthenticated, useAuthHeader, useAuthUser } from "react-auth-kit";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import EditProfileDetails from "../../components/Profile/EditProfileDetails";
 
 const { TabPane } = Tabs;
 const { Title, Text, Paragraph } = Typography;
 
 export default function Profile() {
   document.title = "Datasets";
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const location = useLocation();
   const { username } = useParams();
@@ -88,6 +90,10 @@ export default function Profile() {
         <Spin size="large" />
       </div>
     );
+  }
+
+  if(isEditMode) {
+    return <EditProfileDetails userDetails={userDetails} />
   } else {
     return (
       <>
@@ -126,6 +132,7 @@ export default function Profile() {
                       size="large"
                       type="dashed"
                       className="w-full"
+                      onClick={() => setIsEditMode(true)}
                     >
                       Edit Profile
                     </Button>
@@ -220,9 +227,7 @@ export default function Profile() {
                         Under admin role you are not able to create datasets,
                         bookmark datasets, comment and report.
                       </Text>
-                      <Link to="/dashboard">
-                        Go to dashboard
-                      </Link>
+                      <Link to="/dashboard">Go to dashboard</Link>
                     </Space>
                   }
                   type="info"
