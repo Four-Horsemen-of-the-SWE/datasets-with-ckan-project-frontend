@@ -4,19 +4,25 @@ import React, { useState } from "react";
 import ChangePasswordModal from "./ChangePasswordModal";
 import ChangeUsernameModal from "./ChangeUsernameModal";
 
-export default function EditProfileDetails({ userDetails }) {
+export default function EditProfileDetails({ userDetails, cancel }) {
   const [isChangePasswordModalShow, setIsChangePasswordModalShow] = useState(false);
   const [isChangeUsernameModalShow, setIsChangeUsernameModalShow] = useState(false);
 
   return (
     <>
-      <ChangePasswordModal open={isChangePasswordModalShow} close={() => setIsChangePasswordModalShow(false)} />
+      <ChangePasswordModal
+        open={isChangePasswordModalShow}
+        close={() => setIsChangePasswordModalShow(false)}
+      />
 
-      <ChangeUsernameModal open={isChangeUsernameModalShow} close={() => setIsChangeUsernameModalShow(false)} />
+      <ChangeUsernameModal
+        open={isChangeUsernameModalShow}
+        close={() => setIsChangeUsernameModalShow(false)}
+      />
 
       <div className="container mx-auto mt-5">
         {/* general information */}
-        <Card className="mb-5">
+        <Card className="mb-5 shadow-sm">
           <Row>
             {/* profile image */}
             <Col sm={6} style={{ width: "100%" }}>
@@ -50,24 +56,38 @@ export default function EditProfileDetails({ userDetails }) {
                     placeholder="a little information about your self"
                   />
                 </Form.Item>
+                <Form.Item>
+                  <Space className="float-right">
+                    <Button onClick={cancel}>Cancel</Button>
+                    <Button type="primary">Save</Button>
+                  </Space>
+                </Form.Item>
               </Form>
             </Col>
           </Row>
         </Card>
 
-        <Card title="Change Username" className="mb-5">
+        <Card title="Change Username" className="mb-5 shadow-sm">
           <div className="flex items-center justify-between">
             Change your password here
-            <Button type="primary" danger={true} onClick={() => setIsChangePasswordModalShow(true)}>
+            <Button
+              type="primary"
+              danger={true}
+              onClick={() => setIsChangePasswordModalShow(true)}
+            >
               Change my password
             </Button>
           </div>
         </Card>
 
-        <Card title="Change Password">
+        <Card title="Change Password" className="mb-5 shadow-sm">
           <div className="flex items-center justify-between">
             Change your username here
-            <Button type="primary" danger={true} onClick={() => setIsChangeUsernameModalShow(true)}>
+            <Button
+              type="primary"
+              danger={true}
+              onClick={() => setIsChangeUsernameModalShow(true)}
+            >
               Change my username
             </Button>
           </div>

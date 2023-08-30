@@ -93,7 +93,7 @@ export default function Profile() {
   }
 
   if(isEditMode) {
-    return <EditProfileDetails userDetails={userDetails} />
+    return <EditProfileDetails userDetails={userDetails} cancel={() => setIsEditMode(false)} />
   } else {
     return (
       <>
