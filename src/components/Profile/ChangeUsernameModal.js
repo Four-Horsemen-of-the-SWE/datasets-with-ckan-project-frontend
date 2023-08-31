@@ -1,5 +1,5 @@
 import { Button, Form, Input, Modal, Divider, Typography } from "antd";
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 
 export default function ChangeUsernameModal({ open, close }) {
@@ -14,8 +14,8 @@ export default function ChangeUsernameModal({ open, close }) {
   return (
     <Modal
       open={open}
-      onCancel={close}
-      close={close}
+      onCancel={handleClose}
+      close={handleClose}
       title="Change Password"
       centered={true}
       footer={[
