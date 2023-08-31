@@ -35,11 +35,18 @@ export const EDITOR_JS_TOOLS = {
   linkTool: LinkTool,
   image: SimpleImage,
   raw: Raw,
+  /*
   header: {
     class: Header,
     inlineToolbar: true,
     tunes: ["anyTuneName"],
   },
+  */
+  header: {
+    class: Header,
+    inlineToolbar: ['bold', 'link']
+  },
+  // header: Header,
   quote: Quote,
   marker: Marker,
   checklist: CheckList,

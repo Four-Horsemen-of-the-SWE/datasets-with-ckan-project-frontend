@@ -281,8 +281,9 @@ export default function DatasetsSettings({ datasets }) {
           <Form.Item label="Others">
             <Row gutter={8}>
               <Col span={8}>
-                <Form.Item label="Tags" name="tags">
+                <Form.Item label="Tags" name="tags" extra={datasets?.private && "You can not select tag in private"}>
                   <Select
+                    disabled={datasets?.private}
                     mode="tags"
                     placeholder="Tags"
                     size="large"

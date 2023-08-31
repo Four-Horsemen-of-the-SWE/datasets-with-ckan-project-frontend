@@ -2,8 +2,7 @@ import {
   UserOutlined,
   DatabaseOutlined,
   BookOutlined,
-  EditOutlined,
-  FileSearchOutlined
+  EditOutlined
 } from "@ant-design/icons";
 import { useSignOut, useAuthUser } from "react-auth-kit";
 import { Button, Drawer, List, Space, Popconfirm, Typography, Avatar } from "antd"
@@ -59,10 +58,6 @@ export default function DrawerView({ isDrawerOpen, close }) {
       ),
     },
     {
-      icon: <EditOutlined />,
-      label: "Edit Profile",
-    },
-    {
       icon: (
         <Popconfirm
           title="Logout ?"
@@ -82,7 +77,7 @@ export default function DrawerView({ isDrawerOpen, close }) {
 
   return (
     <Drawer
-      title={<ProfileBox image_url={auth()?.image_url} username={auth()?.name}  fullname={auth()?.fullname} />}
+      title={<ProfileBox image_url={auth()?.image_url || process.env.PUBLIC_URL + "/images/placeholder/avatar.png"} username={auth()?.name}  fullname={auth()?.fullname} />}
       placement="right"
       open={isDrawerOpen}
       onClose={close}

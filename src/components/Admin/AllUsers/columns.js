@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button, Image, Space, Tag, Avatar, Badge } from "antd";
+import { useAuthUser } from "react-auth-kit";
 import { formatted_date_relative_hour } from "../../../lib/formatted_date";
 import UserMenuButton from "./UserMenuButton";
+
+const user_id = JSON.parse(localStorage?.getItem("_auth_state"))?.id;
 
 const columns = [
   {
@@ -12,16 +15,15 @@ const columns = [
       <Space>
         <Avatar
           src={
-            record.image_display_url
-              ? record.image_display_url
-              : process.env.PUBLIC_URL + "/images/no_avatar.png"
+            record.image_display_url ||
+            process.env.PUBLIC_URL + "/images/no_avatar.png"
           }
           shape="square"
           size="large"
         />
         <Space>
           <Link to={`/profile/${text}`}>{text}</Link>
-          <Tag color="green">You</Tag>
+          {record.id === user_id && <Tag color="green">You</Tag>}
         </Space>
       </Space>
     ),

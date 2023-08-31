@@ -81,47 +81,63 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
         <IconText icon={CalendarOutlined} text={format_date(item.created)} />,
       ]}
       extra={
-        <Space align="end" direction="vertical">
-          {auth()?.id === item.user_id && (
-            <Space size="small">
-              {!isEditMode && (
-                <Button
-                  type="ghost"
-                  size="small"
-                  onClick={() => setIsEditMode(true)}
+        ((
+          <Space align="end" direction="vertical">
+            {auth()?.id === item.user_id && (
+              <Space size="small">
+                {!isEditMode && (
+                  <Button
+                    type="ghost"
+                    size="small"
+                    onClick={() => setIsEditMode(true)}
+                  >
+                    <EditOutlined />
+                  </Button>
+                )}
+                <Popconfirm
+                  title="Delete this comment ?"
+                  description="Are you sure to delete this comment."
+                  icon={<DeleteOutlined style={{ color: "red" }} />}
+                  placement="right"
+                  onConfirm={() => handleDeleteComment(item.id)}
                 >
-                  <EditOutlined />
-                </Button>
-              )}
-              <Popconfirm
-                title="Delete this comment ?"
-                description="Are you sure to delete this comment."
-                icon={<DeleteOutlined style={{ color: "red" }} />}
-                placement="right"
-                onConfirm={() => handleDeleteComment(item.id)}
-              >
-                <Button
-                  shape="square"
-                  type="primary"
-                  size="small"
-                  danger={true}
-                >
-                  <DeleteOutlined />
-                </Button>
-              </Popconfirm>
-            </Space>
-          )}
-          {/* vote button */}
-          {isAuthenticated() && (
-            <VoteButton
-              target_id={item.id}
-              target_type="comment"
-              vote={item.vote}
-              vote_type={item.voted_type}
-              size="small"
-            />
-          )}
-        </Space>
+                  <Button
+                    shape="square"
+                    type="primary"
+                    size="small"
+                    danger={true}
+                  >
+                    <DeleteOutlined />
+                  </Button>
+                </Popconfirm>
+              </Space>
+            )}
+            {/* vote button */}
+            {isAuthenticated() && (
+              <VoteButton
+                target_id={item.id}
+                target_type="comment"
+                vote={item.vote}
+                vote_type={item.voted_type}
+                size="small"
+              />
+            )}
+          </Space>
+        ),
+        /* show delete button if user is admin */
+        auth()?.is_admin && (
+          <Popconfirm
+            title="Delete this comment ?"
+            description="Are you sure to delete this comment."
+            icon={<DeleteOutlined style={{ color: "red" }} />}
+            placement="right"
+            onConfirm={() => handleDeleteComment(item.id)}
+          >
+            <Button shape="square" type="primary" size="small" danger={true}>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+        ))
       }
     >
       <List.Item.Meta

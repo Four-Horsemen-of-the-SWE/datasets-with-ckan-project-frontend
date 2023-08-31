@@ -117,8 +117,6 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
     );
   }
 
-  console.log(topics)
-
   return (
     <>
       {contextHolder}
@@ -170,10 +168,18 @@ export default function DiscussionView({ dataset_id, dataset_creator_user_id }) 
                   title={
                     <>
                       <a href={`discussions/${item.id}`}>{item.title}</a>{" "}
+                      {/* if topic is own by current user */}
                       {item.user_id === auth()?.id && (
-                        <Tooltip title="You can edit and delete this topic on the View Topics page." placement="right">
+                        <Tooltip
+                          title="You can edit and delete this topic on the View Topics page."
+                          placement="right"
+                        >
                           <Tag color="red">Your Topic</Tag>
                         </Tooltip>
+                      )}
+                      {/* is topic is created by dataset creator */}
+                      {item.user_id === dataset_creator_user_id && item.user_id !== auth()?.id && (
+                        <Tag color="green">DATASET CREATOR</Tag>
                       )}
                     </>
                   }
