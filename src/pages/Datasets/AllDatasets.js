@@ -21,8 +21,10 @@ import {
   Tag,
   List,
   Spin,
+  DatePicker,
 } from "antd";
 import axios from "axios";
+import moment from "moment";
 
 // import components
 import DatasetsCard from "../../components/Card/DatasetsCard";
@@ -65,6 +67,9 @@ export default function AllDatasets() {
   // sort
   // const [sort, setSort] = useState("");
 
+  // date range
+  const [selectedDateRange, setSelectedDateRange] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -72,6 +77,9 @@ export default function AllDatasets() {
   const tags = searchParams.getAll("tags") || undefined;
   const licenses = searchParams.get("license") || undefined;
   const sort = searchParams.get("sort" || undefined);
+
+  const disabledDate = (current) => current && current > moment().endOf("day");
+  console.log(disabledDate)
 
   const fetchTags = async () => {
     try {
@@ -99,9 +107,9 @@ export default function AllDatasets() {
     }
   };
 
-  const handleSearch = async (name, tags, license, sort) => {
+  const handleSearch = async (name, tags, license, sort, date_range) => {
     setIsLoading(true);
-    // prevent uiser enter soecial character
+    // prevent uiser enter special character
     const special_character_regex = /:/g;
     if (special_character_regex.test(name)) {
       setIsLoading(false);
@@ -118,12 +126,23 @@ export default function AllDatasets() {
     try {
       let api_url = `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/search?q=${name || ""}&sort=${sort || "relevance desc"}`;
 
+      // if license selected
       if (license !== undefined && license !== "") {
         api_url += `&license=${license}`;
       }
+
+      // if tag selected
       if (tags) {
         const tag_list = tags.map((item) => `tags=${item}`).join("&");
         api_url += `&${tag_list}`;
+      }
+
+      if (date_range !== null && date_range !== undefined) {
+        // const range = `&date_range=[${date_range[0]}T00:00:00Z TO ${date_range[1]}T23:59:59Z]`;
+        const start = new Date(date_range[0]?.$d).toISOString().split("T")[0];
+        const end = new Date(date_range[1]?.$d).toISOString().split("T")[0];
+        const range = `&date_range=[${start}T00:00:00Z TO ${end}T23:59:59Z]`;
+        api_url += range;
       }
 
       const response = await axios.get(api_url);
@@ -150,7 +169,7 @@ export default function AllDatasets() {
 
   const handleSelectedLicenseRemove = () => {
     setSelectedLicense("");
-    handleSearch(searchName, selectedTags, "");
+    handleSearch(searchName, selectedTags, "", null, selectedDateRange);
   };
 
   const handleTagsSelected = (tag) => {
@@ -165,24 +184,29 @@ export default function AllDatasets() {
   const handleSelectedTagsRemove = (tag) => {
     const new_data = selectedTags.filter((item) => item !== tag);
     setSelectedTags(new_data);
-    handleSearch(searchName, new_data, selectedLicense);
+    handleSearch(searchName, new_data, selectedLicense, null, selectedDateRange);
   };
 
   const hanldleClearFilter = () => {
     setSelectedTags([]);
     setSelectedLicense("");
+    setSelectedDateRange([]);
     handleSearch(searchName);
   };
 
   const handleSelectedSort = (sort_selected) => {
-    handleSearch(searchName, selectedTags, selectedLicense, sort_selected);
+    handleSearch(searchName, selectedTags, selectedLicense, sort_selected, selectedDateRange);
   };
+
+  const handleDateRangeChange = (date) => {
+    setSelectedDateRange(date)
+  }
 
   useEffect(() => {
     if (!query && !tags && !licenses) {
       handleSearch("");
     } else {
-      handleSearch(query, tags, licenses, sort);
+      handleSearch(query, tags, licenses, sort, selectedDateRange);
     }
 
     fetchTags();
@@ -219,7 +243,7 @@ export default function AllDatasets() {
                 placeholder="Search datasets"
                 style={{ width: "85%" }}
                 onChange={(e) =>
-                  handleSearch(e.target.value, selectedTags, selectedLicense)
+                  handleSearch(e.target.value, selectedTags, selectedLicense, null, selectedDateRange)
                 }
               />
               <Select
@@ -295,13 +319,21 @@ export default function AllDatasets() {
               </div>
             </div>
 
+            {/* date range selection */}
+            <div className="mb-10">
+              <Title level={5} style={{ marginTop: 0 }}>
+                Date
+              </Title>
+              <DatePicker.RangePicker disabledDate={disabledDate} value={selectedDateRange} showToday={true} className="w-full" onChange={handleDateRangeChange} />
+            </div>
+
             <Space direction="vertical" style={{ width: "100%" }}>
               {/* apply button */}
               <Button
                 block={true}
                 type="primary"
                 onClick={() =>
-                  handleSearch(searchName, selectedTags, selectedLicense)
+                  handleSearch(searchName, selectedTags, selectedLicense, null, selectedDateRange)
                 }
               >
                 Apply
