@@ -110,6 +110,21 @@ export default function TopicCard({ discussion_data }) {
             </Space>
           )}
         </Space>
+
+        {/* show delete button if user is admin */}
+        {auth()?.is_admin && (
+          <Popconfirm
+            title="Delete this topic ?"
+            description="Are you sure to delete this topic."
+            icon={<DeleteOutlined style={{ color: "red" }} />}
+            placement="right"
+            onConfirm={handleDeleteTopic}
+          >
+            <Button type="primary" danger={true} loading={isUpdating}>
+              <DeleteOutlined style={{ color: "white" }} />
+            </Button>
+          </Popconfirm>
+        )}
       </div>
 
       {/* topic show in edit mode */}

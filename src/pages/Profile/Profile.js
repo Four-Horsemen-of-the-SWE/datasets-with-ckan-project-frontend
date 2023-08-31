@@ -102,11 +102,11 @@ export default function Profile() {
             {/* user details */}
             <Col xs={24} xl={6} className="text-center">
               <Avatar
-                src={userDetails.image_display_url}
+                src={userDetails.image_display_url || process.env.PUBLIC_URL + "/images/placeholder/avatar.png"}
                 size={256}
                 className="ring-4"
               />
-              <Title level={2}>{userDetails.fullname}</Title>
+              <Title level={2}>{userDetails.fullname || userDetails.name}</Title>
               <Title level={4} type="secondary">
                 {userDetails.about ? userDetails.about : "No Bio"}
               </Title>
