@@ -155,6 +155,10 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
           setIsEditMode={setIsEditMode}
           creator_user_id={creator_user_id}
         />
+
+        {/* conversation */}
+        <Divider />
+        <Typography.Title level={3}>Comments</Typography.Title>
         {/* comment section */}
         {isAuthenticated() && !auth()?.is_admin && (
           <Form
@@ -204,9 +208,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
             </Form.Item>
           </Form>
         )}
-        '
-        <Divider />
-        <Typography.Title level={3}>Conversation</Typography.Title>
+
         <List
           className="mb-5"
           itemLayout="vertical"
