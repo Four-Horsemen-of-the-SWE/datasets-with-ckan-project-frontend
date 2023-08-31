@@ -172,8 +172,6 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
             onFinish={handleCreateComment}
             layout="vertical"
           >
-            <Divider />
-
             <div className="flex gap-2 items-start w-full">
               <Avatar src={auth()?.image_url} />
               <Form.Item
