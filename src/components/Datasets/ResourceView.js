@@ -13,6 +13,7 @@ import {
   Table,
   Button,
   Tooltip,
+  message,
 } from "antd";
 import { filesize } from "filesize";
 import moment from "moment/moment";
@@ -42,16 +43,32 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
   const [isCreateModalShow, setIsCreateModalShow] = useState(false);
   const [isVisualizationModalShow, setIsVisualizationModalShow] = useState(false);
   const [selectedResource, setSelectedResource] = useState({});
-
+  
   const handleDownload = async (url) => {
     try {
       window.open(url, "_blank");
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
       );
-      console.log(response.data.result)
+
       if(response.data.ok) {
-        setDownloadStatistic(response.data.result);
+        setDownloadStatistic({
+          labels: response.data.result.map((item) =>
+            moment(item.download_date).format("LL")
+          ),
+          datasets: [
+            {
+              label: "Download",
+              backgroundColor: "#1677FF",
+              borderColor: "#1677FF",
+              borderWidth: 2,
+              data: response.data.result.map((item) => item.download_count),
+            },
+          ],
+          total_download: response.data.total_download,
+        });
+      } else {
+        message.error("Failed to download.")
       }
     } catch (error) {
       console.error(error);
