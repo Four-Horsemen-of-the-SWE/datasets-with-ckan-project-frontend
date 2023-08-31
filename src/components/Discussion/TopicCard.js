@@ -4,7 +4,6 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Space, Avatar, Input, Form, Button, Typography, Card, Tag, message, Popconfirm } from "antd";
 import axios from "axios";
 import VoteButton from "./VoteButton";
-import ReportButton from "../Button/ReportButton";
 
 const { Title, Paragraph } = Typography;
 
@@ -176,14 +175,6 @@ export default function TopicCard({ discussion_data }) {
               vote={discussion_data.vote}
               vote_type={discussion_data.voted_type}
             />
-            {isAuthenticated() && (
-              <ReportButton
-                entity_id={discussion_data.id}
-                entity_type="topic"
-                entity_owner={discussion_data.user_id}
-                show_label={false}
-              />
-            )}
           </Space>
         </div>
       )}

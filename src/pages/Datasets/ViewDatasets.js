@@ -13,7 +13,6 @@ import DiscussionView from "../../components/Discussion/DiscussionView";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 import { useResourcesStore } from "../../store";
 import ArticleView from "../../components/Article/ArticleView";
-import ReportButton from "../../components/Button/ReportButton";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -207,13 +206,6 @@ export default function ViewDatasets() {
             >
               {isBookmark ? "Bookmarked" : "Bookmark"}
             </Button>
-            <ReportButton
-              entity_id={datasets.id}
-              entity_type="dataset"
-              entity_owner={datasets.creator_user_id}
-              button_size="large"
-              show_label={false}
-            />
           </Space>
         )}
       </div>
