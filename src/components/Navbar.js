@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 // import component
 import DrawerView from "./DrawerView";
 import CreateDatasetsModal from "./Datasets/CreateDatasetsModal";
-import NotificationPopover from "./Popover/NotificationPopover";
 
 export default function Navbar() {
   const location = useLocation();
@@ -103,7 +102,6 @@ export default function Navbar() {
                         Create Datasets
                       </Button>
                     )}
-                    <NotificationPopover />
                     <Button
                       icon={<UserOutlined />}
                       onClick={() => setIsDrawerOpen(!isDrawerOpen)}

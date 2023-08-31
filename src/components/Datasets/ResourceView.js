@@ -13,13 +13,14 @@ import {
   Table,
   Button,
   Tooltip,
+  message,
 } from "antd";
 import { filesize } from "filesize";
 import moment from "moment/moment";
 import axios from "axios";
 
 // store
-import { useResourcesStore } from "../../store";
+import { useDownloadStore, useResourcesStore } from "../../store";
 
 // import components
 import EditResourceModal from "./EditResourcecModal";
@@ -34,20 +35,41 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
   const auth = useAuthUser();
 
   // store
-  const { resources, setResources } = useResourcesStore();
+  const { resources } = useResourcesStore();
+  const { downloadStatistic, setDownloadStatistic } = useDownloadStore();
 
   // states
   const [isEditModalShow, setIsEditModalShow] = useState(false);
   const [isCreateModalShow, setIsCreateModalShow] = useState(false);
   const [isVisualizationModalShow, setIsVisualizationModalShow] = useState(false);
   const [selectedResource, setSelectedResource] = useState({});
-
+  
   const handleDownload = async (url) => {
     try {
       window.open(url, "_blank");
-      await axios.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
       );
+
+      if(response.data.ok) {
+        setDownloadStatistic({
+          labels: response.data.result.map((item) =>
+            moment(item.download_date).format("LL")
+          ),
+          datasets: [
+            {
+              label: "Download",
+              backgroundColor: "#1677FF",
+              borderColor: "#1677FF",
+              borderWidth: 2,
+              data: response.data.result.map((item) => item.download_count),
+            },
+          ],
+          total_download: response.data.total_download,
+        });
+      } else {
+        message.error("Failed to download.")
+      }
     } catch (error) {
       console.error(error);
     }
@@ -201,7 +223,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
         close={() => setIsCreateModalShow(false)}
       />
 
-      <div className="container mx-auto">
+      <div className="container mx-auto w-full">
         <div className="flex items-center justify-between">
           <Space direction="vertical">
             <Title level={3}>Resource</Title>

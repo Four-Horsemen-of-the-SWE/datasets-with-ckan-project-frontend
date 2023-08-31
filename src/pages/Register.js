@@ -63,7 +63,7 @@ export default function Register() {
   return (
     <div className="container mx-auto flex-1 justify-center items-center h-screen gap-10 lg:flex">
       {contextHolder}
-        <img
+      <img
         src={process.env.PUBLIC_URL + "/images/team.svg"}
         alt="register"
         className="h-32 md:h-64 hidden lg:block"
@@ -78,16 +78,16 @@ export default function Register() {
         className="w-full lg:w-1/3"
       >
         <div className="mb-5 flex justify-evenly items-center ">
-        <img
-                src={Logo}
-                alt="logo"
-                width={60}
-                height={60}
-                className="m-0 p-0 hidden sm:block"
+          <img
+            src={Logo}
+            alt="logo"
+            width={60}
+            height={60}
+            className="m-0 p-0 hidden sm:block"
           />
           <div className="flex flex-col items-start  w-full lg:w-2/3 ">
-            <Title class="inline-title">Register</Title> 
-            <Text type="secondary" >
+            <Title class="inline-title">Register</Title>
+            <Text type="secondary">
               Register to visit the best dataset repository.
             </Text>
           </div>
@@ -146,6 +146,10 @@ export default function Register() {
               required: true,
               message: "Please input your password!",
             },
+            {
+              min: 8,
+              message: "Password must be minimum 8 characters"
+            }
           ]}
         >
           <Input.Password
@@ -165,7 +169,18 @@ export default function Register() {
 
         <Form.Item shouldUpdate>
           {() => (
-            <Button type="primary" htmlType="submit" size="large" loading={isProcess} block={true}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              loading={isProcess}
+              block={true}
+              disabled={
+                !form.isFieldsTouched(true) ||
+                !!form.getFieldsError().filter(({ errors }) => errors.length)
+                  .length
+              }
+            >
               Register
             </Button>
           )}

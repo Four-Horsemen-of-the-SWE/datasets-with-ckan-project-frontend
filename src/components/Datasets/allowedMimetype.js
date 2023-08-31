@@ -9,6 +9,7 @@ const allowedMimetype = [
   "image/avif",
   "image/bmp",
   "application/pdf",
+  "text/csv",
 ];
 
 export default allowedMimetype;

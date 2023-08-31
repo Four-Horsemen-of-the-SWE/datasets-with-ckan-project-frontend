@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { StarOutlined, WarningFilled, DatabaseOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb, Space, Result, Alert } from "antd";
+import { StarOutlined, WarningFilled, DatabaseOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, message, Breadcrumb, Space, Result, Alert, Tooltip } from "antd";
 import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
@@ -13,7 +13,7 @@ import DiscussionView from "../../components/Discussion/DiscussionView";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 import { useResourcesStore } from "../../store";
 import ArticleView from "../../components/Article/ArticleView";
-import ReportButton from "../../components/Button/ReportButton";
+import AdminDeleteModal from "../../components/Datasets/AdminDeleteModal";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -26,8 +26,12 @@ export default function ViewDatasets() {
   const [isBookmark, setIsBookmark] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [isNotAuthorized, setIsNotAuthorized] = useState(false);
+  const [isNotActive, setIsNotActive] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const { resources, setResources } = useResourcesStore();
+
+  // admin state
+  const [isAdminDeleteModalShow, setIsAdminDeleteModalShow] = useState(false);
 
   const location = useLocation();
   const currentTab = location.pathname.split("/")[3];
@@ -49,6 +53,11 @@ export default function ViewDatasets() {
       );
 
       if (response.status === 200) {
+        if (response.data?.active === false) {
+          setIsLoading(false);
+          return setIsNotActive(true);
+        }
+
         if (response.data?.is_authorized === false) {
           setIsLoading(false);
           return setIsNotAuthorized(true);
@@ -140,7 +149,23 @@ export default function ViewDatasets() {
         <Spin size="large" />
       </div>
     );
-  } 
+  }
+
+  if (isNotActive) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Result
+          status="warning"
+          title="Dataset not found"
+          extra={
+            <Link to="/datasets">
+              <Button type="primary">Back to all datasets page.</Button>
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
   
   if (isNotAuthorized) {
     return (
@@ -160,6 +185,13 @@ export default function ViewDatasets() {
 
   return (
     <>
+      <AdminDeleteModal 
+        dataset_id={datasets.id}
+        dataset_name={datasets.name}
+        open={isAdminDeleteModalShow}
+        close={() => setIsAdminDeleteModalShow(false)}
+      />
+
       {contextHolder}
       {datasets.private && (
         <Alert
@@ -207,14 +239,14 @@ export default function ViewDatasets() {
             >
               {isBookmark ? "Bookmarked" : "Bookmark"}
             </Button>
-            <ReportButton
-              entity_id={datasets.id}
-              entity_type="dataset"
-              entity_owner={datasets.creator_user_id}
-              button_size="large"
-              show_label={false}
-            />
           </Space>
+        )}
+
+        {/* delete dataset for admin */}
+        {auth()?.is_admin && (
+          <Tooltip title="Please consider before deleting.">
+            <Button icon={<DeleteOutlined />} type="primary" danger={true} onClick={() => setIsAdminDeleteModalShow(true)}>Delete dataset</Button>
+          </Tooltip>
         )}
       </div>
 
@@ -222,10 +254,10 @@ export default function ViewDatasets() {
         <Row
           justify="space-between"
           align="center"
-          gutter={[18, 18]}
+          gutter={[10, 10]}
           className="my-5 w-full"
         >
-          <Col md={18} className="ml-8 mr-8">
+          <Col sm={18} className="">
             <Title level={2}>{datasets.title}</Title>
             <Paragraph
               ellipsis={{
@@ -237,7 +269,7 @@ export default function ViewDatasets() {
               {datasets.notes ? datasets.notes : "No Description"}
             </Paragraph>
           </Col>
-          <Col md={4} className="w-full text-center md:text-right ml-6 mr-6">
+          <Col sm={6} className="w-full text-center md:text-right">
             <Image
               src={datasets.thumbnail}
               alt="datasets thumbnail"
@@ -257,15 +289,15 @@ export default function ViewDatasets() {
           size="large"
         >
           <TabPane tab="Data" key="data">
-            <Row gutter={18}>
-              <Col sm={24} md={18} className="ml-8 mr-8">
+            <Row gutter={[10, 10]} justify="space-between" align="center">
+              <Col sm={24} lg={18}>
                 <ResourceView
                   creator_user_id={datasets.creator_user_id}
                   dataset_id={datasets.id}
                   resource={resources}
                 />
               </Col>
-              <Col sm={24} md={4} className="ml-5 mr-5">
+              <Col sm={24} lg={4}>
                 <InformationView
                   dataset_id={datasets.id}
                   author={datasets.author}

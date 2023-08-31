@@ -1,29 +1,19 @@
-import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { List, Space, Spin, Statistic, Tag, Typography } from "antd";
+import { Col, List, Row, Space, Spin, Statistic, Tag, Typography } from "antd";
 import moment from "moment";
 import "moment-timezone";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useDownloadStore } from "../../store";
+import { formatted_date_time } from "../../lib/formatted_date";
 
 const { Title, Text } = Typography;
 
 export default function InformationView({ dataset_id, author, license_title, version, metadata_created, metadata_modified, tags }) {
-  const [downloadStatistic, setDownloadStatistic] = useState({});
+  const { downloadStatistic, setDownloadStatistic } = useDownloadStore();
   const [downloadStatisticSuccess, setDownloadStatisticSuccess] = useState(false);
-
-  const format_date = (date) => {
-    const result = moment.utc(date).toDate() &&
-      moment(moment.utc(date).toDate()).format(
-        "MMMM Do YYYY, h:mm:ss a"
-      );
-    return result;
-  }
   
-  const format_metadata_created = format_date(metadata_created);
-  const format_metadata_modified = format_date(metadata_modified);
-
   const additional_data = [
     {
       label: "Created by",
@@ -41,11 +31,11 @@ export default function InformationView({ dataset_id, author, license_title, ver
     },
     {
       label: "Created",
-      value: format_metadata_created,
+      value: formatted_date_time(metadata_created),
     },
     {
       label: "Modified",
-      value: format_metadata_modified,
+      value: formatted_date_time(metadata_modified),
     },
   ];
 

@@ -175,8 +175,11 @@ export default function DatasetsSettings({ datasets }) {
             content: "Delete success.",
           });
           setTimeout(() => {
+            setIsDeleting(false);
             window.location.href = "/datasets";
           }, 700);
+        } else {
+          setIsDeleting(false);
         }
 
         // setIsDeleting(false);

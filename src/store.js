@@ -16,6 +16,12 @@ const modalSizeStore = (set) => ({
   setIsMaximize: (value) => set(() => ({ isMaximize: value }))
 });
 
+const downloadStore = (set) => ({
+  downloadStatistic: [],
+  setDownloadStatistic: (value) => set(() => ({ downloadStatistic: value }))
+});
+
 export const useCreateModalStore = create(createModalStore);
 export const useResourcesStore = create(resourcesStore);
 export const useModalSizeStore = create(modalSizeStore);
+export const useDownloadStore = create(downloadStore);

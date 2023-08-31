@@ -5,7 +5,6 @@ import { Button, Space } from "antd";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { useState, useEffect } from "react";
 import ArticleDeleteModal from "./ArticleDeleteModal";
-import ReportButton from "../Button/ReportButton";
 
 export default function ArticleReader({ article_id, content, setIsEditMode, creator_user_id }) {
   var editor = null;
@@ -45,19 +44,6 @@ export default function ArticleReader({ article_id, content, setIsEditMode, crea
         open={showDeleteModal}
         close={() => setShowDeleteModal(false)}
       />
-
-      <div className="flex items-center justify-end my-3">
-        {isAuthenticated() && (
-          <ReportButton
-            entity_id={article_id}
-            entity_type="article"
-            entity_owner={creator_user_id}
-            label_color="white"
-            button_size="large"
-            button_type="primary"
-          />
-        )}
-      </div>
 
       {auth()?.id === creator_user_id && (
         <div className="flex items-center justify-end">
