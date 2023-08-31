@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { StarOutlined, WarningFilled, DatabaseOutlined } from "@ant-design/icons";
-import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, Dropdown, message, Breadcrumb, Space, Result, Alert } from "antd";
+import { StarOutlined, WarningFilled, DatabaseOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Typography, Image, Row, Col, Divider, Tabs, Spin, Button, message, Breadcrumb, Space, Result, Alert, Tooltip } from "antd";
 import { useIsAuthenticated, useAuthUser, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 
@@ -13,6 +13,7 @@ import DiscussionView from "../../components/Discussion/DiscussionView";
 import DatasetsSettings from "../../components/Datasets/DatasetsSettings";
 import { useResourcesStore } from "../../store";
 import ArticleView from "../../components/Article/ArticleView";
+import AdminDeleteModal from "../../components/Datasets/AdminDeleteModal";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -25,8 +26,12 @@ export default function ViewDatasets() {
   const [isBookmark, setIsBookmark] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [isNotAuthorized, setIsNotAuthorized] = useState(false);
+  const [isNotActive, setIsNotActive] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const { resources, setResources } = useResourcesStore();
+
+  // admin state
+  const [isAdminDeleteModalShow, setIsAdminDeleteModalShow] = useState(false);
 
   const location = useLocation();
   const currentTab = location.pathname.split("/")[3];
@@ -48,6 +53,11 @@ export default function ViewDatasets() {
       );
 
       if (response.status === 200) {
+        if (response.data?.active === false) {
+          setIsLoading(false);
+          return setIsNotActive(true);
+        }
+
         if (response.data?.is_authorized === false) {
           setIsLoading(false);
           return setIsNotAuthorized(true);
@@ -139,7 +149,23 @@ export default function ViewDatasets() {
         <Spin size="large" />
       </div>
     );
-  } 
+  }
+
+  if (isNotActive) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Result
+          status="warning"
+          title="Dataset not found"
+          extra={
+            <Link to="/datasets">
+              <Button type="primary">Back to all datasets page.</Button>
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
   
   if (isNotAuthorized) {
     return (
@@ -159,6 +185,13 @@ export default function ViewDatasets() {
 
   return (
     <>
+      <AdminDeleteModal 
+        dataset_id={datasets.id}
+        dataset_name={datasets.name}
+        open={isAdminDeleteModalShow}
+        close={() => setIsAdminDeleteModalShow(false)}
+      />
+
       {contextHolder}
       {datasets.private && (
         <Alert
@@ -207,6 +240,13 @@ export default function ViewDatasets() {
               {isBookmark ? "Bookmarked" : "Bookmark"}
             </Button>
           </Space>
+        )}
+
+        {/* delete dataset for admin */}
+        {auth()?.is_admin && (
+          <Tooltip title="Please consider before deleting.">
+            <Button icon={<DeleteOutlined />} type="primary" danger={true} onClick={() => setIsAdminDeleteModalShow(true)}>Delete dataset</Button>
+          </Tooltip>
         )}
       </div>
 
