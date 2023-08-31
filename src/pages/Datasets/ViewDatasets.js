@@ -222,7 +222,7 @@ export default function ViewDatasets() {
         <Row
           justify="space-between"
           align="center"
-          gutter={[18, 18]}
+          gutter={[10, 10]}
           className="my-5 w-full"
         >
           <Col sm={18} className="">

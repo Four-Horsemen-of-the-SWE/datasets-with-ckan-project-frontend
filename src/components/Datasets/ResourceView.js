@@ -19,7 +19,7 @@ import moment from "moment/moment";
 import axios from "axios";
 
 // store
-import { useResourcesStore } from "../../store";
+import { useDownloadStore, useResourcesStore } from "../../store";
 
 // import components
 import EditResourceModal from "./EditResourcecModal";
@@ -34,7 +34,8 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
   const auth = useAuthUser();
 
   // store
-  const { resources, setResources } = useResourcesStore();
+  const { resources } = useResourcesStore();
+  const { downloadStatistic, setDownloadStatistic } = useDownloadStore();
 
   // states
   const [isEditModalShow, setIsEditModalShow] = useState(false);
@@ -45,9 +46,13 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
   const handleDownload = async (url) => {
     try {
       window.open(url, "_blank");
-      await axios.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
       );
+      console.log(response.data.result)
+      if(response.data.ok) {
+        setDownloadStatistic(response.data.result);
+      }
     } catch (error) {
       console.error(error);
     }
