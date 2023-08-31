@@ -201,7 +201,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
         close={() => setIsCreateModalShow(false)}
       />
 
-      <div className="container mx-auto">
+      <div className="container mx-auto w-full">
         <div className="flex items-center justify-between">
           <Space direction="vertical">
             <Title level={3}>Resource</Title>

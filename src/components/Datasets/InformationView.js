@@ -1,6 +1,6 @@
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { List, Space, Spin, Statistic, Tag, Typography } from "antd";
+import { Col, List, Row, Space, Spin, Statistic, Tag, Typography } from "antd";
 import moment from "moment";
 import "moment-timezone";
 import { useEffect, useState } from "react";

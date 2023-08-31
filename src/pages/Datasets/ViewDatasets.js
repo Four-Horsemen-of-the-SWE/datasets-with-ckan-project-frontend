@@ -225,7 +225,7 @@ export default function ViewDatasets() {
           gutter={[18, 18]}
           className="my-5 w-full"
         >
-          <Col md={18} className="ml-8 mr-8">
+          <Col sm={18} className="">
             <Title level={2}>{datasets.title}</Title>
             <Paragraph
               ellipsis={{
@@ -237,7 +237,7 @@ export default function ViewDatasets() {
               {datasets.notes ? datasets.notes : "No Description"}
             </Paragraph>
           </Col>
-          <Col md={4} className="w-full text-center md:text-right ml-6 mr-6">
+          <Col sm={6} className="w-full text-center md:text-right">
             <Image
               src={datasets.thumbnail}
               alt="datasets thumbnail"
@@ -257,15 +257,15 @@ export default function ViewDatasets() {
           size="large"
         >
           <TabPane tab="Data" key="data">
-            <Row gutter={18}>
-              <Col sm={24} md={18} className="ml-8 mr-8">
+            <Row gutter={[10, 10]} justify="space-between" align="center">
+              <Col sm={24} lg={18}>
                 <ResourceView
                   creator_user_id={datasets.creator_user_id}
                   dataset_id={datasets.id}
                   resource={resources}
                 />
               </Col>
-              <Col sm={24} md={4} className="ml-5 mr-5">
+              <Col sm={24} lg={4}>
                 <InformationView
                   dataset_id={datasets.id}
                   author={datasets.author}
