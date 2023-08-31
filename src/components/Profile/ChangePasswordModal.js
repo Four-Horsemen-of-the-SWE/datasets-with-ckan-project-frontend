@@ -33,20 +33,17 @@ export default function ChangePasswordModal({ open, close }) {
       if (response.data.ok) {
         message.success("update sucess");
         setTimeout(() => {
-          setIsChanging(false);
-          setSaveButtonDisabled(true);
           window.location.reload();
         }, 450);
       } else if(response.data.message === "old password is not valid") {
         message.warning("Old password is incorrect");
         form.resetFields();
-        setIsChanging(false);
-        setSaveButtonDisabled(true);
       } else {
         message.error("update failed");
-        setIsChanging(false);
-        setSaveButtonDisabled(true);
       }
+
+      setIsChanging(false);
+      setSaveButtonDisabled(true);
     } catch (error) {
       setIsChanging(false);
       setSaveButtonDisabled(true);

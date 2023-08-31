@@ -52,6 +52,7 @@ export default function EditProfileDetails({ userDetails, cancel }) {
       />
 
       <ChangeUsernameModal
+        username={userDetails.name}
         open={isChangeUsernameModalShow}
         close={() => setIsChangeUsernameModalShow(false)}
       />
@@ -64,7 +65,11 @@ export default function EditProfileDetails({ userDetails, cancel }) {
             <Col sm={6} style={{ width: "100%" }}>
               <Space direction="vertical" align="center">
                 <Typography.Title level={2}>Profile Photo</Typography.Title>
-                <Image src={userDetails.image_display_url} className="rounded-md mb-2" width={300} />
+                <Avatar
+                  src={userDetails.image_display_url}
+                  className="ring-4 mb-2"
+                  size={256}
+                />
                 <ImgCrop rotationSlider>
                   <Upload onChange={null}>
                     <Button>Change Image</Button>
@@ -91,7 +96,9 @@ export default function EditProfileDetails({ userDetails, cancel }) {
                 <Form.Item
                   label="Email"
                   name="email"
-                  rules={[{ required: true, message: "Please input your email" }]}
+                  rules={[
+                    { required: true, message: "Please input your email" },
+                  ]}
                 >
                   <Input
                     size="large"
@@ -124,7 +131,7 @@ export default function EditProfileDetails({ userDetails, cancel }) {
           </Row>
         </Card>
 
-        <Card title="Change Username" className="mb-5 shadow-sm">
+        <Card title="Change Password" className="mb-5 shadow-sm">
           <div className="flex items-center justify-between">
             Change your password here
             <Button
@@ -137,7 +144,7 @@ export default function EditProfileDetails({ userDetails, cancel }) {
           </div>
         </Card>
 
-        <Card title="Change Password" className="mb-5 shadow-sm">
+        <Card title="Change Username" className="mb-5 shadow-sm">
           <div className="flex items-center justify-between">
             Change your username here
             <Button
