@@ -98,9 +98,9 @@ export default function Profile() {
     return (
       <>
         <section className="container mx-auto">
-          <Row gutter={[32, 15]} justify="space-between" className="my-10">
+          <Row gutter={[16, 16]} justify="space-between" className="my-10">
             {/* user details */}
-            <Col xs={24} xl={6} className="text-center">
+            <Col sm={24} lg={8} className="text-center w-full">
               <Avatar
                 src={userDetails.image_display_url || process.env.PUBLIC_URL + "/images/placeholder/avatar.png"}
                 size={256}
@@ -142,7 +142,7 @@ export default function Profile() {
             </Col>
 
             {/* data */}
-            <Col xs={24} xl={18}>
+            <Col sm={24} lg={16}>
               {!auth()?.is_admin ? (
                 <Tabs
                   defaultActiveKey={currentTab}
