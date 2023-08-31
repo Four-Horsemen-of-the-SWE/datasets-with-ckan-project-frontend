@@ -79,7 +79,6 @@ export default function AllDatasets() {
   const sort = searchParams.get("sort" || undefined);
 
   const disabledDate = (current) => current && current > moment().endOf("day");
-  console.log(disabledDate)
 
   const fetchTags = async () => {
     try {
@@ -137,13 +136,15 @@ export default function AllDatasets() {
         api_url += `&${tag_list}`;
       }
 
-      if (date_range !== null && date_range !== undefined) {
+      if (date_range !== null && date_range !== undefined && date_range?.length !== 0) {
         // const range = `&date_range=[${date_range[0]}T00:00:00Z TO ${date_range[1]}T23:59:59Z]`;
         const start = new Date(date_range[0]?.$d).toISOString().split("T")[0];
         const end = new Date(date_range[1]?.$d).toISOString().split("T")[0];
         const range = `&date_range=[${start}T00:00:00Z TO ${end}T23:59:59Z]`;
         api_url += range;
       }
+
+      
 
       const response = await axios.get(api_url);
       if (response.data.ok) {
@@ -301,7 +302,7 @@ export default function AllDatasets() {
                     renderItem={(item) => (
                       <div
                         className="bg-[#F7F9FC] py-1 px-2.5 mb-1.5 rounded-lg cursor-pointer transition ease-in-out delay-50 hover:bg-[#D6DEE1]"
-                        onClick={() => handleLicenseSelected(item.title)}
+                        onClick={() => handleLicenseSelected(item.id)}
                       >
                         {item.title}
                       </div>
