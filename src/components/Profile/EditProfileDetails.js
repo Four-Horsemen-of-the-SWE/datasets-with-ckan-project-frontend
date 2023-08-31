@@ -60,26 +60,21 @@ export default function EditProfileDetails({ userDetails, cancel }) {
       <div className="container mx-auto mt-5">
         {/* general information */}
         <Card className="mb-5 shadow-sm">
-          <Row>
+          <Row gutter={18}>
             {/* profile image */}
-            <Col sm={6} style={{ width: "100%" }}>
-              <Space direction="vertical" align="center">
+            <Col sm={24} md={6}>
+              <div className="w-full flex flex-col items-center justify-between gap-4">
                 <Typography.Title level={2}>Profile Photo</Typography.Title>
                 <Avatar
                   src={userDetails.image_display_url}
                   className="ring-4 mb-2"
                   size={256}
                 />
-                <ImgCrop rotationSlider>
-                  <Upload onChange={null}>
-                    <Button>Change Image</Button>
-                  </Upload>
-                </ImgCrop>
-              </Space>
+              </div>
             </Col>
 
             {/* form */}
-            <Col sm={18}>
+            <Col sm={24} md={18}>
               <Form
                 layout="vertical"
                 form={form}
@@ -88,6 +83,7 @@ export default function EditProfileDetails({ userDetails, cancel }) {
                   fullname: userDetails.fullname,
                   email: userDetails.email,
                   about: userDetails.about,
+                  image_url: userDetails.image_url,
                 }}
               >
                 <Form.Item label="Full name" name="fullname">
@@ -112,6 +108,19 @@ export default function EditProfileDetails({ userDetails, cancel }) {
                     placeholder="a little information about your self"
                   />
                 </Form.Item>
+                <Form.Item
+                  label="Profile image"
+                  name="image_url"
+                  extra={
+                    <small className="text-slate-500">
+                      After you change it, your profile picture in the drawer
+                      will remain the same until you log out and log in again.
+                    </small>
+                  }
+                >
+                  <Input size="large" placeholder="image url" />
+                </Form.Item>
+
                 <Form.Item>
                   <Space className="float-right">
                     <Button disabled={isUpdating} onClick={cancel}>
