@@ -66,7 +66,7 @@ export default function EditProfileDetails({ userDetails, cancel }) {
               <div className="w-full flex flex-col items-center justify-between gap-4">
                 <Typography.Title level={2}>Profile Photo</Typography.Title>
                 <Avatar
-                  src={userDetails.image_display_url}
+                  src={userDetails.image_display_url || process.env.PUBLIC_URL + "/images/placeholder/avatar.png"}
                   className="ring-4 mb-2"
                   size={256}
                 />

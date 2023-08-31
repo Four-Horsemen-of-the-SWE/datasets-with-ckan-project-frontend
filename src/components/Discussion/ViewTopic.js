@@ -112,7 +112,10 @@ export default function ViewTopic({ topic_id, dataset_creator_user_id }) {
       </a>
 
       {/* topic details show here */}
-      <TopicCard discussion_data={discussion} />
+      <TopicCard
+        discussion_data={discussion}
+        dataset_creator_user_id={dataset_creator_user_id}
+      />
 
       <Divider />
 

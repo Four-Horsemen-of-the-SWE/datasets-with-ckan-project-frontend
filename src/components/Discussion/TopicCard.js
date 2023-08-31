@@ -7,7 +7,7 @@ import VoteButton from "./VoteButton";
 
 const { Title, Paragraph } = Typography;
 
-export default function TopicCard({ discussion_data }) {
+export default function TopicCard({ discussion_data, dataset_creator_user_id }) {
   const [discussion, setDiscussion] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -19,7 +19,7 @@ export default function TopicCard({ discussion_data }) {
   const isAuthenticated = useIsAuthenticated();
   const JWTToken = authHeader().split(" ")[1];
 
-  const handleUpdateTopic = async(values) => {
+  const handleUpdateTopic = async (values) => {
     try {
       setIsUpdating(true);
       const response = await axios.put(
@@ -27,25 +27,25 @@ export default function TopicCard({ discussion_data }) {
         values,
         {
           headers: {
-            Authorization: JWTToken
-          }
+            Authorization: JWTToken,
+          },
         }
       );
-      if(response.data.ok) {
+      if (response.data.ok) {
         message.success("Topic were successfully updated.");
         // then set topic information with new data
-        setDiscussion({...discussion, ...response.data.result});
+        setDiscussion({ ...discussion, ...response.data.result });
 
-        setTimeout(()  => {
+        setTimeout(() => {
           setIsUpdating(false);
           setIsEditMode(false);
         }, 700);
       }
-    } catch(error) {
+    } catch (error) {
       message.error(error.message);
       setIsUpdating(false);
     }
-  }
+  };
 
   const handleDeleteTopic = async () => {
     try {
@@ -61,7 +61,10 @@ export default function TopicCard({ discussion_data }) {
         if (response.data.ok) {
           message.success("Your topic has been deleted.");
           setTimeout(() => {
-            window.location.href = window.location.pathname.split('/').slice(0, -1).join('/');
+            window.location.href = window.location.pathname
+              .split("/")
+              .slice(0, -1)
+              .join("/");
           }, 400);
         }
       } catch (error) {
@@ -73,16 +76,18 @@ export default function TopicCard({ discussion_data }) {
   };
 
   useEffect(() => {
-    setDiscussion(discussion_data)
-  }, [discussion_data])
-  
+    setDiscussion(discussion_data);
+  }, [discussion_data]);
+
   return (
     <Card bordered={true}>
       <div className="flex justify-between w-full items-center space-x-4">
         <Space split="•">
           <Avatar src={discussion.user_image_url} />
           <small>{discussion.user_name}</small>
-          <Tag color="green">DATASET CREATOR</Tag>
+          {discussion.user_id === dataset_creator_user_id && (
+            <Tag color="green">DATASET CREATOR</Tag>
+          )}
         </Space>
         <Space>
           {/* action button, edit and delete */}
