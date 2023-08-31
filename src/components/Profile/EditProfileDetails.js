@@ -64,7 +64,7 @@ export default function EditProfileDetails({ userDetails, cancel }) {
             <Col sm={6} style={{ width: "100%" }}>
               <Space direction="vertical" align="center">
                 <Typography.Title level={2}>Profile Photo</Typography.Title>
-                <Image src={userDetails.image_display_url} />
+                <Image src={userDetails.image_display_url} className="rounded-md mb-2" width={300} />
                 <ImgCrop rotationSlider>
                   <Upload onChange={null}>
                     <Button>Change Image</Button>

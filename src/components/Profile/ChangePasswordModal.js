@@ -56,7 +56,15 @@ export default function ChangePasswordModal({ open, close }) {
         <Button size="large" onClick={close}>
           Cancel
         </Button>,
-        <Button type="primary" size="large" onClick={handleChangePassword}>
+        <Button
+          type="primary"
+          size="large"
+          onClick={handleChangePassword}
+          disabled={
+            !form.isFieldsTouched(true) ||
+            !!form.getFieldsError().filter(({ errors }) => errors.length).length
+          }
+        >
           Save
         </Button>,
       ]}
@@ -74,7 +82,10 @@ export default function ChangePasswordModal({ open, close }) {
         <Form.Item
           label="Password"
           name="new_password"
-          rules={[{ required: true, message: "Please input your password" }]}
+          rules={[
+            { required: true, message: "Please input your password" },
+            { min: 8, message: "Password must be minimum 8 characters" },
+          ]}
         >
           <Input.Password size="large" placeholder="password" />
         </Form.Item>
