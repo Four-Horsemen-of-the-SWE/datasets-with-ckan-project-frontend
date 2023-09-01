@@ -19,10 +19,10 @@ export default function VoteButton({ target_id, target_type, vote = 0, vote_type
       }
     : {};
 
-  const handleVote = async(vote_type) => {
+  const handleVote = async (vote_type) => {
     try {
       // if vote_type === voteState is mean user want to clear voted
-      if(vote_type === voteState) {
+      if (vote_type === voteState) {
         vote_type = "neutral";
       }
 
@@ -38,7 +38,7 @@ export default function VoteButton({ target_id, target_type, vote = 0, vote_type
 
       if (response.data.ok) {
         // update vote score
-        const vote_score = getVoteState(voteState, vote_type)
+        const vote_score = getVoteState(voteState, vote_type);
         setVoteScore(voteScore + vote_score);
         // set vote state
         setVoteState(vote_type);
@@ -46,13 +46,13 @@ export default function VoteButton({ target_id, target_type, vote = 0, vote_type
     } catch (error) {
       message.error(error.message);
     }
-  }
+  };
 
   const getVoteState = (oldVote, newVote) => {
-    if(oldVote === "downvote") {
-      return newVote === "neutral" ? 1 : 2
+    if (oldVote === "downvote") {
+      return newVote === "neutral" ? 1 : 2;
     } else if (oldVote === "upvote") {
-      return newVote === "neutral" ? -1 : -2
+      return newVote === "neutral" ? -1 : -2;
     } else {
       return newVote === "upvote" ? 1 : -1;
     }
@@ -60,14 +60,14 @@ export default function VoteButton({ target_id, target_type, vote = 0, vote_type
 
   useEffect(() => {
     setVoteScore(vote);
-    setVoteState(vote_type)
+    setVoteState(vote_type);
   }, [vote, vote_type]);
 
-  if(auth()?.is_admin) {
-    return 
+  if (auth()?.is_admin) {
+    return;
   }
 
-  if(isAuthenticated()) {
+  if (isAuthenticated()) {
     return (
       <>
         <Space align="center" direction={direction}>
