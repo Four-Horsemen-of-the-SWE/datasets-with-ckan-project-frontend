@@ -101,7 +101,7 @@ export default function Home() {
       <section className="container mx-auto text-center my-16">
         <Title style={{ lineHeight: "1.6em" }}>
           "Inside our platform, you'll find all the datasets you need for your data science work. Over{" "}
-          <Title mark className="inline">
+          <Title className="inline">
             {datasetsNumber}
           </Title>{" "}
           datasets."
