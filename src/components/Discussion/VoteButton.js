@@ -21,7 +21,6 @@ export default function VoteButton({ target_id, target_type, vote = 0, vote_type
 
   const handleVote = async (vote_type) => {
     try {
-      // if vote_type === voteState is mean user want to clear voted
       if (vote_type === voteState) {
         vote_type = "neutral";
       }

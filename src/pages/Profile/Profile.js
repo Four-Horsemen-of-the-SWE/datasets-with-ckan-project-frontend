@@ -30,7 +30,7 @@ export default function Profile() {
     auth()?.name === username
       ? {
           headers: {
-            Authorization: authHeader()?.slice(" ")[1],
+            Authorization: authHeader()?.split(" ")[1],
           },
         }
       : {};
