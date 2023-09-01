@@ -32,26 +32,13 @@ export default function UserMenuButton({ user_name, user_id, is_admin }) {
         </Button>
       ),
     },
-    {
-      key: "3",
-      danger: true,
-      label: (
-        <Button
-          type="ghost"
-          style={{ color: "red", margin: 0, padding: 0 }}
-          onClick={() => setIsBanModalShow(true)}
-        >
-          Ban this user
-        </Button>
-      ),
-    },
   ];
 
   return (
     <>
       <ChangeRoleModal user_id={user_id} is_admin={is_admin} open={isRoleModalShow} close={() => setIsRoleModalShow(false)} />
 
-      <BanUserModal user_id={user_id} open={isBanModalShow} close={() => setIsBanModalShow(false)} />
+      {/*<BanUserModal user_id={user_id} open={isBanModalShow} close={() => setIsBanModalShow(false)} />*/}
 
       <Dropdown
         trigger="click"
