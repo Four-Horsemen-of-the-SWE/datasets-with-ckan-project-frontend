@@ -177,6 +177,7 @@ export default function AllDatasets() {
       setSelectedTags(new_data);
     } else {
       setSelectedTags([...selectedTags, tag]);
+      console.log(selectedTags)
     }
   };
 
