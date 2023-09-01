@@ -102,7 +102,7 @@ export default function ChangeUsernameModal({ username, open, close }) {
             { required: true, message: "Please input your new username" },
             { min: 6, message: "Username must be minimum 6 characters" },
             {
-              pattern: new RegExp(/^[a-zA-Z_-][a-zA-Z0-9_-]*$/),
+              pattern: new RegExp(/^[a-zA-Z_-][a-zA-Z0-9-]*$/),
               message: "Username must be in English and alphabet and  only. and not start with number",
             },
             {

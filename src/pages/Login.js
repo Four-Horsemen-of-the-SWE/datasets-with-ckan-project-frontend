@@ -73,13 +73,7 @@ export default function Login() {
       {contextHolder}
       <div className="flex flex-col items-center w-full lg:w-1/3">
         <div className="flex items-center justify-center mb-5">
-          <img
-            src={Logo}
-            alt="logo"
-            width={50}
-            height={50}
-            className="mr-2"
-          />
+          <img src={Logo} alt="logo" width={50} height={50} className="mr-2" />
           <Title level={4} className="m-0 p-0">
             DATASETS HUB
           </Title>
@@ -105,6 +99,9 @@ export default function Login() {
                 message: "Please input your username!",
               },
             ]}
+            getValueFromEvent={(event) =>
+              event.target.value.replace(/\s+/g, "-").toLowerCase()
+            }
           >
             <Input
               prefix={<UserOutlined />}
@@ -137,7 +134,8 @@ export default function Login() {
                 block
                 disabled={
                   !form.isFieldsTouched(true) ||
-                  !!form.getFieldsError().filter(({ errors }) => errors.length).length
+                  !!form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length
                 }
                 className="mt-4"
                 loading={isProcess}
