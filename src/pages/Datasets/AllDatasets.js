@@ -51,7 +51,7 @@ const sort_data = [
   {
     value: "most_downloaded",
     label: "Most Downloaded"
-  }
+  },
 ];
 
 export default function AllDatasets() {
@@ -143,8 +143,6 @@ export default function AllDatasets() {
         const range = `&date_range=[${start}T00:00:00Z TO ${end}T23:59:59Z]`;
         api_url += range;
       }
-
-      
 
       const response = await axios.get(api_url);
       if (response.data.ok) {

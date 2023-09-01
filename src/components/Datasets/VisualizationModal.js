@@ -7,18 +7,37 @@ import { Modal, Image, Button } from 'antd'
 import React, { useState, useEffect } from 'react'
 import axios from "axios";
 import { getVisualize } from "../../lib/getVisualization";
-import { useModalSizeStore } from "../../store";
+import { useDownloadStore, useModalSizeStore } from "../../store";
+import moment from "moment";
 
 export default function VisualizationModal({ dataset_id, mimetype, format, url, open, close }) {
   const content = getVisualize(mimetype, url);
   const { isMaximize, setIsMaximize } = useModalSizeStore();
+  const { setDownloadStatistic } = useDownloadStore();
 
   const handleDownload = async (url) => {
     try {
       window.open(url, "_blank");
-      await axios.post(
+      const response  = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/download`
       );
+      if (response.data.ok) {
+        setDownloadStatistic({
+          labels: response.data.result.map((item) =>
+            moment(item.download_date).format("LL")
+          ),
+          datasets: [
+            {
+              label: "Download",
+              backgroundColor: "#1677FF",
+              borderColor: "#1677FF",
+              borderWidth: 2,
+              data: response.data.result.map((item) => item.download_count),
+            },
+          ],
+          total_download: response.data.total_download,
+        });
+      }
     } catch (error) {
       console.error(error);
     }
