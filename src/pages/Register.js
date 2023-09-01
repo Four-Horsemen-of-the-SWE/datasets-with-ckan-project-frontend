@@ -176,7 +176,6 @@ export default function Register() {
               loading={isProcess}
               block={true}
               disabled={
-                !form.isFieldsTouched(true) ||
                 !!form.getFieldsError().filter(({ errors }) => errors.length)
                   .length
               }
