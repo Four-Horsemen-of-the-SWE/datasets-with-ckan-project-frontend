@@ -81,7 +81,7 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
         <IconText icon={CalendarOutlined} text={format_date(item.created)} />,
       ]}
       extra={
-        ((
+        <>
           <Space align="end" direction="vertical">
             {auth()?.id === item.user_id && (
               <Space size="small">
@@ -112,7 +112,6 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
                 </Popconfirm>
               </Space>
             )}
-            {/* vote button */}
             {isAuthenticated() && (
               <VoteButton
                 target_id={item.id}
@@ -123,21 +122,7 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
               />
             )}
           </Space>
-        ),
-        /* show delete button if user is admin */
-        auth()?.is_admin && (
-          <Popconfirm
-            title="Delete this comment ?"
-            description="Are you sure to delete this comment."
-            icon={<DeleteOutlined style={{ color: "red" }} />}
-            placement="right"
-            onConfirm={() => handleDeleteComment(item.id)}
-          >
-            <Button shape="square" type="primary" size="small" danger={true}>
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-        ))
+        </>
       }
     >
       <List.Item.Meta
