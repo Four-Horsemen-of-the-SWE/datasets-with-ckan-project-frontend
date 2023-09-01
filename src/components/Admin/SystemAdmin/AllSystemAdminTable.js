@@ -1,11 +1,12 @@
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { Table, Avatar, Button, Space, message, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
 export default function AllSystemAdminTable() {
+  const auth = useAuthUser();
   const authHeader = useAuthHeader();
   const [users, setUsers] = useState([]);
 
@@ -90,7 +91,7 @@ export default function AllSystemAdminTable() {
           icon={<DeleteOutlined />}
           onClick={() => handleClick(record.id)}
           danger={true}
-          disabled={!index}
+          disabled={!index || auth()?.id === record.id}
         />
       ),
     },

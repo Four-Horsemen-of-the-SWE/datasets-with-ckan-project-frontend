@@ -50,7 +50,7 @@ export default function ChangeRoleModal({ user_id, open, close, is_admin }) {
           <Typography.Text>
             {is_admin
               ? "Member can only create, update, delete own dataset. They can also see other people's dataset."
-              : "Administrators can delte other datase. They can also manage user role and ban other user"}
+              : "Administrators can delete other datase. They can also manage user role and ban other user"}
           </Typography.Text>
           <Button type="primary" onClick={handleChangeRole}>
             {is_admin ? "Change to Member" : "Change to Administrators"}

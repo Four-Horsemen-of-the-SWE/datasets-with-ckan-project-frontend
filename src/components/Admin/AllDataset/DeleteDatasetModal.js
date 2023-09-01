@@ -34,6 +34,7 @@ export default function DeleteDatasetModal({ dataset_id, dataset_name }) {
           setIsDeleting(false);
         }
       } catch (error) {
+        setIsDeleting(false);
         console.log(error);
       }
     } else {
