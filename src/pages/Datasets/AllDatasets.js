@@ -51,7 +51,7 @@ const sort_data = [
   {
     value: "most_downloaded",
     label: "Most Downloaded"
-  }
+  },
 ];
 
 export default function AllDatasets() {
@@ -144,8 +144,6 @@ export default function AllDatasets() {
         api_url += range;
       }
 
-      
-
       const response = await axios.get(api_url);
       if (response.data.ok) {
         setAllDatasets(response.data.result);
@@ -179,6 +177,7 @@ export default function AllDatasets() {
       setSelectedTags(new_data);
     } else {
       setSelectedTags([...selectedTags, tag]);
+      console.log(selectedTags)
     }
   };
 

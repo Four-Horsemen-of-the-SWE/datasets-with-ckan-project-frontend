@@ -13,7 +13,7 @@ const { Title, Text } = Typography;
 export default function InformationView({ dataset_id, author, license_title, version, metadata_created, metadata_modified, tags }) {
   const { downloadStatistic, setDownloadStatistic } = useDownloadStore();
   const [downloadStatisticSuccess, setDownloadStatisticSuccess] = useState(false);
-  
+
   const additional_data = [
     {
       label: "Created by",
