@@ -8,7 +8,7 @@ const allowedMimetype = [
   "image/webp",
   "image/avif",
   "image/bmp",
-  "application/pdf",
+  // "application/pdf",
   "text/csv",
 ];
 

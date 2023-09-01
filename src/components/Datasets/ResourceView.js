@@ -187,7 +187,7 @@ export default function ResourceView({ creator_user_id, dataset_id }) {
                 >
                   <EditOutlined />
                 </Button>
-                <DeleteResouceButton resource_id={record.id} />,
+                <DeleteResouceButton resource_id={record.id} />
               </>
             ),
           },
