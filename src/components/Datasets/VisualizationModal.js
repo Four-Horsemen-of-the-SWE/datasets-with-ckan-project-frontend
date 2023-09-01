@@ -26,6 +26,7 @@ export default function VisualizationModal({ dataset_id, mimetype, format, url, 
 
   return (
     <Modal
+      destroyOnClose={true}
       title="Visualization window"
       width={
         isMaximize

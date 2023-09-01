@@ -32,7 +32,8 @@ export default function ChangeUsernameModal({ username, open, close }) {
         setTimeout(() => {
           setIsChanging(false);
           signOut();
-        }, 500);
+          window.location.href = "/";
+        }, 400);
       } else {
         setIsChanging(false);
       }
@@ -101,14 +102,12 @@ export default function ChangeUsernameModal({ username, open, close }) {
             { required: true, message: "Please input your new username" },
             { min: 6, message: "Username must be minimum 6 characters" },
             {
-              pattern: new RegExp(
-                /^[a-zA-Z@~`!@#$%^&*()_=+\\\\';:\"\\/?>.<,-]+$/i
-              ),
-              message: "Username must be in English only.",
+              pattern: new RegExp(/^[a-zA-Z_-][a-zA-Z0-9_-]*$/),
+              message: "Username must be in English and alphabet and  only. and not start with number",
             },
             {
-              validator: validatorInput
-            }
+              validator: validatorInput,
+            },
           ]}
           getValueFromEvent={(event) =>
             event.target.value.replace(/\s+/g, "-").toLowerCase()

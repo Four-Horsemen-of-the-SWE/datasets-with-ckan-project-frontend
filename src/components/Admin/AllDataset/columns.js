@@ -73,15 +73,7 @@ const columns = [
     render: (url, record) => (
       <DeleteDatasetModal dataset_id={record.id} dataset_name={record.name} />
     ),
-  },
-  {
-    title: "Report",
-    dataIndex: "url",
-    key: "url",
-    width: "10px",
-    align: "center",
-    render: (url, record) => <ReportDatasetModal />,
-  },
+  }
 ];
 
 export default columns;
