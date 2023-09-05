@@ -60,8 +60,11 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
   }
 
   return (
-    <>
-      <Typography.Title level={2}>All Articles</Typography.Title>
+    <div className="container mx-auto">
+      <div className="flex items-center justify-between">
+        <Typography.Title level={2}>All Articles</Typography.Title>
+        {!auth()?.is_admin && <Button icon={<PlusOutlined />}>Create article</Button>}
+      </div>
 
       {/* display all dataset */}
       <Row>
@@ -70,16 +73,19 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
             <Card
               cover={
                 <img
-                  alt="example"
-                  src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+                  alt="article thumbnail"
+                  src={item.thumbnail || process.env.PUBLIC_URL + "/images/placeholder/image.jpg"}
                 />
               }
             >
-              <Card.Meta title={item.title} description="Click to view this article" />
+              <Card.Meta
+                title={item.title}
+                description="Click to view this article"
+              />
             </Card>
           </Col>
         ))}
       </Row>
-    </>
+    </div>
   );
 }
