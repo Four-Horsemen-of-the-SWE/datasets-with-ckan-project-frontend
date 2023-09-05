@@ -3,6 +3,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Button, Typography, Empty, Spin, Form, Avatar, Input, Divider, List, Row, Col, Card } from "antd";
 import { useAuthUser, useIsAuthenticated, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
+import ArticleReader from "./ArticleReader";
 
 export default function ArticleView({ dataset_id, creator_user_id }) {
   const auth = useAuthUser();
@@ -10,6 +11,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
   const isAuthenticated = useIsAuthenticated();
   const [isLoading, setIsLoading] = useState(false);
   const [articles, setArticles] = useState(null);
+  const [isCreateMode, setIsCreateMode] = useState(false);
   const [isCreatingComment, setIsCreatingComment] = useState(false);
 
   const JWTToken = authHeader().split(" ")[1];
@@ -59,11 +61,17 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     );
   }
 
+  if (isCreateMode) {
+    return <ArticleReader />
+  }
+
   return (
     <div className="container mx-auto">
       <div className="flex items-center justify-between">
         <Typography.Title level={2}>All Articles</Typography.Title>
-        {!auth()?.is_admin && <Button icon={<PlusOutlined />}>Create article</Button>}
+        {!auth()?.is_admin && (
+          <Button icon={<PlusOutlined />} onClick={() => setIsCreateMode(true)}>Create article</Button>
+        )}
       </div>
 
       {/* display all dataset */}
@@ -74,7 +82,10 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
               cover={
                 <img
                   alt="article thumbnail"
-                  src={item.thumbnail || process.env.PUBLIC_URL + "/images/placeholder/image.jpg"}
+                  src={
+                    item.thumbnail ||
+                    process.env.PUBLIC_URL + "/images/placeholder/image.jpg"
+                  }
                 />
               }
             >

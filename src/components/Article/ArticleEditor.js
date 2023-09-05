@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Space, Button, message } from "antd";
+import { Space, Button, message, Typography } from "antd";
 import { EDITOR_JS_TOOLS } from "./tools";
 import EditorJs from "@natterstefan/react-editor-js";
 import { useAuthHeader } from "react-auth-kit";
