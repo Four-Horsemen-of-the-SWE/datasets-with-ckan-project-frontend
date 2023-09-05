@@ -124,7 +124,7 @@ export default function Profile() {
                         className="w-full"
                         onClick={() => setIsCreateModalShow(!isCreateModalShow)}
                       >
-                        Create Datasets
+                        Create Dataset
                       </Button>
                     )}
                     <Button
