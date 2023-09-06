@@ -6,6 +6,7 @@ import EditorJs from "@natterstefan/react-editor-js";
 import { useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 import "./editor-style.css";
+// import "./uploadbutton.css"
 
 const defaultContent = {
   time: Date.now(),
@@ -19,17 +20,19 @@ const defaultContent = {
   ],
 };
 
-export default function ArticleCreate({ cancel }) {
+export default function ArticleCreate({ dataset_id, cancel }) {
   const authHeader = useAuthHeader();
   var editor = null;
   const [title, setTitle] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const [thumbnail, setThumbnail] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
   const config = {
     headers: {
-      Authorization: authHeader()?.split(" ")[1]
-    }
-  }
+      "Content-Type": "multipart/form-data",
+      Authorization: authHeader()?.split(" ")[1],
+    },
+  };
 
   const handleReady = async () => {
     try {
@@ -42,18 +45,41 @@ export default function ArticleCreate({ cancel }) {
   };
 
   const handleCreate = async() => {
+    setIsCreating(true);
     if(title === "") {
+      setIsCreating(false);
       return message.warning("Please enter title of article")
     }
     try {
-      const payload = null;
+      const outputData = await editor.save();
+      if (!outputData.blocks?.length) {
+        setIsCreating(false);
+        return message.warning("Article is empty");
+      }
+
+      let formData = new FormData();
+      formData.append('title', title)
+      formData.append("content", JSON.stringify(outputData));
+      formData.append('package_id', dataset_id)
+      formData.append('thumbnail', thumbnail);
 
       const response = await axios.post(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles`,
-        payload,
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/`,
+        formData,
         config
-      )
+      );
+
+      if(response.data.ok) {
+        message.success("create article success")
+        setTimeout(() => {
+          window.location.reload();
+        }, 400);
+      } else {
+        message.error("create failed")
+      }
+      setIsCreating(false);
     } catch(error) {
+      setIsCreating(false);
       console.error(error);
       message.error("create failed")
     }
@@ -63,7 +89,7 @@ export default function ArticleCreate({ cancel }) {
     <>
       <Typography.Title>Create article</Typography.Title>
       {/* title */}
-      <div className="flex items-end justify-between gap-2 mb-5">
+      <div className="flex items-end justify-between gap-2 mb-5 w-full">
         <Space direction="vertical" className="w-full">
           <label className="font-semibold text-xl">article title</label>
           <Input
@@ -73,11 +99,18 @@ export default function ArticleCreate({ cancel }) {
             onChange={(e) => setTitle(e.target.value)}
           />
         </Space>
-        <Upload accept="image/*" maxCount={1} multiple={false}>
-          <Button size="large" type="primary" icon={<UploadOutlined />}>
-            Upload thumbnail
-          </Button>
-        </Upload>
+
+        <Space direction="vertical">
+          <label className="font-semibold text-xl">article thumbnail</label>
+          <input
+            id="file-upload"
+            type="file"
+            name="thumbnail"
+            accept="image/png, image/jpeg"
+            onChange={(e) => setThumbnail(e.target.files[0])}
+            className="block w-full text-sm file:bg-black file:mr-4 file:rounded-md file:border-0 file:bg-primary-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none"
+          />
+        </Space>
       </div>
 
       {/* content */}
@@ -115,3 +148,4 @@ export default function ArticleCreate({ cancel }) {
     </>
   );
 }
+

@@ -32,8 +32,11 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
       const response = await axios.get(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/articles`
       );
+      console.log(response.data);
       if (response.data.ok) {
         setIsLoading(false);
+
+        
 
         // if dataset is created.
         if (response.data?.is_created) {
@@ -64,7 +67,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
   }
 
   if (isCreateMode) {
-    return <ArticleCreate cancel={() => setIsCreateMode(false)} />
+    return <ArticleCreate dataset_id={dataset_id} cancel={() => setIsCreateMode(false)} />
   }
 
   if (selectedArticle) {
@@ -86,7 +89,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
       </div>
 
       {/* display all dataset */}
-      <Row>
+      <Row gutter={18}>
         {articles?.map((item, key) => (
           <Col sm={12} md={8} key={key}>
             <Card
