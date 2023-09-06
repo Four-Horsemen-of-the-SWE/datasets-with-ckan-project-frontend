@@ -5,6 +5,8 @@ import { Button, Space, Spin, Typography, message } from "antd";
 import { useAuthHeader, useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import ArticleEditor from "./ArticleEditor";
+import ArticleDeleteModal from "./ArticleDeleteModal";
 
 const defaultContent = {
   time: Date.now(),
@@ -18,16 +20,15 @@ const defaultContent = {
   ],
 };
 
-export default function ArticleReader({ article_id, setIsEditMode, creator_user_id, close }) {
+export default function ArticleReader({ article_id, close }) {
   var editor = null;
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
-  const [artcle, setArticle] = useState(defaultContent);
+  const [article, setArticle] = useState(defaultContent);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  console.log(artcle.content)
 
   const config = {
     headers: {
@@ -37,7 +38,7 @@ export default function ArticleReader({ article_id, setIsEditMode, creator_user_
 
   const handleReady = async () => {
     if (editor) {
-      await editor.render(artcle?.content || defaultContent);
+      await editor.render(article?.content || defaultContent);
     }
   };
 
@@ -89,11 +90,17 @@ export default function ArticleReader({ article_id, setIsEditMode, creator_user_
     return <Spin size="large" />
   }
 
+  if(isEditMode) {
+    return <ArticleEditor old_title={article.title} content={article?.content} cancel={() => setIsEditMode(false)} />
+  }
+
   return (
     <>
+      <ArticleDeleteModal article_id={article.id} open={showDeleteModal} close={() => setShowDeleteModal(false)} />
+
       <Button type="dashed" size="large" icon={<ArrowLeftOutlined />} onClick={close}>Back to all articles</Button>
 
-      {auth()?.id === creator_user_id && (
+      {auth()?.id === article.user_id && (
         <div className="flex items-center justify-end">
           <Space>
             <Button icon={<EditOutlined />} onClick={() => setIsEditMode(true)}>
@@ -109,7 +116,7 @@ export default function ArticleReader({ article_id, setIsEditMode, creator_user_
         </div>
       )}
 
-      <Typography.Title>{artcle?.title}</Typography.Title>
+      <Typography.Title>{article?.title}</Typography.Title>
       
       <EditorJs
         tools={EDITOR_JS_TOOLS}

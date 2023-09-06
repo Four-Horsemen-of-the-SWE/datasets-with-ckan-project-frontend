@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Space, Button, message, Typography } from "antd";
+import { Space, Button, message, Typography, Input, Image } from "antd";
 import { EDITOR_JS_TOOLS } from "./tools";
 import EditorJs from "@natterstefan/react-editor-js";
 import { useAuthHeader } from "react-auth-kit";
@@ -18,10 +18,12 @@ const defaultContent = {
   ],
 };
 
-export default function ArticleEditor({ content, dataset_id, setIsEditMode }) {
+export default function ArticleEditor({ old_title, content, dataset_id, cancel }) {
   const authHeader = useAuthHeader();
   var editor = null;
   const [isSaving, setIsSaving] = useState(false);
+  const [title, setTitle] = useState(old_title);
+  const [thumbnail, setThumbnail] = useState({});
 
   const handleSave = async() => {
     try {
@@ -72,12 +74,38 @@ export default function ArticleEditor({ content, dataset_id, setIsEditMode }) {
 
   return (
     <>
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end mt-5">
         <Space>
-          <Button onClick={() => setIsEditMode(false)} disabled={isSaving}>Cancel</Button>
+          <Button onClick={cancel} disabled={isSaving}>
+            Cancel
+          </Button>
           <Button type="primary" onClick={handleSave} loading={isSaving}>
             Save
           </Button>
+        </Space>
+      </div>
+
+      <div className="flex items-end justify-between gap-2 my-5 w-full">
+        <Space direction="vertical" className="w-full">
+          <label className="font-semibold text-xl">article title</label>
+          <Input
+            size="large"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </Space>
+
+        <Space direction="vertical">
+          <label className="font-semibold text-xl">article thumbnail</label>
+          <input
+            id="file-upload"
+            type="file"
+            name="thumbnail"
+            accept="image/png, image/jpeg"
+            onChange={(e) => setThumbnail(e.target.files[0])}
+            className="block w-full text-sm file:bg-black file:mr-4 file:rounded-md file:border-0 file:bg-primary-500 file:py-2.5 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-700 focus:outline-none"
+          />
         </Space>
       </div>
 
