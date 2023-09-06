@@ -76,6 +76,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
         article_id={selectedArticle}
         close={() => setSelectedArticle(null)}
         dataset_id={dataset_id}
+        creator_user_id={selectedArticle.user_id}
       />
     );
   }

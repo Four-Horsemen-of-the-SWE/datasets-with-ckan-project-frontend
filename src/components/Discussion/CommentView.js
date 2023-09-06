@@ -83,9 +83,9 @@ export default function CommentView({ item, dataset_creator_user_id, updateComme
       extra={
         <>
           <Space align="end" direction="vertical">
-            {auth()?.id === item.user_id && (
+            {(auth()?.id === item.user_id || auth()?.is_admin) && (
               <Space size="small">
-                {!isEditMode && (
+                {!isEditMode && !auth()?.is_admin && (
                   <Button
                     type="ghost"
                     size="small"
