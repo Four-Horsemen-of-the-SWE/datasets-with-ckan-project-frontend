@@ -99,7 +99,7 @@ export default function Navbar() {
                         icon={<PlusOutlined />}
                         onClick={() => setIsCreateModalShow(true)}
                       >
-                        Create Datasets
+                        Create Dataset
                       </Button>
                     )}
                     <Button

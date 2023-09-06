@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import { RequireAuth } from "react-auth-kit";
 
 import "./App.css";
 
@@ -28,6 +27,7 @@ function App() {
         <Route path="/datasets/:datasets_id/discussions/:topic_id" element={<ViewDatasets />} />
         <Route path="/datasets/:datasets_id/settings" element={<ViewDatasets />} />
         <Route path="/datasets/:datasets_id/article" element={<ViewDatasets />} />
+        <Route path="/datasets/:datasets_id/article/create" element={<ViewDatasets />} />
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/profile/:username/datasets" element={<Profile />} />
         <Route path="/profile/:username/bookmarks" element={<Profile />} />
