@@ -1,23 +1,71 @@
 import EditorJs from "@natterstefan/react-editor-js";
 import { EDITOR_JS_TOOLS } from "./tools";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Button, Space } from "antd";
-import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
+import { EditOutlined, DeleteOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Space, Spin, Typography, message } from "antd";
+import { useAuthHeader, useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { useState, useEffect } from "react";
-import ArticleDeleteModal from "./ArticleDeleteModal";
+import axios from "axios";
 
-export default function ArticleReader({ article_id, content, setIsEditMode, creator_user_id }) {
+const defaultContent = {
+  time: Date.now(),
+  blocks: [
+    {
+      type: "paragraph",
+      data: {
+        text: "Your content goes here.",
+      },
+    },
+  ],
+};
+
+export default function ArticleReader({ article_id, setIsEditMode, creator_user_id, close }) {
   var editor = null;
   const auth = useAuthUser();
+  const authHeader = useAuthHeader();
   const isAuthenticated = useIsAuthenticated();
+  const [artcle, setArticle] = useState(defaultContent);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  console.log(artcle.content)
+
+  const config = {
+    headers: {
+      Authorization: authHeader()?.split(" ")[1],
+    },
+  };
 
   const handleReady = async () => {
     if (editor) {
-      await editor.render(content);
+      await editor.render(artcle?.content || defaultContent);
     }
   };
 
+  const fetchArticle = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/${article_id}`
+      );
+      if(response.data.ok) {
+        setArticle(response.data.result);
+      } else {
+        message.error("failed to fetch article")
+      }
+      setIsLoading(false);
+    } catch(error) {
+      setIsLoading(false);
+      console.error(error);
+      message.error("cannot fetch article")
+    }
+  }
+
+  // fetch an artcle
+  useEffect(() => {
+    fetchArticle();
+  }, []);
+
+  // prevent user can do somethin. i forgot
   useEffect(() => {
     // Prevent drag event on images
     const handleDragStart = (event) => {
@@ -37,13 +85,13 @@ export default function ArticleReader({ article_id, content, setIsEditMode, crea
     };
   }, []);
 
+  if(isLoading) {
+    return <Spin size="large" />
+  }
+
   return (
     <>
-      <ArticleDeleteModal
-        article_id={article_id}
-        open={showDeleteModal}
-        close={() => setShowDeleteModal(false)}
-      />
+      <Button type="dashed" size="large" icon={<ArrowLeftOutlined />} onClick={close}>Back to all articles</Button>
 
       {auth()?.id === creator_user_id && (
         <div className="flex items-center justify-end">
@@ -61,6 +109,8 @@ export default function ArticleReader({ article_id, content, setIsEditMode, crea
         </div>
       )}
 
+      <Typography.Title>{artcle?.title}</Typography.Title>
+      
       <EditorJs
         tools={EDITOR_JS_TOOLS}
         placeholder="Starting writing content..."

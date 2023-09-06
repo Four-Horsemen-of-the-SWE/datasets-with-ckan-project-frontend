@@ -13,6 +13,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
   const [isLoading, setIsLoading] = useState(false);
   const [articles, setArticles] = useState(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
   const [isCreatingComment, setIsCreatingComment] = useState(false);
 
   const JWTToken = authHeader().split(" ")[1];
@@ -29,7 +30,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/${dataset_id}`
+        `${process.env.REACT_APP_CKAN_API_ENDPOINT}/datasets/${dataset_id}/articles`
       );
       if (response.data.ok) {
         setIsLoading(false);
@@ -66,6 +67,15 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
     return <ArticleCreate cancel={() => setIsCreateMode(false)} />
   }
 
+  if (selectedArticle) {
+    return (
+      <ArticleReader
+        article_id={selectedArticle}
+        close={() => setSelectedArticle(null)}
+      />
+    );
+  }
+
   return (
     <div className="container mx-auto">
       <div className="flex items-center justify-between">
@@ -93,6 +103,8 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
               <Card.Meta
                 title={item.title}
                 description="Click to view this article"
+                className="cursor-pointer"
+                onClick={() => setSelectedArticle(item.id)}
               />
             </Card>
           </Col>
