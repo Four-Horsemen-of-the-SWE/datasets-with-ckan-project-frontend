@@ -4,6 +4,7 @@ import { Button, Typography, Empty, Spin, Form, Avatar, Input, Divider, List, Ro
 import { useAuthUser, useIsAuthenticated, useAuthHeader } from "react-auth-kit";
 import axios from "axios";
 import ArticleReader from "./ArticleReader";
+import ArticleCreate from "./ArticleCreate";
 
 export default function ArticleView({ dataset_id, creator_user_id }) {
   const auth = useAuthUser();
@@ -62,7 +63,7 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
   }
 
   if (isCreateMode) {
-    return <ArticleReader />
+    return <ArticleCreate cancel={() => setIsCreateMode(false)} />
   }
 
   return (
