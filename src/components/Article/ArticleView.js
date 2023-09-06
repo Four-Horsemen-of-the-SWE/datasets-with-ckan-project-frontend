@@ -75,12 +75,13 @@ export default function ArticleView({ dataset_id, creator_user_id }) {
       <ArticleReader
         article_id={selectedArticle}
         close={() => setSelectedArticle(null)}
+        dataset_id={dataset_id}
       />
     );
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto mb-5">
       <div className="flex items-center justify-between">
         <Typography.Title level={2}>All Articles</Typography.Title>
         {!auth()?.is_admin && (

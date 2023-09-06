@@ -20,7 +20,7 @@ const defaultContent = {
   ],
 };
 
-export default function ArticleReader({ article_id, close }) {
+export default function ArticleReader({ article_id, close, dataset_id }) {
   var editor = null;
   const auth = useAuthUser();
   const authHeader = useAuthHeader();
@@ -91,7 +91,7 @@ export default function ArticleReader({ article_id, close }) {
   }
 
   if(isEditMode) {
-    return <ArticleEditor old_title={article.title} content={article?.content} cancel={() => setIsEditMode(false)} />
+    return <ArticleEditor article_id={article.id} old_title={article.title} content={article?.content} cancel={() => setIsEditMode(false)} dataset_id={dataset_id} />
   }
 
   return (

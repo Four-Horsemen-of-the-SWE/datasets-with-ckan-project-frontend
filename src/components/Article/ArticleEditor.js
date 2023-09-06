@@ -18,39 +18,54 @@ const defaultContent = {
   ],
 };
 
-export default function ArticleEditor({ old_title, content, dataset_id, cancel }) {
+export default function ArticleEditor({ article_id, old_title, content, dataset_id, cancel }) {
   const authHeader = useAuthHeader();
   var editor = null;
   const [isSaving, setIsSaving] = useState(false);
   const [title, setTitle] = useState(old_title);
-  const [thumbnail, setThumbnail] = useState({});
+  const [thumbnail, setThumbnail] = useState(undefined);
+
+  const config = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: authHeader()?.split(" ")[1],
+    },
+  };
 
   const handleSave = async() => {
     try {
       setIsSaving(true);
       const outputData = await editor.save();
 
+      if (title === "") {
+        setIsSaving(false);
+        return message.warning("Please enter title of article");
+      }
+
       if(!outputData.blocks?.length) {
         setIsSaving(false);
         return message.warning("Article is empty")
       }
 
+      let formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", JSON.stringify(outputData));
+      formData.append("package_id", dataset_id);
+      formData.append("article_id", article_id)
+      if(thumbnail) {
+        formData.append("thumbnail", thumbnail);
+      }
+
       const response = await axios.post(
         `${process.env.REACT_APP_CKAN_API_ENDPOINT}/articles/`,
-        {
-          package_id: dataset_id,
-          content: outputData,
-        },
-        {
-          headers: {
-            Authorization: authHeader().split(" ")[1]
-          }
-        }
+        formData,
+        config
       );
 
       if(response.data.ok) {
         message.success("Article has been saved successfully.");
         setIsSaving(false);
+        console.log(response.data)
         window.location.reload();
       } else {
         message.warning("Unable to save at this time");
